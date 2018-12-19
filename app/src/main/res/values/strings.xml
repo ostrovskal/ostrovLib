@@ -1,0 +1,14 @@
+<resources>
+    <string name="std_theme" translatable="false">std</string>
+    <string name="toggle" translatable="false">switch</string>
+    <string name="hint" translatable="false">hint</string>
+    <string name="radio1" translatable="false">radio1</string>
+    <string name="radio2" translatable="false">radio2</string>
+    <string name="radio3" translatable="false">radio3</string>
+    <string name="check3" translatable="false">check3</string>
+    <string name="check2" translatable="false">check2</string>
+    <string name="check1" translatable="false">check1</string>
+    <string name="header" translatable="false">help</string>
+    <string name="std_theme_d" translatable="false">dark</string>
+    <string name="std_theme_l" translatable="false">light</string>
+</resources>

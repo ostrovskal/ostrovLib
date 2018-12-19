@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="sshCommon">
+        <attr name="scrollBarsStyle" format="reference" />
+    </declare-styleable>
+
+    <style name="StdTheme">
+        <item name="scrollBarsStyle">@style/scrollBars</item>
+    </style>
+
+    <style name="dialog" parent="@android:style/Theme.Holo">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:borderlessButtonStyle">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowCloseOnTouchOutside">false</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowActionModeOverlay">false</item>
+        <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
+    </style>
+    <style name="dialog.custom">
+        <item name="android:windowBackground">@drawable/dialogs</item>
+    </style>
+    <style name="scrollBars">
+        <item name="android:padding">1dp</item>
+        <item name="android:scrollbars">vertical|horizontal</item>
+        <item name="android:scrollbarThumbVertical">@drawable/scrollbar_handle_vertical</item>
+        <item name="android:scrollbarThumbHorizontal">@drawable/scrollbar_handle_horizontal</item>
+        <item name="android:scrollbarTrackHorizontal">@null</item>
+        <item name="android:scrollbarTrackVertical">@null</item>
+    </style>
+</resources>

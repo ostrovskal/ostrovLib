@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="seek" type="id"/>
+    <item name="toggle" type="id"/>
+    <item name="edit" type="id"/>
+    <item name="check" type="id"/>
+    <item name="radio1" type="id"/>
+    <item name="radio2" type="id"/>
+    <item name="radio3" type="id"/>
+    <item name="check1" type="id"/>
+    <item name="check2" type="id"/>
+    <item name="check3" type="id"/>
+    <item name="controller1" type="id"/>
+    <item name="controller2" type="id"/>
+    <item name="progress2" type="id"/>
+    <item name="progress1" type="id"/>
+    <item name="progress4" type="id"/>
+    <item name="progress3" type="id"/>
+    <item name="toggle1" type="id"/>
+    <item name="seek1" type="id"/>
+    <item name="seek2" type="id"/>
+    <item name="seek3" type="id"/>
+    <item name="page3" type="id"/>
+    <item name="page2" type="id"/>
+    <item name="page1" type="id"/>
+    <item name="toggle2" type="id"/>
+    <item name="seek4" type="id"/>
+    <item name="tabHost" type="id"/>
+    <item name="spinner" type="id"/>
+    <item name="ribbon" type="id"/>
+</resources>

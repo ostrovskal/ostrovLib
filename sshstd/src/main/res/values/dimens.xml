@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ************************************************************ -->
+    <!-- текст на тосте -->
+    <dimen name="toast">18sp</dimen>
+    <!-- текст на стандартной кнопке -->
+    <dimen name="button">22sp</dimen>
+    <!-- html текст -->
+    <dimen name="html">26sp</dimen>
+    <!-- размер текста подсказок -->
+    <dimen name="hint">16sp</dimen>
+    <!-- размер текста заголовка диалога -->
+    <dimen name="header">23sp</dimen>
+    <!-- размер текста поля ввода -->
+    <dimen name="edit">20sp</dimen>
+    <!-- размер маленького текста -->
+    <dimen name="small">14sp</dimen>
+    <!-- размер текста рейтинга -->
+    <dimen name="chart">11sp</dimen>
+    <!-- размер обычного текста -->
+    <dimen name="normal">22sp</dimen>
+    <!-- размер большого текста -->
+    <dimen name="large">26sp</dimen>
+    <!-- отступ ячейки -->
+    <dimen name="cellSpacing">1dp</dimen>
+    <!-- смещение нажатия для тайла -->
+    <dimen name="pressedOffs">4dp</dimen>
+    <!-- смещение тени от текста по осям -->
+    <dimen name="shadowTextX">4dp</dimen>
+    <dimen name="shadowTextY">4dp</dimen>
+    <!-- радиус тени от текста -->
+    <dimen name="shadowTextR">6dp</dimen>
+    <!-- высота/ширина элементов -->
+    <dimen name="heightFooter">48dp</dimen>
+    <dimen name="heightSwitch">32dp</dimen>
+    <dimen name="heightHeader">45dp</dimen>
+    <dimen name="heightSeek">42dp</dimen>
+    <dimen name="heightButton">30dp</dimen>
+    <dimen name="heightCheck">32dp</dimen>
+    <dimen name="heightRadio">32dp</dimen>
+    <dimen name="heightSelectItem">37dp</dimen>
+    <dimen name="heightSelectCaption">42dp</dimen>
+    <dimen name="heightProgress">48dp</dimen>
+    <dimen name="widthProgress">48dp</dimen>
+    <dimen name="widthSelector">3dp</dimen>
+    <dimen name="widthSeek">80dp</dimen>
+    <!-- отступы элементов-->
+    <dimen name="paddingDlg">10dp</dimen>
+    <dimen name="paddingHorzSelectItem">8dp</dimen>
+    <dimen name="paddingHorzEdit">10dp</dimen>
+    <dimen name="paddingVertEdit">3dp</dimen>
+    <dimen name="paddingHorzToast">16dp</dimen>
+    <dimen name="paddingVertToast">8dp</dimen>
+    <dimen name="vertOffsSelect">1dp</dimen>
+    <dimen name="horzOffsSelect">0dp</dimen>
+</resources>

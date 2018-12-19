@@ -1,0 +1,19 @@
+<resources>
+    <string name="again_press_for_exit">Press once again!</string>
+    <string name="error404"><![CDATA[<h3>Page not found</h3><p>Link <big>\"%s\"</big> not found<p>Check validate resource<h5><p><a href="back">Back</a></h5>]]></string>
+    <string name="null_text" translatable="false"> </string>
+    <string name="font_large" translatable="false">large</string>
+    <string name="font_normal" translatable="false">normal</string>
+    <string name="font_small" translatable="false">small</string>
+    <string name="patch9_select_item" translatable="false">7,5,7,5</string>
+    <string name="patch9_select_caption" translatable="false">4,3,26,3</string>
+    <string name="patch9_edit" translatable="false">6,6,6,6</string>
+    <string name="patch9_item" translatable="false">6,6,6,6</string>
+    <string name="patch9_dropdown" translatable="false">6,6,6,6</string>
+    <string name="patch9_header" translatable="false">25,4,25,4</string>
+    <string name="radii_dlg" translatable="false">30,30,30,30,20,20,20,20</string>
+    <string name="shadow_text" translatable="false">4,4,6,0</string>
+    <string name="colors_chart_diagram" translatable="false">#c3f556,#063f5e,#f5e6e6,#0e24e9,#eadada,#66093a,#e0f907,#292807,#7df442,#15480a,#fa11ac,#260221</string>
+    <string name="colors_chart_circular" translatable="false">#c3f556,#f5e6e6,#eadada,#e0f907,#7df442,#fa11ac</string>
+</resources>
+

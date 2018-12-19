@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="I_NULL">0</integer>
+    <integer name="I_YES">1</integer>
+    <integer name="I_NO">2</integer>
+    <integer name="I_EXIT">3</integer>
+    <integer name="I_NEW_PLANET">4</integer>
+    <integer name="I_SELECT_PLANET">5</integer>
+    <integer name="I_SAVE_OPTIONS">6</integer>
+    <integer name="I_CYCLES">7</integer>
+    <integer name="I_GEN_PLANET">8</integer>
+    <integer name="I_HELP">9</integer>
+    <integer name="I_TEST_PLANET">10</integer>
+    <integer name="I_PROP_PLANET">11</integer>
+    <integer name="I_DEFAULT_OPTIONS">12</integer>
+    <integer name="I_OPEN_PLANET">13</integer>
+    <integer name="I_PLAY_RECORD">14</integer>
+    <integer name="I_ALL_PLANET">15</integer>
+    <integer name="I_SAVE_PLANET">16</integer>
+    <integer name="I_SKULL1">17</integer>
+    <integer name="I_SKULL2">18</integer>
+    <integer name="I_GAME">19</integer>
+    <integer name="I_CANCEL">20</integer>
+    <integer name="I_OPTIONS">21</integer>
+    <integer name="I_STAR1">22</integer>
+    <integer name="I_STAR2">23</integer>
+    <integer name="I_DELETE_PLANET">24</integer>
+    <integer name="I_RECORD">25</integer>
+    <integer name="I_EDITOR">26</integer>
+    <integer name="I_RECV_PACK">27</integer>
+    <integer name="I_MAIL">28</integer>
+    <integer name="I_SEND_PACK">29</integer>
+</resources>
