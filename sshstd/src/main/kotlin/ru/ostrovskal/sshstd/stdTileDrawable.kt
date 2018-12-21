@@ -343,7 +343,7 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 			if(states test (TILE_STATE_SHADOW or TILE_STATE_PRESS)) fRect.inset(shadowOffset, shadowOffset)
 			fRect.toInt(iRect)
 			if(bounds != iRect) {
-				bounds?.set(iRect)
+				bounds.set(iRect)
 				redrawSelf(true)
 			}
 			// пересчитать иконку

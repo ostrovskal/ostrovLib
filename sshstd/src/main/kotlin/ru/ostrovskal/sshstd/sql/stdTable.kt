@@ -59,10 +59,10 @@ open class Table {
 	}
 	
 	/** Дабавление ограничения первичного ключа(ей) для таблицы */
-	val primaryKeyConstraint get() = {
-		var pkey = fields.filter { it.isPK }.sortedBy { it.idxPK }
+	private fun primaryKeyConstraint(): String? {
+		var pkey = fields.filter { it.isPK }//.sortedBy { it.idxPK }
 		if(pkey.isEmpty()) pkey = fields.filter { it.isAutoInc }
-		if(pkey.isNotEmpty())
+		return if(pkey.isNotEmpty())
 			pkey.joinToString(prefix = "CONSTRAINT ${SQL.quote("pk_$name")} PRIMARY KEY (", postfix = ")") { SQL.quote(it.name) }
 		else null
 	}

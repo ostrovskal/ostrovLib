@@ -128,13 +128,13 @@ class Touch {
 }
 
 /** Клик с идентификатором [id] для области [rc] */
-fun touchClick(id: Int, rc: Rect, action: (time: Long) -> Unit) {
+inline fun touchClick(id: Int, rc: Rect, crossinline action: (time: Long) -> Unit) {
 	findTouch(id)?.apply { if(rc.contains(ptBegin)) Touch.tmpTh1 = this } ?: Touch.tmpTh1?.apply { Touch.tmpTh1 = null; if(rc.contains(ptCurrent))
 		action(tmCurrent - tmBegin) }
 }
 
 /** Клик с идентификатором [id] для массива областей [rects] */
-fun touchClick(id: Int, rects: Array<Rect>, action: (idx: Int, time: Long) -> Unit) {
+inline fun touchClick(id: Int, rects: Array<Rect>, crossinline action: (idx: Int, time: Long) -> Unit) {
 	findTouch(id)?.apply { Touch.clk = contains(rects, ptBegin).also { if(it != -1) Touch.tmpTh1 = this } }
 	?: Touch.tmpTh1?.apply { Touch.tmpTh1 = null; if(contains(rects, ptCurrent) == Touch.clk) action(Touch.clk, tmCurrent - tmBegin) }
 }
@@ -147,12 +147,12 @@ fun touchClick(id: Int, rects: Array<Rect>, action: (idx: Int, time: Long) -> Un
  * @param center Точка относительно которой определять направление
  * @param is4    Признак, определяющий количество направлений - 4 или 8
  */
-inline fun touchDirection(id: Int, cell: Size, center: PointF, is4: Boolean, action: (dir: Int, t: Touch) -> Unit) {
+inline fun touchDirection(id: Int, cell: Size, center: PointF, is4: Boolean, crossinline action: (dir: Int, t: Touch) -> Unit) {
 	findTouch(id)?.apply { action(direction(cell, center, is4), this) }
 }
 
 /** Перетаскивание для касания с идентификатором [id] и гранулярностью [cell] */
-fun touchDrag(id: Int, cell: Size, action: (offset: Size, time: Long, t: Touch, event: Boolean) -> Unit) {
+inline fun touchDrag(id: Int, cell: Size, crossinline action: (offset: Size, time: Long, t: Touch, event: Boolean) -> Unit) {
 	Touch.tmpTh1 = findTouch(id)?.apply {
 		delta(cell, Touch.tmpSz1)
 		if(Touch.tmpSz2 != Touch.tmpSz1) {
@@ -170,7 +170,7 @@ fun touchDrag(id: Int, cell: Size, action: (offset: Size, time: Long, t: Touch, 
 }
 
 /** Ротация вокруг центральной точки [center] для касания с идентификатором [id] и гранулярностью [cell] */
-fun touchRotate(id: Int, cell: Size, center: PointF, action: (angle: Float, time: Long, t: Touch, event: Boolean) -> Unit) {
+inline fun touchRotate(id: Int, cell: Size, center: PointF, crossinline action: (angle: Float, time: Long, t: Touch, event: Boolean) -> Unit) {
 	Touch.tmpTh1 = findTouch(id)?.apply {
 		if(delta(cell, Touch.tmpSz1)) {
 			action(this.rotate(center, ptCurrent), tmCurrent - tmBegin, this, true)
@@ -181,7 +181,7 @@ fun touchRotate(id: Int, cell: Size, center: PointF, action: (angle: Float, time
 }
 
 /** Масштабирование для касаний с идентификаторами [id1] и [id2] и гранулярностью [cell] */
-fun touchScale(id1: Int, id2: Int, cell: Size, action: (offs: Float, t1: Touch, t2: Touch, event: Boolean) -> Unit) {
+inline fun touchScale(id1: Int, id2: Int, cell: Size, crossinline action: (offs: Float, t1: Touch, t2: Touch, event: Boolean) -> Unit) {
 	val t1 = findTouch(id1)
 	val t2 = findTouch(id2)
 	if(t1 != null && t2 != null) {

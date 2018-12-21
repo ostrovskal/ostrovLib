@@ -73,7 +73,8 @@ class AdapterDate : JAdapter {
 }
 
 class Primer {
-	@STORAGE @JvmField val str1 = """Шаталов
+	@STORAGE
+	@JvmField val str1 = """Шаталов
 		Влад"""
 	@STORAGE @JvmField val flt1 = 3.05f
 	@STORAGE @JvmField val dbl1 = 21.102030
@@ -316,7 +317,7 @@ class Abs(val wnd: MainWnd): UiComponent() {
 				true
 			}
 //			surface = custom<ExampleSurface> {}.lps(0, 0, MATCH, if(config.portrait) 300.dp else 200.dp)
-			tabRibbonLayout {
+			tabLayout {
 				tabChangeListener = {tab, content ->
 					if(tab == 0) {
 						content.byIdx<Chart>(0).startAnimation()

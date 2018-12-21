@@ -11,6 +11,9 @@ import ru.ostrovskal.sshstd.ui.UiCtx
 import ru.ostrovskal.sshstd.utils.byIdx
 import ru.ostrovskal.sshstd.widgets.*
 
+/** Класс, реализующий адаптер с доступом к записи в БД
+ * @property layout Компонент
+ */
 open class RecordAdapter(context: Context, @JvmField protected val layout: UiComponent, private val fields: Int) : CursorAdapter(context, null, false) {
 	
 	/** Путь к картинкам */

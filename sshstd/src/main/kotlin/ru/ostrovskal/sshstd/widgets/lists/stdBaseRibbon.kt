@@ -131,8 +131,8 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 	/** Признак определяющий привязано ли новое представление к окну */
 	@JvmField protected var mIsAttachedChild    = false
 	
-	/** Объект жеста прокрутки списка */
-	@JvmField protected val mFling              = Fling()
+	// Объект жеста прокрутки списка
+	private val mFling              			= Fling()
 	
 	/** Список кэшированных представлений по количеству типов в адаптере */
 	@JvmField val mCacheViews                   = mutableListOf< MutableList<View> >()
@@ -670,7 +670,11 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 		return null
 	}
 	
-	/** Класс параметров разметки дочерних элементов списка */
+	/** Класс параметров разметки дочерних элементов списка
+	 * @property type	Тип элемента
+	 * @property id		Идентификатор элемента
+	 * @property pos	Позиция элемента
+	 */
 	class LayoutParams(width: Int, height: Int, @JvmField var type: Int, @JvmField var id: Long, @JvmField var pos: Int) : ViewGroup.LayoutParams(width, height)
 	
 	/** Генерация параметров разметки по умолчанию */
@@ -812,7 +816,7 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 	}
 	
 	// Класс реализации жеста прокрутки списка с инерцией
-	inner class Fling : Runnable {
+	private inner class Fling : Runnable {
 		// Скроллер
 		private val mScroller = OverScroller(context)
 		
