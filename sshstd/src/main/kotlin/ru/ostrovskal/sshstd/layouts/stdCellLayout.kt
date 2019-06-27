@@ -14,6 +14,7 @@ import ru.ostrovskal.sshstd.SizeF
 import ru.ostrovskal.sshstd.objects.ATTR_SSH_COLOR_WIRED
 import ru.ostrovskal.sshstd.objects.Theme
 import ru.ostrovskal.sshstd.utils.*
+import kotlin.math.roundToInt
 
 /**
  * @author  Шаталов С.В.
@@ -46,7 +47,7 @@ open class CellLayout(context: Context, @JvmField protected var cols: Int, @JvmF
 	
 	/** Установка параметров разметки представления с гор. координатой [x] и верт. координатой [y], шириной [w], высотой [h] и инициализатором [init] */
 	inline fun <T : View> T.lps(x: Int, y: Int, w: Int, h: Int, init: T.() -> Unit): T {
-		layoutParams = CellLayout.LayoutParams(x, y, w, h).apply { init() }
+		layoutParams = LayoutParams(x, y, w, h).apply { init() }
 		return this
 	}
 	
@@ -84,7 +85,7 @@ open class CellLayout(context: Context, @JvmField protected var cols: Int, @JvmF
 	/** Сдвиг всех ячеек, начиная с позиции [fromX] и [fromY], на величину [dx] и [dy] */
 	fun shiftCells(fromX: Int, fromY: Int, dx: Int, dy: Int) {
 		loopChildren {
-			(it.layoutParams as? CellLayout.LayoutParams)?.apply {
+			(it.layoutParams as? LayoutParams)?.apply {
 				if(x >= fromX && y >= fromY) it.layoutParams = LayoutParams(x + dx, y + dy, w, h)
 			}
 		}
@@ -92,7 +93,7 @@ open class CellLayout(context: Context, @JvmField protected var cols: Int, @JvmF
 	
 	/** Вычисление габаритов представлений */
 	override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-		val ww = View.MeasureSpec.getSize(widthMeasureSpec)
+		val ww = MeasureSpec.getSize(widthMeasureSpec)
 		val hh = MeasureSpec.getSize(heightMeasureSpec)
 		val spc = spacing * 2
 		
@@ -103,16 +104,16 @@ open class CellLayout(context: Context, @JvmField protected var cols: Int, @JvmF
 			cellH = h / rows.toFloat()
 			if(cols == CELL_LAYOUT_AUTO_FIT) {
 				cellW = cellH
-				cols = Math.round(w / cellW)
+				cols = (w / cellW).roundToInt()
 			}
 			if(rows == CELL_LAYOUT_AUTO_FIT) {
 				cellH = cellW
-				rows = Math.round(h / cellH)
+				rows = (h / cellH).roundToInt()
 			}
 		}
 		loopChildren {
 			if(it.visibility == View.GONE) return@loopChildren
-			(it.layoutParams as CellLayout.LayoutParams?)?.apply {
+			(it.layoutParams as LayoutParams?)?.apply {
 				if(w <= 0) w = cols
 				if(h <= 0) h = rows
 				if(y == CELL_LAYOUT_INSERT_BEGIN) {
@@ -124,7 +125,7 @@ open class CellLayout(context: Context, @JvmField protected var cols: Int, @JvmF
 					var maxY = 0
 					var maxH = 1
 					loopChildren {view ->
-						(view.layoutParams as? CellLayout.LayoutParams)?.apply {
+						(view.layoutParams as? LayoutParams)?.apply {
 							if((y + h) > maxY) { maxY = y; maxH = h }
 						}
 					}
@@ -133,8 +134,8 @@ open class CellLayout(context: Context, @JvmField protected var cols: Int, @JvmF
 				// корректируем габариты
 				if(x + w > cols) w = cols - x
 				if(y + h > rows) h = rows - y
-				val childWidthSpec = View.MeasureSpec.makeMeasureSpec((w * cellW).toInt() - spc, View.MeasureSpec.EXACTLY)
-				val childHeightSpec = View.MeasureSpec.makeMeasureSpec((h * cellH).toInt() - spc, View.MeasureSpec.EXACTLY)
+				val childWidthSpec = MeasureSpec.makeMeasureSpec((w * cellW).toInt() - spc, MeasureSpec.EXACTLY)
+				val childHeightSpec = MeasureSpec.makeMeasureSpec((h * cellH).toInt() - spc, MeasureSpec.EXACTLY)
 				it.measure(childWidthSpec, childHeightSpec)
 			}
 		}
@@ -147,7 +148,7 @@ open class CellLayout(context: Context, @JvmField protected var cols: Int, @JvmF
 		val pt = paddingTop
 		loopChildren {
 			if(it.visibility == View.GONE) return@loopChildren
-			(it.layoutParams as CellLayout.LayoutParams?)?.apply {
+			(it.layoutParams as LayoutParams?)?.apply {
 				val ll = (x * cellW).toInt() + pl + spacing
 				val rr = ((x + w) * cellW).toInt() + pl - spacing
 				val tt = (y * cellH).toInt() + pt + spacing

@@ -553,10 +553,10 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 	/** Вычисление габаритов списка */
 	override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
 		
-		val widthMode = View.MeasureSpec.getMode(widthMeasureSpec)
-		val heightMode = View.MeasureSpec.getMode(heightMeasureSpec)
-		var widthSize = View.MeasureSpec.getSize(widthMeasureSpec)
-		var heightSize = View.MeasureSpec.getSize(heightMeasureSpec)
+		val widthMode = MeasureSpec.getMode(widthMeasureSpec)
+		val heightMode = MeasureSpec.getMode(heightMeasureSpec)
+		var widthSize = MeasureSpec.getSize(widthMeasureSpec)
+		var heightSize = MeasureSpec.getSize(heightMeasureSpec)
 		
 		mWidthMeasureSpec = widthMeasureSpec
 		mHeightMeasureSpec = heightMeasureSpec
@@ -565,7 +565,7 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 		var childHeight = 0
 		var childState = 0
 		
-		if(mCount > 0 && (widthMode == View.MeasureSpec.UNSPECIFIED || heightMode == View.MeasureSpec.UNSPECIFIED)) {
+		if(mCount > 0 && (widthMode == MeasureSpec.UNSPECIFIED || heightMode == MeasureSpec.UNSPECIFIED)) {
 			val child = obtainView(0)
 			
 			measureCacheChild(child, 0)
@@ -577,11 +577,11 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 			addCacheView(child, -1)
 		}
 		
-		widthSize = if(widthMode == View.MeasureSpec.UNSPECIFIED) horizontalPadding + childWidth + verticalScrollbarWidth
+		widthSize = if(widthMode == MeasureSpec.UNSPECIFIED) horizontalPadding + childWidth + verticalScrollbarWidth
 		else widthSize or (childState and View.MEASURED_STATE_MASK)
 		
-		if(heightMode == View.MeasureSpec.UNSPECIFIED) heightSize = verticalPadding + childHeight + verticalFadingEdgeLength * 2
-		if(heightMode == View.MeasureSpec.AT_MOST) heightSize = measureHeightOrWidthOfChildren(0, -1, if(mIsVert) heightSize else widthSize, -1)
+		if(heightMode == MeasureSpec.UNSPECIFIED) heightSize = verticalPadding + childHeight + verticalFadingEdgeLength * 2
+		if(heightMode == MeasureSpec.AT_MOST) heightSize = measureHeightOrWidthOfChildren(0, -1, if(mIsVert) heightSize else widthSize, -1)
 		
 		setMeasuredDimension(widthSize, heightSize)
 		
@@ -606,7 +606,7 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 			if(i > 0) returned += dividerHeight
 			addCacheView(child, -1)
 			returned += if(mIsVert) child.measuredHeight else child.measuredWidth
-			if(returned >= max) return if(disallow in 0..(i - 1) && prevHW > 0 && returned != max) prevHW else max
+			if(returned >= max) return if(disallow in 0 until i && prevHW > 0 && returned != max) prevHW else max
 			if(disallow in 0..i) prevHW = returned
 			++i
 		}
@@ -622,16 +622,15 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 		p?.apply {
 			p.type = adapter?.getItemViewType(position) ?: 0
 			val height = p.height
-			val childWidthSpec = ViewGroup.getChildMeasureSpec(mWidthMeasureSpec, horizontalPadding, p.width)
-			val childHeightSpec = View.MeasureSpec.makeMeasureSpec(if(height > 0) height else 0,
-			                                                       if(height > 0) View.MeasureSpec.EXACTLY else View.MeasureSpec.UNSPECIFIED)
+			val childWidthSpec = getChildMeasureSpec(mWidthMeasureSpec, horizontalPadding, p.width)
+			val childHeightSpec = MeasureSpec.makeMeasureSpec(if(height > 0) height else 0, if(height > 0) MeasureSpec.EXACTLY else MeasureSpec.UNSPECIFIED)
 			child.measure(childWidthSpec, childHeightSpec)
 		}
 	}
 	
 	/** Помещение выпавшего представления из области видимости в кэш */
 	protected fun addCacheView(child: View, position: Int) {
-		(child.layoutParams as? BaseRibbon.LayoutParams)?.apply {
+		(child.layoutParams as? LayoutParams)?.apply {
 			//"addCacheView pos: $position child: ${(child as? Text)?.text} oldPos: ${this.pos} $type".info()
 			this.pos = position
 			mCacheViews[this.type].add(child)
@@ -684,7 +683,7 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 	override fun generateLayoutParams(p: ViewGroup.LayoutParams) : ViewGroup.LayoutParams = LayoutParams(p.width, p.height, 0, -1, -1)
 	
 	/** Проверка на парамерты разметки */
-	override fun checkLayoutParams(p: ViewGroup.LayoutParams): Boolean = p is BaseRibbon.LayoutParams
+	override fun checkLayoutParams(p: ViewGroup.LayoutParams): Boolean = p is LayoutParams
 	
 	/** Сдвиг всех видимых элементов списка на [delta] */
 	fun offsetChildren(delta: Int) {

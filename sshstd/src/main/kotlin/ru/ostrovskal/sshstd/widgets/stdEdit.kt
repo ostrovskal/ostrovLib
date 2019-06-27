@@ -33,7 +33,7 @@ open class Edit(context: Context, id: Int, hint: Int, @JvmField val style: IntAr
 	/** Диапазон. Необходим в случае значений текста в виде чисел в определенном диапазоне  */
 	var range 		    = 0..0
 		set(v)          {   field = v; inputType = TYPE_CLASS_NUMBER or TYPE_NUMBER_FLAG_SIGNED
-							hint = if(v.interval != 0) "$hint ${v.first}..${v.endInclusive}" else hint
+							hint = if(v.interval != 0) "$hint ${v.first}..${v.last}" else hint
 						}
 	
 	/** Строковое значение текста */

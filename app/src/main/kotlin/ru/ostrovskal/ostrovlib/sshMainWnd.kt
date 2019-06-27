@@ -23,6 +23,7 @@ import ru.ostrovskal.sshstd.sql.Table
 import ru.ostrovskal.sshstd.ui.*
 import ru.ostrovskal.sshstd.utils.*
 import ru.ostrovskal.sshstd.widgets.Controller
+import ru.ostrovskal.sshstd.widgets.Seek
 import ru.ostrovskal.sshstd.widgets.charts.Chart
 import ru.ostrovskal.sshstd.widgets.html.Html
 
@@ -272,12 +273,14 @@ class ExampleSurface(context: Context) : Surface(context) {
 class Abs(val wnd: MainWnd): UiComponent() {
 	override fun createView(ui: UiCtx) = with(ui) {
 		cellLayout(10, 10) {
-			stretchLayout(false) {
+			stretchLayout(true) {
 				padding = 15.dp
 				setOnTouchListener { _, event ->
 					if(event.action == MotionEvent.ACTION_UP) {
 						byIdx<Chart>(0).startAnimation()
-						byIdx<Chart>(1).startAnimation()
+						byIdx<Seek>(1).apply {
+							animThumb = (animThumb + 1) % 4
+						}
 					}
 					true
 				}
@@ -289,6 +292,7 @@ class Abs(val wnd: MainWnd): UiComponent() {
 					this.currentValuesSegments = intArrayOf(600, 800, 100, 400, 350, 1000, 700, 500, 650, 900)
 					this.colorsSegments = context.resources.getString(R.string.colors_chart_circular).toIntArray(10, Color.RED, 10, true, ',')
 				}
+				/*
 				chartDiagram {
 					backgroundSet {
 						gradient = intArrayOf(Color.WHITE, Color.GRAY)
@@ -303,6 +307,11 @@ class Abs(val wnd: MainWnd): UiComponent() {
 					this.colorsSegments = context.resources.getString(R.string.colors_chart_diagram).toIntArray(14, Color.RED, 10, true, ',')
 					this.maxValuesSegments = intArrayOf(1000, 1000, 1000, 1000, 1000, 1000, 1000)
 					this.currentValuesSegments = intArrayOf(600, 800, 200, 400, 350, 1000, 700)
+				}
+				*/
+				seek(R.id.seek, 0..10, true) {
+					animThumb = SEEK_ANIM_ROTATE or SEEK_ANIM_SCALE
+					progress = 5
 				}
 			}.lps(0, 0, 10, 5)
 			setOnTouchListener { _, event ->

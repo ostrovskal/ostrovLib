@@ -10,6 +10,8 @@ import android.graphics.drawable.GradientDrawable
 import ru.ostrovskal.sshstd.Common.*
 import ru.ostrovskal.sshstd.objects.*
 import ru.ostrovskal.sshstd.utils.*
+import kotlin.math.cos
+import kotlin.math.sin
 
 /**
  * @author Шаталов С.В.
@@ -104,7 +106,7 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 	
 	/** Выравнивание значка */
 	var alignIcon						    = drawableIcon?.align ?: TILE_GRAVITY_NONE
-		set(v)						        { drawableIcon?.align = v; updateBound(null) }
+		set(value)					        { drawableIcon?.align = value; updateBound(null) }
 	
 	/** Масштаб иконки */
 	var scaleIcon                           = 0.5f
@@ -272,7 +274,7 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 	
 	/** Вычисление габаритов тайла [n] и запись его в [r] */
 	fun resolveTile(n: Int, r: Rect): Rect {
-		if(n in 0..(countTiles - 1)) {
+		if(n in 0 until countTiles) {
 			val tx = (n % horz * tileSize.w) + padding.left
 			val ty = (n / horz * tileSize.h) + padding.top
 			r.set(tx, ty, tx + tileSize.w, ty + tileSize.h)
@@ -412,8 +414,8 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 		// есть тень, либо возможность нажатия
 		if(states test (TILE_STATE_PRESS or TILE_STATE_SHADOW)) {
 			val degree = Math.toRadians((405.0 - angle))
-			val sx = (shadowOffset * Math.cos(degree)).toFloat()
-			val sy = (shadowOffset * Math.sin(degree)).toFloat()
+			val sx = (shadowOffset * cos(degree)).toFloat()
+			val sy = (shadowOffset * sin(degree)).toFloat()
 			canvas.translate(sx, sy)
 			if(paint.colorFilter != fltPressed && states test TILE_STATE_SHADOW) {
 				// рисуем тень, если не нажали и тень есть

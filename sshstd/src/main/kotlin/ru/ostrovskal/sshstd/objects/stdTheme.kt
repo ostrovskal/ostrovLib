@@ -793,13 +793,13 @@ object Theme {
 					ATTR_ENABLED            -> isEnabled = bol
 					ATTR_BACKGROUND         -> background = drw
 					ATTR_SCROLLBARS         -> {
-						if(int test SCROLLBARS_VERT) isVerticalScrollBarEnabled = true
-						if(int test SCROLLBARS_HORZ) isHorizontalScrollBarEnabled = true
+                        isVerticalScrollBarEnabled = (int test SCROLLBARS_VERT)
+						isHorizontalScrollBarEnabled = (int test SCROLLBARS_HORZ)
 					}
 					ATTR_FADING_EDGE        -> {
-						if(int test SCROLLBARS_VERT) isVerticalFadingEdgeEnabled = true
-						if(int test SCROLLBARS_HORZ) isHorizontalFadingEdgeEnabled = true
-					}
+						isVerticalFadingEdgeEnabled = (int test SCROLLBARS_VERT)
+                        isHorizontalFadingEdgeEnabled = (int test SCROLLBARS_HORZ)
+                    }
 					ATTR_FOCUSABLE_TOUCH_MODE-> isFocusableInTouchMode = bol
 				}
 			}
@@ -855,10 +855,10 @@ object Theme {
 		}
 	}
 	
-	/** Установка слоя тени для текста [view] из строки [str] */
+	/** Установка слоя тени для текста [view] из строки [str] в формате: dx, dy, radius, color */
 	@JvmStatic fun setShadowText(view: TextView, str: String) {
-		val shadow = str.toFloatArray(4, 0f)
-		view.setShadowLayer(shadow[2].dp, shadow[0].dp, shadow[1].dp, shadow[3].toInt().color)
+        val shadow = str.split(',')
+        view.setShadowLayer(shadow[2].fval(0f).dp, shadow[0].fval(0f).dp, shadow[1].fval(0f).dp, shadow[3].cval(0))
 	}
 	
 	/** Установка текущей темы [theme] */

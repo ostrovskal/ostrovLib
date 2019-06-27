@@ -17,9 +17,14 @@ import ru.ostrovskal.sshstd.sql.SQL
 import java.io.Closeable
 import java.io.File
 import java.io.IOException
+import kotlin.math.roundToInt
 
 /** Конфигурация устройства */
-@JvmField var config     = Config(ScreenSize.UNDEF, 0, "", Orientation.UNDEF, false, 0, 0, UiMode.UNDEF, false, false, 0)
+@JvmField var config     = Config(ScreenSize.UNDEF, 0, "", Orientation.UNDEF, false, 0, 0, UiMode.UNDEF,
+	night = false,
+	rtl = false,
+	sw = 0
+)
 
 /** Карта HTML флагов */
 @JvmField val mapHtmlArray  = mapOf("CENTER" to Gravity.CENTER, "CENTER_VERTICAL" to Gravity.CENTER_VERTICAL,
@@ -216,8 +221,7 @@ private fun writeToFields(ret: Parcel, obj: Any): Any? {
 	val clazz = obj.javaClass
 	clazz.fields.filter { it.isAnnotationPresent(STORAGE::class.java) }.forEach {
 		it.isAccessible = true
-		val tmp = it.get(obj)
-		val o: Any? = when(tmp) {
+		val o: Any? = when(val tmp = it.get(obj)) {
 			is Int          -> ret.readInt()
 			is Byte         -> ret.readByte()
 			is Long         -> ret.readLong()
@@ -311,7 +315,7 @@ inline infix fun Int.test(f: Int) = (this and f) != 0
 inline infix fun Int.ntest(f: Int) = (this and f) == 0
 
 /** Получение процента от значения [value] */
-inline fun Int.toPercent(value: Int) = Math.round(this / value.toFloat() * 100.0f)
+inline fun Int.toPercent(value: Int) = (this / value.toFloat() * 100.0f).roundToInt()
 
 /** Преобразование процентов [percent] в значение */
 inline fun Int.fromPercent(percent: Int) = (percent / 100.0f * this).toInt()

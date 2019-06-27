@@ -3,7 +3,6 @@ package ru.ostrovskal.sshstd.widgets.lists
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.view.View
-import android.view.ViewGroup
 import ru.ostrovskal.sshstd.Common.*
 import ru.ostrovskal.sshstd.objects.Theme
 import ru.ostrovskal.sshstd.utils.edge
@@ -139,14 +138,14 @@ open class Grid(context: Context, id: Int, vert: Boolean, style: IntArray): Base
 	override fun childMeasure(child: View) {
 		val params = child.layoutParams
 		val childHeightSpec = if(mIsVert) {
-			ViewGroup.getChildMeasureSpec(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), verticalPadding, params.height)
+			getChildMeasureSpec(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED), verticalPadding, params.height)
 		} else {
-			ViewGroup.getChildMeasureSpec(View.MeasureSpec.makeMeasureSpec(cellSize, View.MeasureSpec.EXACTLY), verticalPadding, params.height)
+			getChildMeasureSpec(MeasureSpec.makeMeasureSpec(cellSize, MeasureSpec.EXACTLY), verticalPadding, params.height)
 		}
 		val childWidthSpec = if(mIsVert) {
-			ViewGroup.getChildMeasureSpec(View.MeasureSpec.makeMeasureSpec(cellSize, View.MeasureSpec.EXACTLY), horizontalPadding, params.width)
+			getChildMeasureSpec(MeasureSpec.makeMeasureSpec(cellSize, MeasureSpec.EXACTLY), horizontalPadding, params.width)
 		} else {
-			ViewGroup.getChildMeasureSpec(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), horizontalPadding, params.width)
+			getChildMeasureSpec(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED), horizontalPadding, params.width)
 		}
 		child.measure(childWidthSpec, childHeightSpec)
 	}

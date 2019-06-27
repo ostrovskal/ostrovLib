@@ -27,8 +27,8 @@ open class ContainerLayout(context: Context, @JvmField protected var percentWidt
 	inline fun <T: View> T.lps(width: Int = MATCH, height: Int = MATCH, gravity: Int = -1) = lps(width, height, gravity) {}
 	
 	/** Установка параметров разметки представления с шириной [width] и высотой [height], гравитацией [gravity] и инициализатором [init] */
-	inline fun <T: View> T.lps(width: Int = MATCH, height: Int = MATCH, gravity: Int = -1, init: FrameLayout.LayoutParams.() -> Unit): T {
-		layoutParams = FrameLayout.LayoutParams(width, height, gravity).apply { init() }
+	inline fun <T: View> T.lps(width: Int = MATCH, height: Int = MATCH, gravity: Int = -1, init: LayoutParams.() -> Unit): T {
+		layoutParams = LayoutParams(width, height, gravity).apply { init() }
 		return this
 	}
 	
@@ -42,10 +42,10 @@ open class ContainerLayout(context: Context, @JvmField protected var percentWidt
 			(it.layoutParams as? MarginLayoutParams)?.apply {
 				val hPadding = horizontalPadding + horizontalMargin
 				val vPadding = verticalPadding + verticalMargin
-				val cwSpec = if(width == FrameLayout.LayoutParams.MATCH_PARENT)
+				val cwSpec = if(width == LayoutParams.MATCH_PARENT)
 					MeasureSpec.makeMeasureSpec(ww - hPadding, MeasureSpec.EXACTLY)
 				else getChildMeasureSpec(widthMeasureSpec, hPadding, ww)
-				val chSpec = if(height == FrameLayout.LayoutParams.MATCH_PARENT)
+				val chSpec = if(height == LayoutParams.MATCH_PARENT)
 					MeasureSpec.makeMeasureSpec(hh - vPadding, MeasureSpec.EXACTLY)
 				else getChildMeasureSpec(heightMeasureSpec, vPadding, hh)
 				it.measure(cwSpec, chSpec)

@@ -18,6 +18,7 @@ import ru.ostrovskal.sshstd.objects.Theme
 import ru.ostrovskal.sshstd.ui.UiComponent
 import ru.ostrovskal.sshstd.ui.UiCtx
 import java.io.File
+import kotlin.math.*
 
 /** Кэш картинок */
 @JvmField val cacheBitmap       = object : LruCache<String, Bitmap>(config.mem / 8) {
@@ -38,7 +39,7 @@ import java.io.File
 fun Path.makeFigure(shape: Int, r: RectF, radii: FloatArray?) {
 	reset()
 	when(shape) {
-		Common.TILE_SHAPE_CIRCLE -> addCircle(r.centerX(), r.centerY(), Math.min(r.height(), r.width()) / 2.0f, Path.Direction.CCW)
+		Common.TILE_SHAPE_CIRCLE -> addCircle(r.centerX(), r.centerY(), min(r.height(), r.width()) / 2.0f, Path.Direction.CCW)
 		Common.TILE_SHAPE_OVAL   -> addOval(r, Path.Direction.CCW)
 		Common.TILE_SHAPE_ROUND  -> {
 			if(radii == null) addRoundRect(r, r.width() / 4f, r.height() / 4f, Path.Direction.CCW)
@@ -86,8 +87,8 @@ fun Rect.offset(dx: Int, dy: Int, dst: Rect) : Rect {
  */
 fun RectF.offsetAngle(angle: Double, rx: Float, ry: Float, dst: RectF): RectF {
 	val degree = Math.toRadians(angle)
-	val x = (rx * Math.cos(degree)).toFloat()
-	val y = (ry * Math.sin(degree)).toFloat()
+	val x = (rx * cos(degree)).toFloat()
+	val y = (ry * sin(degree)).toFloat()
 	return offset(x, y, dst)
 }
 
@@ -290,7 +291,7 @@ fun makeWired(cols: Int, rows: Int, ww: Float, hh: Float, cellW: Float, cellH: F
 }
 
 /** Сравнение точки [p] в диапазоне [s] */
-inline fun PointF.equals(p: PointF, s: Size) = (Math.abs(x - p.x) <= s.w && Math.abs(y - p.y) <= s.h)
+inline fun PointF.equals(p: PointF, s: Size) = (abs(x - p.x) <= s.w && abs(y - p.y) <= s.h)
 
 /** Преобразование целой точки в вещественную */
 inline fun Point.toFloat(out: PointF): PointF {
@@ -346,7 +347,7 @@ inline val Rect.dp
 
 /** Преобразование целых экранных координат в пиксели */
 inline val Int.dp
-	@JvmName("dp") get()   = Math.round(this * Common.dMetrics.density * config.multiplySW)
+	@JvmName("dp") get()   = (this * Common.dMetrics.density * config.multiplySW).roundToInt()
 
 /** Преобразование вещественных экранных координат в пиксели */
 inline val Float.dp
@@ -354,7 +355,7 @@ inline val Float.dp
 
 /** Преобразование целого размера шрифта в пиксели */
 inline val Int.sp
-	@JvmName("sp") get()   = Math.round(this * Common.dMetrics.scaledDensity)
+	@JvmName("sp") get()   = (this * Common.dMetrics.scaledDensity).roundToInt()
 
 /** Преобразование вещественного размера шрифта в пиксели */
 inline val Float.sp

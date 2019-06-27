@@ -12,7 +12,7 @@
     <string name="patch9_dropdown" translatable="false">6,6,6,6</string>
     <string name="patch9_header" translatable="false">25,4,25,4</string>
     <string name="radii_dlg" translatable="false">30,30,30,30,20,20,20,20</string>
-    <string name="shadow_text" translatable="false">4,4,6,0</string>
+    <string name="shadow_text" translatable="false">4,4,6,#ff000000</string>
     <string name="colors_chart_diagram" translatable="false">#c3f556,#063f5e,#f5e6e6,#0e24e9,#eadada,#66093a,#e0f907,#292807,#7df442,#15480a,#fa11ac,#260221</string>
     <string name="colors_chart_circular" translatable="false">#c3f556,#f5e6e6,#eadada,#e0f907,#7df442,#fa11ac</string>
 </resources>

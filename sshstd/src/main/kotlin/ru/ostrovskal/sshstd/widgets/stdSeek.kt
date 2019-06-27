@@ -4,7 +4,9 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.view.MotionEvent
-import ru.ostrovskal.sshstd.Common.*
+import ru.ostrovskal.sshstd.Common
+import ru.ostrovskal.sshstd.Common.SEEK_ANIM_NONE
+import ru.ostrovskal.sshstd.Common.iRect
 import ru.ostrovskal.sshstd.objects.ATTR_SSH_SEEK_ANIM
 import ru.ostrovskal.sshstd.objects.THEME
 import ru.ostrovskal.sshstd.objects.Theme
@@ -45,30 +47,35 @@ open class Seek(context: Context, id: Int, range: IntRange, enabled: Boolean, st
 	/** Признак запуска анимации */
 	var animated
 		get()               = animator.isRunning
-		set(v)				{ if(v) animator.start(false, false) else animator.stop() }
+		set(v)				{ if(v) animator.start(stop = false, reset = false) else animator.stop() }
 	
 	/** Величина прогресса */
 	var progress
 		get()				= (data * ((range.interval / 1000f)) + range.first).toInt()
 		set(v)				{ data = (range.clamp(v) - range.first) * (1000f / range.interval); invalidate() }
-	
+
 	init {
+		doFrame = { _, _, frame, _, _ ->
+			val f = frame % 12
+			var result = false
+			if(animThumb == SEEK_ANIM_NONE) {
+				if(animSpeedTrack == 0) result = true else invalidate()
+			} else {
+				if (animThumb test Common.SEEK_ANIM_ROTATE) {
+					drawable.angle = 30f * f
+				}
+				if (animThumb test Common.SEEK_ANIM_SCALE) {
+					drawable.scaleFactor = if (f >= 6) 1f - (12 - f) * 0.08333f else 1f - f * 0.08333f
+				}
+			}
+			result
+		}
+
 		onChangeTheme()
 		animator.apply { duration = 50; frames = Int.MAX_VALUE }
 		this.id = id
 		this.range = range
 		isEnabled = enabled
-		
-		doFrame = { _, _, frame, _, _ ->
-			val f = frame % 12
-			var result = false
-			when(animThumb) {
-				SEEK_ANIM_ROTATE -> drawable.angle = 30f * f
-				SEEK_ANIM_SCALE  -> drawable.scaleFactor = if(f >= 6) 1f - (12 - f) * 0.08333f else 1f - f * 0.08333f
-				SEEK_ANIM_NONE   -> if(animSpeedTrack == 0) result = true else invalidate()
-			}
-			result
-		}
 	}
 	
 	// Сброс параметров анимации ползунка

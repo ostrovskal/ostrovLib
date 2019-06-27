@@ -1,12 +1,10 @@
-import com.android.build.gradle.ProguardFiles.getDefaultProguardFile
-import org.gradle.internal.impldep.com.amazonaws.PredefinedClientConfigurations.defaultConfig
-import org.jetbrains.kotlin.com.intellij.util.lang.JavaVersion
-import org.jetbrains.kotlin.js.dce.InputResource.Companion.file
-import org.jetbrains.kotlin.js.translate.context.Namer.kotlin
-
 plugins {
     id("com.android.application")
     id("kotlin-android")
+}
+apply {
+    plugin("kotlin-android")
+    plugin("kotlin-android-extensions")
 }
 
 android {
@@ -24,8 +22,8 @@ android {
         applicationId = "com.github.ostrovskal.ostrovlib"
         minSdkVersion(19)
         targetSdkVersion(28)
-        versionCode = 11
-        versionName = "0.8.2"
+        versionCode = 14
+        versionName = "0.8.5"
         resValue("string", "app_name", "ostrovLib")
     }
     buildTypes {
@@ -39,14 +37,19 @@ android {
             signingConfig = signingConfigs.getByName("default")
         }
     }
+/*
     compileOptions {
         sourceCompatibility = org.gradle.api.JavaVersion.VERSION_1_8
         targetCompatibility = org.gradle.api.JavaVersion.VERSION_1_8
     }
+*/
 }
 
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("'*.jar"))))
-    implementation(kotlin("stdlib-jdk8", "1.3.11"))
+    implementation(kotlin("stdlib-jdk8", rootProject.properties["kotlinVers"].toString()))
     implementation(project(":sshstd"))
+}
+repositories {
+    mavenCentral()
 }

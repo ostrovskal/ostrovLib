@@ -1,21 +1,5 @@
-import com.android.build.gradle.ProguardFiles.getDefaultProguardFile
-import com.android.build.gradle.api.AndroidSourceDirectorySet
-import com.android.build.gradle.external.cmake.server.ConfigureResult
-import com.android.build.gradle.internal.dsl.AndroidSourceSetFactory
-import com.android.build.gradle.internal.dsl.ProductFlavor
-import com.android.tools.r8.kotlin.Kotlin
 import com.jfrog.bintray.gradle.BintrayExtension
 import org.jetbrains.dokka.gradle.DokkaTask
-import groovy.xml.dom.DOMCategory.appendNode
-import org.apache.maven.artifact.ant.Pom
-import org.gradle.internal.impldep.com.amazonaws.PredefinedClientConfigurations.defaultConfig
-import org.gradle.internal.impldep.com.amazonaws.util.XpathUtils.asNode
-import org.gradle.internal.impldep.org.eclipse.jgit.transport.NetRCCredentialsProvider.install
-import org.gradle.wrapper.Install
-import org.jetbrains.kotlin.contracts.model.structure.UNKNOWN_COMPUTATION.type
-import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
-import org.jetbrains.kotlin.serialization.js.DynamicTypeDeserializer.id
-import kotlin.math.sign
 
 plugins {
     id("com.android.library")
@@ -24,9 +8,13 @@ plugins {
     id("org.jetbrains.dokka-android") version "0.9.17"
     `maven-publish`
 }
+apply {
+    plugin("kotlin-android")
+    plugin("kotlin-android-extensions")
+}
 
 // версия библиотеки
-val libVersion = "0.8.2"
+val libVersion = "0.8.5"
 
 // ссылка на сайт размещения проекта
 val siteUrl = "https://github.com/ostrovskal/sshSTD"
@@ -40,7 +28,7 @@ android {
     defaultConfig {
         minSdkVersion(19)
         targetSdkVersion(28)
-        versionCode = 1
+        versionCode = 14
         versionName = libVersion
         resValue("string", "app_name", "sshSTD")
     }
@@ -53,15 +41,17 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
     }
+/*
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+*/
 }
 
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("'*.jar"))))
-    implementation(kotlin("stdlib-jdk8", "1.3.11"))
+    implementation(kotlin("stdlib-jdk8", rootProject.properties["kotlinVers"].toString()))
 }
 
 tasks.named("dokka", DokkaTask::class) {
@@ -80,12 +70,20 @@ task<Jar>("dokkaJar") {
     from(tasks["dokka"])
 }
 
+task<Jar>("assembleJar") {
+    classifier = ""
+    val arr = rootProject.tasks["assembleRelease"]
+    println(arr.name)
+    from(arr)
+}
+
 group = "com.github.ostrovskal"
 version = libVersion
 
 publishing {
     publications {
         create<MavenPublication>("sergey") {
+//            val arr = tasks["assembleJar"]
             artifact(tasks["sourcesJar"])
             artifact(tasks["dokkaJar"])
             artifact("$buildDir/outputs/aar/${project.name}-release.aar")
@@ -139,4 +137,7 @@ bintray {
             })
         })
     })
+}
+repositories {
+    mavenCentral()
 }

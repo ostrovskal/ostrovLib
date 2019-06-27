@@ -9,13 +9,11 @@ import android.os.Parcelable
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.LinearLayout
 import ru.ostrovskal.sshstd.Common
 import ru.ostrovskal.sshstd.Common.MATCH
 import ru.ostrovskal.sshstd.objects.*
 import ru.ostrovskal.sshstd.utils.*
 import ru.ostrovskal.sshstd.widgets.Tile
-import ru.ostrovskal.sshstd.widgets.lists.BaseRibbon
 import ru.ostrovskal.sshstd.widgets.lists.Ribbon
 
 /**
@@ -93,8 +91,8 @@ open class TabRibbonLayout(context: Context, idContent: Int, @JvmField protected
 			val vert = captionPos test Common.DIRV
 			val width = measuredWidth.fromPercent(sizeCaption)
 			val height = measuredHeight.fromPercent(sizeCaption)
-			caption.layoutParams = LinearLayout.LayoutParams(if(vert) Common.MATCH else width, if(vert) height else Common.MATCH)
-			content.layoutParams = LinearLayout.LayoutParams(if(vert) Common.MATCH else measuredWidth - width, if(vert) measuredHeight - height else Common.MATCH)
+			caption.layoutParams = LayoutParams(if(vert) MATCH else width, if(vert) height else MATCH)
+			content.layoutParams = LayoutParams(if(vert) MATCH else measuredWidth - width, if(vert) measuredHeight - height else MATCH)
 			if(content.adapter == null) {
 				if(captionPos == Common.DIRU || captionPos == Common.DIRL) {
 					addView(caption)
@@ -164,7 +162,7 @@ open class TabRibbonLayout(context: Context, idContent: Int, @JvmField protected
 		// Временная область
 		private val rectTmp                 = Rect()
 		
-		override fun generateDefaultLayoutParams() = BaseRibbon.LayoutParams(250.dp, MATCH, 0, -1, -1)
+		override fun generateDefaultLayoutParams() = LayoutParams(250.dp, MATCH, 0, -1, -1)
 		
 		/** Диспетчер отрисовки содержитого заголовка вкладки на канве [canvas] */
 		public override fun dispatchDraw(canvas: Canvas) {
@@ -211,7 +209,7 @@ open class TabRibbonLayout(context: Context, idContent: Int, @JvmField protected
 				currentTab = pos
 			}
 		}
-		override fun generateDefaultLayoutParams() = BaseRibbon.LayoutParams(MATCH, MATCH, 0, -1, -1)
+		override fun generateDefaultLayoutParams() = LayoutParams(MATCH, MATCH, 0, -1, -1)
 		
 		override fun addView(child: View) {
 			views.add(child)

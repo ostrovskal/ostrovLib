@@ -40,14 +40,9 @@ open class Switch(context: Context, id: Int, text: Int, style: IntArray) : Tile(
 	/** Признак активности */
 	override var isChecked: Boolean
 		get() 					= super.isChecked
-		set(v) 					{ if(v != isChecked) { animator.start(true, true) } else performClick() }
+		set(v) 					{ if(v != isChecked) { animator.start(stop = true, reset = true) } else performClick() }
 	
 	init {
-		realWidthThumb = (Theme.integer(context, style.themeAttrValue(ATTR_SSH_THUMB_WIDTH, 32)) * dMetrics.density).toInt()
-		animator.apply { duration = 20; frames = 10 }
-		this.id = id
-		setText(text)
-		
 		doFrame = { _, animator, frame, direction, _ ->
 			posThumb = if(isChecked) 10 - frame else frame
 			invalidate()
@@ -55,6 +50,11 @@ open class Switch(context: Context, id: Int, text: Int, style: IntArray) : Tile(
 				if(this) { data = posThumb.toFloat(); isChecked = data.toInt() != 0 }
 			}
 		}
+
+		realWidthThumb = (Theme.integer(context, style.themeAttrValue(ATTR_SSH_THUMB_WIDTH, 32)) * dMetrics.density).toInt()
+		animator.apply { duration = 20; frames = 10 }
+		this.id = id
+		setText(text)
 	}
 	
 	/** Обработка события касания */

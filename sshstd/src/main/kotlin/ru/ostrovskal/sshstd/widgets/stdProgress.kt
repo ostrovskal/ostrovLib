@@ -68,6 +68,12 @@ open class Progress(context: Context, id: Int, max: Int, mode: Int, style: IntAr
 		set(v)                  { field = v; invalidate() }
 	
 	init {
+		doFrame = { _, _, frame, _, _ ->
+			drawable.angle = 30f * (frame % 12)
+			invalidate()
+			false
+		}
+
 		paint.textAlign = Paint.Align.CENTER
 		animator.apply { duration = 70; frames = Int.MAX_VALUE }
 		
@@ -85,18 +91,12 @@ open class Progress(context: Context, id: Int, max: Int, mode: Int, style: IntAr
 		this.id = id
 		this.max = max
 		this.mode = mode
-		
-		doFrame = { _, _, frame, _, _ ->
-			drawable.angle = 30f * (frame % 12)
-			invalidate()
-			false
-		}
 	}
 	
 	override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec)
 		measure()
-		if(mode == SSH_MODE_CIRCULAR && !animator.isRunning) animator.start(true, true)
+		if(mode == SSH_MODE_CIRCULAR && !animator.isRunning) animator.start(stop = true, reset = true)
 	}
 	
 	private fun measure() {

@@ -9,6 +9,7 @@ import ru.ostrovskal.sshstd.Common.WRAP
 import ru.ostrovskal.sshstd.utils.horizontalPadding
 import ru.ostrovskal.sshstd.utils.loopChildren
 import ru.ostrovskal.sshstd.utils.verticalPadding
+import kotlin.math.max
 
 /**
  * @author  Шаталов С.В.
@@ -22,8 +23,8 @@ open class AbsoluteLayout(context: Context) : ViewGroup(context, null, 0) {
 	
 	/** Установка параметров разметки представления с горизонтальной позицией [x], вертикальной позицией [y], шириной [width],
 	 *  высотой [height] и инициализатором [init] */
-	inline fun <T: View> T.lps(x: Int, y: Int, width: Int = WRAP, height: Int = WRAP, init: AbsoluteLayout.LayoutParams.() -> Unit): T {
-		layoutParams = AbsoluteLayout.LayoutParams(width, height, x, y).apply { init() }
+	inline fun <T: View> T.lps(x: Int, y: Int, width: Int = WRAP, height: Int = WRAP, init: LayoutParams.() -> Unit): T {
+		layoutParams = LayoutParams(width, height, x, y).apply { init() }
 		return this
 	}
 	
@@ -36,18 +37,18 @@ open class AbsoluteLayout(context: Context) : ViewGroup(context, null, 0) {
 		
 		loopChildren {
 			if(it.visibility == View.GONE) return@loopChildren
-			(it.layoutParams as? AbsoluteLayout.LayoutParams)?.apply {
+			(it.layoutParams as? LayoutParams)?.apply {
 				val childRight = x + it.measuredWidth
 				val childBottom = y + it.measuredHeight
-				maxWidth = Math.max(maxWidth, childRight)
-				maxHeight = Math.max(maxHeight, childBottom)
+				maxWidth = max(maxWidth, childRight)
+				maxHeight = max(maxHeight, childBottom)
 			}
 		}
 		maxWidth += horizontalPadding
 		maxHeight += verticalPadding
 		
-		maxHeight = Math.max(maxHeight, suggestedMinimumHeight)
-		maxWidth = Math.max(maxWidth, suggestedMinimumWidth)
+		maxHeight = max(maxHeight, suggestedMinimumHeight)
+		maxWidth = max(maxWidth, suggestedMinimumWidth)
 		
 		setMeasuredDimension(View.resolveSizeAndState(maxWidth, widthMeasureSpec, 0),
 		                     View.resolveSizeAndState(maxHeight, heightMeasureSpec, 0))
@@ -57,7 +58,7 @@ open class AbsoluteLayout(context: Context) : ViewGroup(context, null, 0) {
 	override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
 		loopChildren {
 			if(it.visibility == View.GONE) return@loopChildren
-			(it.layoutParams as? AbsoluteLayout.LayoutParams)?.apply {
+			(it.layoutParams as? LayoutParams)?.apply {
 				val childLeft = paddingLeft + x
 				val childTop = paddingTop + y
 				it.layout(childLeft, childTop, childLeft + it.measuredWidth, childTop + it.measuredHeight)
@@ -69,13 +70,13 @@ open class AbsoluteLayout(context: Context) : ViewGroup(context, null, 0) {
 	override fun generateDefaultLayoutParams() = LayoutParams(WRAP, WRAP, 0, 0)
 	
 	/** Проверка на параметры разметки */
-	override fun checkLayoutParams(source: ViewGroup.LayoutParams) = source is AbsoluteLayout.LayoutParams
+	override fun checkLayoutParams(source: ViewGroup.LayoutParams) = source is LayoutParams
 	
 	/** Генерация параметров разметки из родительской разметки */
 	override fun generateLayoutParams(source: ViewGroup.LayoutParams) = LayoutParams(source)
 	
 	/**  Класс, реализующий параметры для абсолютной разметки */
-	class LayoutParams : ViewGroup.MarginLayoutParams {
+	class LayoutParams : MarginLayoutParams {
 		/** Гор. позиция */
 		var x = 0
 		

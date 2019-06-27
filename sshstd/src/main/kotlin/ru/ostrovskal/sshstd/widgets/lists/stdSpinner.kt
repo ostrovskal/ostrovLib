@@ -191,10 +191,10 @@ open class Spinner(context: Context, id: Int, @JvmField val style: IntArray, sty
 	
 	/** Вычисленте габаритов заголовка */
 	override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-		val widthMode = View.MeasureSpec.getMode(widthMeasureSpec)
+		val widthMode = MeasureSpec.getMode(widthMeasureSpec)
 		
 		var preferredHeight = verticalPadding
-		var preferredWidth = if(widthMode == View.MeasureSpec.UNSPECIFIED) horizontalPadding else 0
+		var preferredWidth = if(widthMode == MeasureSpec.UNSPECIFIED) horizontalPadding else 0
 		
 		adapter?.let {
 			if(it.count > 0) {
@@ -213,9 +213,9 @@ open class Spinner(context: Context, id: Int, @JvmField val style: IntArray, sty
 		val heightSize = View.resolveSizeAndState(preferredHeight, heightMeasureSpec, 0)
 		val widthSize = View.resolveSizeAndState(preferredWidth, widthMeasureSpec, 0)
 		
-		if(widthMode == View.MeasureSpec.AT_MOST)
+		if(widthMode == MeasureSpec.AT_MOST)
 			setMeasuredDimension(Math.min(Math.max(measuredWidth, measureContentWidth(adapter)),
-			                              View.MeasureSpec.getSize(widthMeasureSpec)), measuredHeight)
+			                              MeasureSpec.getSize(widthMeasureSpec)), measuredHeight)
 		else setMeasuredDimension(widthSize, heightSize)
 	}
 	
@@ -234,7 +234,7 @@ open class Spinner(context: Context, id: Int, @JvmField val style: IntArray, sty
 		
 		for(i in start until end) {
 			itemView = adapter?.getView(i, itemView, this)?.apply {
-				if(layoutParams == null) layoutParams = ViewGroup.LayoutParams(WRAP, WRAP)
+				if(layoutParams == null) layoutParams = LayoutParams(WRAP, WRAP)
 				measure(widthMeasureSpec, heightMeasureSpec)
 				width = Math.max(width, measuredWidth)
 			}

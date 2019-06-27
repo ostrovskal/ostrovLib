@@ -17,7 +17,7 @@ import ru.ostrovskal.sshstd.Common.WRAP
 open class CommonLayout(context: Context, vert: Boolean) : LinearLayout(context, null, 0) {
 	
 	init {
-		orientation = if(vert) LinearLayout.VERTICAL else LinearLayout.HORIZONTAL
+		orientation = if(vert) VERTICAL else HORIZONTAL
 	}
 	
 	/** Установка горизонтального выравнивания */
@@ -34,8 +34,8 @@ open class CommonLayout(context: Context, vert: Boolean) : LinearLayout(context,
 	inline fun <T : View> T.lps(width: Int = MATCH, height: Int = WRAP, weight: Float = 0f) = lps(width, height, weight) {}
 	
 	/** Установка параметров разметки представления с шириной [width] и высотой [height], весом [weight] и инициализатором [init] */
-	inline fun <T : View> T.lps(width: Int = MATCH, height: Int = WRAP, weight: Float = 0f, init: LinearLayout.LayoutParams.() -> Unit): T {
-		layoutParams = LinearLayout.LayoutParams(width, height, weight).apply { init() }
+	inline fun <T : View> T.lps(width: Int = MATCH, height: Int = WRAP, weight: Float = 0f, init: LayoutParams.() -> Unit): T {
+		layoutParams = LayoutParams(width, height, weight).apply { init() }
 		return this
 	}
 }

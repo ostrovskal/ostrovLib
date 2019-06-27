@@ -11,6 +11,8 @@ import ru.ostrovskal.sshstd.objects.ATTR_SSH_CHART_CHECK_RADIUS
 import ru.ostrovskal.sshstd.objects.ATTR_SSH_CHART_INNER_RADIUS
 import ru.ostrovskal.sshstd.objects.Theme
 import ru.ostrovskal.sshstd.utils.*
+import kotlin.math.min
+import kotlin.math.roundToInt
 
 /**
  * @author  Шаталов С.В.
@@ -66,7 +68,7 @@ open class ChartCircular(context: Context, style: IntArray) : Chart(context, sty
 		
 		if(size > 0 && !rectScreen.isZero) {
 			angles = currentValuesSegments.sum().toFloat()
-			radius = Math.min(measuredWidth - horizontalPadding, measuredHeight - verticalPadding) / 2f
+			radius = min(measuredWidth - horizontalPadding, measuredHeight - verticalPadding) / 2f
 			val cr = (radius * checkedRadius) / 100f
 			val cx = rectScreen.centerX().toFloat()
 			val cy = rectScreen.centerY().toFloat()
@@ -104,7 +106,7 @@ open class ChartCircular(context: Context, style: IntArray) : Chart(context, sty
 					val rot = (a2 % 360f).toFloat()
 					r = rect.offsetAngle(a2, offs * 0.66f, offs * 0.66f, fRect)
 					rotate(if(rot > 100f && rot < 270f) rot + 180f else rot, r.centerX(), r.centerY())
-					drawText("${Math.round(percent * 100.1f)}%", r.centerX(), r.centerY() - paint.fontMetrics.ascent / 2f, paint)
+					drawText("${(percent * 100.1f).roundToInt()}%", r.centerX(), r.centerY() - paint.fontMetrics.ascent / 2f, paint)
 				}
 			}
 			a1 += a

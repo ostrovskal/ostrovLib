@@ -37,8 +37,8 @@ open class EditLayout(context: Context, cols: Int, rows: Int) : CellLayout(conte
 	// Аниматор
 	private val animator				by lazy {
 		Animator(this, 7, 50) { _, animator, frame, direction, began ->
-			(edit.layoutParams as? CellLayout.LayoutParams)?.apply {
-				(hint.layoutParams as? CellLayout.LayoutParams)?.let { lh ->
+			(edit.layoutParams as? LayoutParams)?.apply {
+				(hint.layoutParams as? LayoutParams)?.let { lh ->
 					if(began) {
 						yEditor = y
 						hEditor = h
@@ -69,19 +69,19 @@ open class EditLayout(context: Context, cols: Int, rows: Int) : CellLayout(conte
 		if(child is Edit) {
 			hint.text = child.hint
 			hint.visibility = visibility
-			lp = CellLayout.LayoutParams(0, 0, cols, rows)
+			lp = LayoutParams(0, 0, cols, rows)
 			edit = child.apply {
 				hint = null
 				changeTextLintener = { text ->
 					emptyText = text.isNullOrEmpty().apply {
 						if(this != emptyText) {
-							animator.apply { if(isRunning) reverse() else start(false, false) }
+							animator.apply { if(isRunning) reverse() else start(stop = false, reset = false) }
 						}
 					}
 				}
 			}
 		}
 		super.addView(child, idx, lp)
-		if(edit == child) addView(hint, -1, CellLayout.LayoutParams(1, 0, cols - 2, rows))
+		if(edit == child) addView(hint, -1, LayoutParams(1, 0, cols - 2, rows))
 	}
 }

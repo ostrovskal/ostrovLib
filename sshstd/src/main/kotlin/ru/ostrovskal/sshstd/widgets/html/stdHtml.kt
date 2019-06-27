@@ -26,6 +26,7 @@ import ru.ostrovskal.sshstd.objects.*
 import ru.ostrovskal.sshstd.utils.*
 import ru.ostrovskal.sshstd.widgets.Text
 import java.util.*
+import kotlin.math.max
 
 /**
  * @author  Шаталов С.В.
@@ -493,16 +494,16 @@ open class Html(context: Context, @JvmField val style: IntArray): ScrollView(con
 			// расчитать ширину и максимальную высоту
 			loopChildren {
 				(it.layoutParams as? TableRow.LayoutParams)?.apply {
-					val childWidthSpec = MeasureSpec.makeMeasureSpec(w.fromPercent(it.tag(Common.HTML_KEY_WIDTH)), View.MeasureSpec.EXACTLY)
-					val childHeightSpec = MeasureSpec.makeMeasureSpec(h, View.MeasureSpec.UNSPECIFIED)
+					val childWidthSpec = MeasureSpec.makeMeasureSpec(w.fromPercent(it.tag(Common.HTML_KEY_WIDTH)), MeasureSpec.EXACTLY)
+					val childHeightSpec = MeasureSpec.makeMeasureSpec(h, MeasureSpec.UNSPECIFIED)
 					it.measure(childWidthSpec, childHeightSpec)
-					hMax = Math.max(hMax, it.measuredHeight)
+					hMax = max(hMax, it.measuredHeight)
 				}
 			}
 			// установить высоту ячеек
 			loopChildren {
-				val childWidthSpec = MeasureSpec.makeMeasureSpec(it.measuredWidth, View.MeasureSpec.EXACTLY)
-				val childHeightSpec = MeasureSpec.makeMeasureSpec(hMax, View.MeasureSpec.EXACTLY)
+				val childWidthSpec = MeasureSpec.makeMeasureSpec(it.measuredWidth, MeasureSpec.EXACTLY)
+				val childHeightSpec = MeasureSpec.makeMeasureSpec(hMax, MeasureSpec.EXACTLY)
 				it.measure(childWidthSpec, childHeightSpec)
 			}
 			setMeasuredDimension(w, hMax)

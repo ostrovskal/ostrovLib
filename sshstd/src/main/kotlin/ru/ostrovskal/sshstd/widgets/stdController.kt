@@ -17,6 +17,7 @@ import ru.ostrovskal.sshstd.objects.ATTR_SSH_CONTROLLER_WIDTH
 import ru.ostrovskal.sshstd.objects.Theme
 import ru.ostrovskal.sshstd.objects.style_controller
 import ru.ostrovskal.sshstd.utils.*
+import kotlin.math.roundToInt
 
 /**
  * @author  Шаталов С.В.
@@ -158,8 +159,8 @@ open class Controller(context: Context, ID: Int, show: Boolean, style: IntArray 
 		val flg = pressedButtons
 		touch?.apply {
 			// определить куда нажали, тип нажатия, вызвать уведомитель и обновить представление
-			val xx = Math.round(relativeSizeMap.w * ptCurrent.x)
-			val yy = Math.round(relativeSizeMap.h * ptCurrent.y)
+			val xx = (relativeSizeMap.w * ptCurrent.x).roundToInt()
+			val yy = (relativeSizeMap.h * ptCurrent.y).roundToInt()
 			if(xx < 0 || xx >= controllerMap[0] || yy < 0 || yy >= controllerMap[1]) return pressedButtons
 			ret = controllerMap[xx, yy]
 		}

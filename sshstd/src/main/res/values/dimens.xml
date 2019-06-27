@@ -21,8 +21,6 @@
     <dimen name="normal">22sp</dimen>
     <!-- размер большого текста -->
     <dimen name="large">26sp</dimen>
-    <!-- отступ ячейки -->
-    <dimen name="cellSpacing">1dp</dimen>
     <!-- смещение нажатия для тайла -->
     <dimen name="pressedOffs">4dp</dimen>
     <!-- смещение тени от текста по осям -->

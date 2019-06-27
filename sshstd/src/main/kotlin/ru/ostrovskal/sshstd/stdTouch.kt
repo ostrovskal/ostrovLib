@@ -7,6 +7,7 @@ import android.graphics.Rect
 import android.view.MotionEvent
 import ru.ostrovskal.sshstd.Common.*
 import ru.ostrovskal.sshstd.utils.contains
+import kotlin.math.*
 
 /**
  * @author Шаталов С.В.
@@ -41,20 +42,20 @@ class Touch {
 	
 	/** Величина смещения [ret] относительно начальной точки с учетом размера ячейки [cell] */
 	fun delta(cell: Size, ret: Size): Boolean {
-		ret.set(Math.round((ptCurrent.x - ptBegin.x) / cell.w), Math.round((ptCurrent.y - ptBegin.y) / cell.h))
-		return (Math.abs(ret.w) > 0 || Math.abs(ret.h) > 0)
+		ret.set(((ptCurrent.x - ptBegin.x) / cell.w).roundToInt(), ((ptCurrent.y - ptBegin.y) / cell.h).roundToInt())
+		return (abs(ret.w) > 0 || abs(ret.h) > 0)
 	}
 	
 	/** Длина "линии" между начальной [p] и текущей точкой с учетом размера ячейки [cell] */
 	fun length(cell: Size, p: PointF): Float {
-		val x = Math.pow((ptCurrent.x - p.x) / cell.w.toDouble(), 2.0)
-		val y = Math.pow((ptCurrent.y - p.y) / cell.h.toDouble(), 2.0)
-		return Math.sqrt(x + y).toFloat()
+		val x = ((ptCurrent.x - p.x) / cell.w.toDouble()).pow(2.0)
+		val y = ((ptCurrent.y - p.y) / cell.h.toDouble()).pow(2.0)
+		return sqrt(x + y).toFloat()
 	}
 	
 	/** Вычисление угла между центральной [center] и заданной [p] точками */
 	inline fun rotate(center: PointF, p: PointF): Float {
-		val a = (Math.atan2((center.y - p.y).toDouble(), (center.x - p.x).toDouble()) / Math.PI * 180.0).toFloat()
+		val a = (atan2((center.y - p.y).toDouble(), (center.x - p.x).toDouble()) / Math.PI * 180.0).toFloat()
 		return if(a < 0f) a + 360f else a
 	}
 	
@@ -78,13 +79,13 @@ class Touch {
 		var dir = DIR0
 		val dx = ptCurrent.x - pt.x
 		val dy = ptCurrent.y - pt.y
-		val adx = Math.abs(dx)
-		val ady = Math.abs(dy)
+		val adx = abs(dx)
+		val ady = abs(dy)
 		if(adx > cell.w || ady > cell.h) {
 			if(is4) {
 				dir = if(adx >= ady) if(dx < cell.w) DIRL else DIRR else if(dy < cell.h) DIRU else DIRD
 			} else {
-				val angle = Math.round(rotate(pt, ptCurrent))
+				val angle = rotate(pt, ptCurrent).roundToInt()
 				for(r in 0..9) {
 					if(angle >= aranges[r] && angle < aranges[r + 1]) {
 						dir = dirs8[r]

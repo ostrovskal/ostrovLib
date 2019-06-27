@@ -17,6 +17,7 @@ import ru.ostrovskal.sshstd.utils.debug
 import ru.ostrovskal.sshstd.utils.info
 import ru.ostrovskal.sshstd.utils.join
 import ru.ostrovskal.sshstd.utils.valid
+import java.util.*
 
 /**
  * @author  Шаталов С.В.
@@ -51,7 +52,7 @@ object SQL: SQLiteDatabase.CursorFactory {
 		if(tables.isNotEmpty()) {
 			for(table in tables) {
 				// создать таблицу
-				exec(table.create, Common.SQL_DDL_OPS)
+				exec(table.create, SQL_DDL_OPS)
 				// создать индексы
 				// уникальные
 				ddlIndex(table, true)
@@ -82,7 +83,7 @@ object SQL: SQLiteDatabase.CursorFactory {
 	@JvmStatic fun drop(vararg tables: Table) {
 		if(tables.isNotEmpty()) {
 			for(table in tables) {
-				exec(table.drop, Common.SQL_DDL_OPS)
+				exec(table.drop, SQL_DDL_OPS)
 			}
 		}
 	}
@@ -103,6 +104,7 @@ object SQL: SQLiteDatabase.CursorFactory {
 	 * @param reset     Признак перезапуска БД
 	 */
 	@JvmStatic fun connection(context: Context, reset: Boolean, vararg tables: Table): Boolean {
+		var ok = false
 		try {
 			db = if(Common.logTag.isEmpty()) SQLiteDatabase.create(null)
 			else {
@@ -119,8 +121,7 @@ object SQL: SQLiteDatabase.CursorFactory {
 			sqlLog(ex.message)
 		}
 		db?.apply {
-			val dbOldVersion = version
-			var ok = dbOldVersion == dbVersion
+			ok = dbVersion == version
 			if(ok) {
 				// проверить на целостность
 				ok = isDatabaseIntegrityOk
@@ -131,8 +132,8 @@ object SQL: SQLiteDatabase.CursorFactory {
 				ok = false
 			}
 			version = dbVersion
-			return ok
 		}
+		return ok
 	}
 	
 	/** Выполнение внутреннего запроса [query] определенного типа [type] к БД */

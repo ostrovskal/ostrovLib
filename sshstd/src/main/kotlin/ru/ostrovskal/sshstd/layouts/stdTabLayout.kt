@@ -8,7 +8,6 @@ import android.graphics.Rect
 import android.os.Parcelable
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import ru.ostrovskal.sshstd.Common.*
 import ru.ostrovskal.sshstd.objects.*
 import ru.ostrovskal.sshstd.utils.*
@@ -93,7 +92,7 @@ open class TabLayout(context: Context, idContent: Int, @JvmField protected val c
 	override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
 		if(changed) {
 			val vert = captionPos test DIRV
-			caption.layoutParams = LinearLayout.LayoutParams(if(vert) MATCH else measuredWidth.fromPercent(sizeCaption),
+			caption.layoutParams = LayoutParams(if(vert) MATCH else measuredWidth.fromPercent(sizeCaption),
 			                                   if(vert) measuredHeight.fromPercent(sizeCaption) else MATCH)
 		}
 		super.onLayout(changed, l, t, r, b)
@@ -119,7 +118,7 @@ open class TabLayout(context: Context, idContent: Int, @JvmField protected val c
 			this.text = text.toUpperCase()
 		}
 		indicator.tag = caption.childCount
-		caption.addView(indicator, LinearLayout.LayoutParams(MATCH, MATCH))
+		caption.addView(indicator, LayoutParams(MATCH, MATCH))
 		indicator.setOnClickListener {
 			currentTab = ((it.tag as? Int) ?: currentTab)
 		}
@@ -164,7 +163,7 @@ open class TabLayout(context: Context, idContent: Int, @JvmField protected val c
 		
 		/** Добавление дочернего представления заголовка вкладки */
 		override fun addView(child: View, index: Int, params: ViewGroup.LayoutParams) {
-			(params as? LinearLayout.LayoutParams)?.weight = 1f
+			(params as? LayoutParams)?.weight = 1f
 			super.addView(child, index, params)
 		}
 		

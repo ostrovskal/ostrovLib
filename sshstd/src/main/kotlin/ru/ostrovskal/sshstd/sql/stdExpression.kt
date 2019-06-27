@@ -176,7 +176,7 @@ class ExpressionParameter<T>(@JvmField val value: T, type: Int) : Expression<T>(
 	}
 	
 	/** Преобразует параметр в строку определенного типа */
-	override fun toString() = ExpressionParameter.argument(value, type)
+	override fun toString() = argument(value, type)
 }
 
 /** Класс, реализующий арифметические операции

@@ -287,14 +287,14 @@ public final class Common
     /** Прокрутка. Вертикальная */
     public static final int SCROLLBARS_VERT         = 0x00000200;
 
+    /** Тип анимации ползунка. Без анимации */
+    public static final int SEEK_ANIM_NONE		    = 0;
+
     /** Тип анимации ползунка. Ротация */
-    public static final int SEEK_ANIM_ROTATE        = 0;
+    public static final int SEEK_ANIM_ROTATE        = 1;
 
     /** Тип анимации ползунка. Масштабирование */
-    public static final int SEEK_ANIM_SCALE         = 1;
-
-    /** Тип анимации ползунка. Без анимации */
-    public static final int SEEK_ANIM_NONE		    = 2;
+    public static final int SEEK_ANIM_SCALE         = 2;
 
     /** Тип диаграммы/прогресса. Диарграмма */
     public static final int SSH_MODE_DIAGRAM	    = 0;

@@ -33,17 +33,18 @@ abstract class Chart(context: Context, style: IntArray) : Tile(context, style) {
 	abstract var currentValuesSegments: IntArray
 	
 	init {
-		paint.textAlign = Paint.Align.CENTER
-		isShowText = Theme.boolean(context, style.themeAttrValue(ATTR_SSH_SHOW, 0))
 		doFrame = { _, animator, frame, _, _ ->
 			this.frame = frame
 			measure()
 			frame >= animator.frames
 		}
+
+		paint.textAlign = Paint.Align.CENTER
+		isShowText = Theme.boolean(context, style.themeAttrValue(ATTR_SSH_SHOW, 0))
 	}
 	
 	/** Запуск анимации */
-	fun startAnimation() { animator.start(true, true) }
+	fun startAnimation() { animator.start(stop = true, reset = true) }
 	
 	/** Определение позиции */
 	override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
