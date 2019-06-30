@@ -46,7 +46,10 @@ const val VB = 4.toByte()
  * @property context    Контекст
  */
 open class TileDrawable(private val context: Context, style: IntArray) : Drawable() {
-	
+
+	// Признак внутреннего обновления(для избегания зацикливания)
+	private var isInnerUpdate				= false
+
 	// Количество тайлов по вертикали
 	private var vert                        = 1
 		set(v)                              { field = if(v <= 0) 1 else v }
@@ -101,11 +104,11 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 		set(v)                              { field = v; if(keyBitmap.isNotEmpty()) setBitmap(keyBitmap, horz, vert, tile); updateBound(null) }
 	
 	/** Выравнивание */
-	var align						        = TILE_GRAVITY_NONE
+	var align						        = 0
 		set(v)						        { field = v; updateBound(null) }
 	
 	/** Выравнивание значка */
-	var alignIcon						    = drawableIcon?.align ?: TILE_GRAVITY_NONE
+	var alignIcon						    = drawableIcon?.align ?: 0
 		set(value)					        { drawableIcon?.align = value; updateBound(null) }
 	
 	/** Масштаб иконки */
@@ -178,7 +181,7 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 		set(v)                              { field = v; redrawSelf(false) }
 	
 	/** Масштаб отображения */
-	var scaleFactor                         = 1f
+	var zoom 		                        = 1f
 		set(v)                              { field = v; redrawSelf(false) }
 	
 	/** Направление градиентной заливки фона */
@@ -287,9 +290,12 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 	
 	/** Рассчитанная высота */
 	override fun getIntrinsicHeight() = bounds.height()
-	
+
+	private fun updateBound() { updateBound(null) }
+
 	/** Обновление габаритов */
 	fun updateBound(rc: Rect?) {
+		if(isInnerUpdate) return
 		val r = rc ?: bounds
 		val w: Int
 		val h: Int
@@ -298,36 +304,21 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 		val ww = r.width()
 		val hh = r.height()
 		if(ww > 0 && hh > 0) {
-			val rel = tileSize.w.toFloat() / tileSize.h
+			val wt = tileSize.w
+			val ht = tileSize.h
+			val rel = wt / ht.toFloat()
 			// расчитать размер в зависимости от типа масштабирования
 			when(scale) {
-				TILE_SCALE_TILE   -> {
-					w = tileSize.w
-					h = tileSize.h
-				}
-				TILE_SCALE_MIN    -> {
-					h = if(ww < hh) ww else hh
-					w = (h * rel).toInt()
-				}
-				TILE_SCALE_HEIGHT -> {
-					h = hh
-					w = (h * rel).toInt()
-				}
-				TILE_SCALE_WIDTH  -> {
-					w = ww
-					h = (w * rel).toInt()
-				}
-				else              -> {
-					w = ww
-					h = hh
-				}
+				TILE_SCALE_TILE   -> { w = wt; h = ht }
+				TILE_SCALE_MIN    -> { h = if(ww < hh) ww else hh; w = (h * rel).toInt() }
+				TILE_SCALE_HEIGHT -> { h = hh; w = (h * rel).toInt() }
+				TILE_SCALE_WIDTH  -> { w = ww; h = (w * rel).toInt() }
+				else              -> { w = ww; h = hh }
 			}
-			if(align ntest TILE_GRAVITY_NONE) {
-				xx += when(align and TILE_GRAVITY_MASK_HORZ) {
-					TILE_GRAVITY_END         -> ww - w
-					TILE_GRAVITY_CENTER_HORZ -> (ww - w) / 2
-					else                     -> 0
-				}
+			xx += when(align and TILE_GRAVITY_MASK_HORZ) {
+				TILE_GRAVITY_END         -> ww - w
+				TILE_GRAVITY_CENTER_HORZ -> (ww - w) / 2
+				else                     -> 0
 			}
 			yy += when(align and TILE_GRAVITY_MASK_VERT) {
 				TILE_GRAVITY_BOTTOM      -> hh - h
@@ -346,7 +337,9 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 			fRect.toInt(iRect)
 			if(bounds != iRect) {
 				bounds.set(iRect)
+				isInnerUpdate = true
 				redrawSelf(true)
+				isInnerUpdate = false
 			}
 			// пересчитать иконку
 			drawableIcon?.updateBound(bounds)
@@ -379,9 +372,12 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 			}
 		}
 		// иконка
-		drawableIcon?.apply {
-			canvas.scale(scaleIcon, scaleIcon, rect.centerX().toFloat(), rect.centerY().toFloat())
-			draw(canvas)
+		drawableIcon?.also {
+			canvas.withSave {
+				val r = it.bounds
+				canvas.scale(scaleIcon, scaleIcon, r.centerX().toFloat(), r.centerY().toFloat())
+				it.draw(canvas)
+			}
 		}
 		// восстановление ограничительной фигуры
 		if(shape != TILE_SHAPE_EMPTY) canvas.clipRect(clipRect, Region.Op.REPLACE)
@@ -423,11 +419,11 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 				canvas.translate(-sx, -sy)
 			}
 		} else {
-			if(scaleFactor != 1f || angle != 0f) {
+			if(zoom != 1f || angle != 0f) {
 				val x = rect.centerX().toFloat()
 				val y = rect.centerY().toFloat()
 				canvas.rotate(angle, x, y)
-				canvas.scale(scaleFactor, scaleFactor, x, y)
+				canvas.scale(zoom, zoom, x, y)
 			}
 		}
 		canvas.drawBitmap(bitmap, tileRect, rect, paint)

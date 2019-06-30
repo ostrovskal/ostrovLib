@@ -15,5 +15,6 @@
     <string name="shadow_text" translatable="false">4,4,6,#ff000000</string>
     <string name="colors_chart_diagram" translatable="false">#c3f556,#063f5e,#f5e6e6,#0e24e9,#eadada,#66093a,#e0f907,#292807,#7df442,#15480a,#fa11ac,#260221</string>
     <string name="colors_chart_circular" translatable="false">#c3f556,#f5e6e6,#eadada,#e0f907,#7df442,#fa11ac</string>
+    <string name="string_not_found">STRING NOT FOUND!!!</string>
 </resources>
 

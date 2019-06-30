@@ -13,10 +13,7 @@ import ru.ostrovskal.sshstd.Common.*
 import ru.ostrovskal.sshstd.TileDrawable
 import ru.ostrovskal.sshstd.objects.ATTR_CHECKED
 import ru.ostrovskal.sshstd.objects.Theme
-import ru.ostrovskal.sshstd.utils.bitmapGetCache
-import ru.ostrovskal.sshstd.utils.noGetter
-import ru.ostrovskal.sshstd.utils.rectWithPadding
-import ru.ostrovskal.sshstd.utils.themeAttrValue
+import ru.ostrovskal.sshstd.utils.*
 
 /**
  * @author Шаталов С.В.
@@ -181,14 +178,17 @@ open class Tile(context: Context, style: IntArray) : Text(context, style) {
 	}
 	
 	private fun setDrawables() {
-		var drLeft: TileDrawable? = null
-		var drRight: TileDrawable? = null
-		when(align and TILE_GRAVITY_MASK_HORZ) {
-			TILE_GRAVITY_START      -> drLeft = drawable
-			TILE_GRAVITY_END        -> drRight = drawable
-			TILE_GRAVITY_CENTER_HORZ-> background = drawable
-		}
-		setCompoundDrawablesWithIntrinsicBounds(drLeft, null, drRight, null)
+        var left: TileDrawable? = null
+        var right: TileDrawable? = null
+        var top: TileDrawable? = null
+        var bottom: TileDrawable? = null
+        val pos = align
+        if(pos test TILE_GRAVITY_BACKGROUND) background = drawable
+        if(pos test TILE_GRAVITY_LEFT)      left = drawable
+        if(pos test TILE_GRAVITY_RIGHT)     right = drawable
+        if(pos test TILE_GRAVITY_UP)        top = drawable
+        if(pos test TILE_GRAVITY_DOWN)      bottom = drawable
+        setCompoundDrawablesWithIntrinsicBounds(left, top, right, bottom)
 	}
 	
 	/** Вычисление габаритов тайла [n] и запись его в [r] */
@@ -198,11 +198,9 @@ open class Tile(context: Context, style: IntArray) : Text(context, style) {
 	override fun invalidateDrawable(drawable: Drawable) {
 		(drawable as? TileDrawable)?.apply {
 			super.invalidateDrawable(drawable)
-			if(isRedraw) {
-				if((align and TILE_GRAVITY_MASK_HORZ) != TILE_GRAVITY_CENTER_HORZ) setDrawables()
-				invalidate()
-			}
+			if(isRedraw) setDrawables()
 		}
+		invalidate()
 	}
 	
 	override fun onChangeTheme() {

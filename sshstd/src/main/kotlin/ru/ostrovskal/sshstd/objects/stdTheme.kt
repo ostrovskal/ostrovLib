@@ -358,7 +358,7 @@ const val ATTR_SSH_SIZE_SELECTOR_SEL_TAB= 237 or ATTR_INT
                                              ATTR_SSH_SCALE, TILE_SCALE_MIN,
                                              ATTR_CLICKABLE, 0,
                                              ATTR_FOCUSABLE, 0,
-                                             ATTR_SSH_GRAVITY, TILE_GRAVITY_CENTER,
+                                             ATTR_SSH_GRAVITY, TILE_GRAVITY_CENTER or TILE_GRAVITY_BACKGROUND,
                                              ATTR_SSH_BITMAP_NAME, ATTR_SSH_BM_ICONS or THEME,
                                              ATTR_SSH_SCALE_ICON, 40000,
                                              ATTR_SSH_VERT, 3,
@@ -374,8 +374,8 @@ const val ATTR_SSH_SIZE_SELECTOR_SEL_TAB= 237 or ATTR_INT
                                              ATTR_ALIGN, TEXT_ALIGNMENT_GRAVITY,
                                              ATTR_MIN_HEIGHT, R.dimen.heightRadio,
                                              ATTR_SSH_HORZ, 2, ATTR_SSH_TILE, 0,
-                                             ATTR_SSH_SCALE, TILE_SCALE_HEIGHT,
-                                             ATTR_SSH_GRAVITY, TILE_GRAVITY_START or TILE_GRAVITY_CENTER_VERT,
+                                             ATTR_SSH_SCALE, TILE_SCALE_MIN,
+                                             ATTR_SSH_GRAVITY, TILE_GRAVITY_LEFT or TILE_GRAVITY_CENTER_VERT,
                                              ATTR_SSH_BITMAP_NAME, ATTR_SSH_BM_RADIO or THEME)
 
 /** Стиль по умолчанию для Флажка */
@@ -389,8 +389,8 @@ const val ATTR_SSH_SIZE_SELECTOR_SEL_TAB= 237 or ATTR_INT
                                              ATTR_MIN_HEIGHT, R.dimen.heightCheck,
                                              ATTR_SSH_HORZ, 2,
                                              ATTR_SSH_TILE, 0,
-                                             ATTR_SSH_SCALE, TILE_SCALE_HEIGHT,
-                                             ATTR_SSH_GRAVITY, TILE_GRAVITY_START or TILE_GRAVITY_CENTER_VERT,
+                                             ATTR_SSH_SCALE, TILE_SCALE_MIN,
+                                             ATTR_SSH_GRAVITY, TILE_GRAVITY_LEFT or TILE_GRAVITY_CENTER_VERT,
                                              ATTR_SSH_BITMAP_NAME, ATTR_SSH_BM_CHECK or THEME)
 
 /** Стиль по умолчанию для Переключателя */
@@ -407,7 +407,7 @@ const val ATTR_SSH_SIZE_SELECTOR_SEL_TAB= 237 or ATTR_INT
                                              ATTR_SSH_TILE, 0,
                                              ATTR_SSH_THUMB_WIDTH, 32,
                                              ATTR_SSH_SCALE, TILE_SCALE_HEIGHT,
-                                             ATTR_SSH_GRAVITY, TILE_GRAVITY_END or TILE_GRAVITY_CENTER_VERT or TILE_GRAVITY_NONE,
+                                             ATTR_SSH_GRAVITY, TILE_GRAVITY_RIGHT or TILE_GRAVITY_CENTER_VERT,
                                              ATTR_SSH_BITMAP_NAME, ATTR_SSH_BM_SWITCH or THEME)
 
 /** Стиль по умолчанию для Простой диаграммы */
@@ -428,12 +428,12 @@ const val ATTR_SSH_SIZE_SELECTOR_SEL_TAB= 237 or ATTR_INT
 
 /** Стиль по умолчанию для Слайдера */
 @JvmField val style_seek                  = intArrayOf(ATTR_MIN_HEIGHT, R.dimen.heightSeek,
-                                             ATTR_SSH_HORZ, 2,
+                                             ATTR_SSH_HORZ, 3,
                                              ATTR_SSH_TILE, 0,
                                              ATTR_PADDING_HORZ, 18,
                                              ATTR_MIN_WIDTH, R.dimen.widthSeek,
                                              ATTR_SSH_SCALE, TILE_SCALE_MIN,
-                                             ATTR_SSH_GRAVITY, TILE_GRAVITY_START or TILE_GRAVITY_CENTER_VERT,
+                                             ATTR_SSH_GRAVITY, TILE_GRAVITY_LEFT or TILE_GRAVITY_CENTER_VERT,
                                              ATTR_SSH_BITMAP_NAME, ATTR_SSH_BM_SEEK or THEME,
                                              ATTR_SSH_SEEK_ANIM, ATTR_SSH_SEEK_ANIM or THEME)
 
@@ -534,7 +534,7 @@ const val ATTR_SSH_SIZE_SELECTOR_SEL_TAB= 237 or ATTR_INT
                                                        ATTR_SSH_CONTROLLER_WIDTH, 160,
                                                        ATTR_SSH_CONTROLLER_HEIGHT, 160,
                                                        ATTR_SSH_ALPHA, 184,
-                                                       ATTR_SSH_GRAVITY, TILE_GRAVITY_CENTER,
+                                                       ATTR_SSH_GRAVITY, TILE_GRAVITY_CENTER or TILE_GRAVITY_BACKGROUND,
                                                        ATTR_SSH_BITMAP_NAME, R.drawable.controller_tiles,
                                                        ATTR_SSH_HORZ, 6,
                                                        ATTR_SSH_VERT, 1,
@@ -555,7 +555,7 @@ const val ATTR_SSH_SIZE_SELECTOR_SEL_TAB= 237 or ATTR_INT
                                              ATTR_SSH_TILE, 0,
                                              ATTR_SSH_STATES, TILE_STATE_HOVER,
                                              ATTR_GRAVITY, Gravity.CENTER,
-                                             ATTR_SSH_GRAVITY, TILE_GRAVITY_CENTER,
+                                             ATTR_SSH_GRAVITY, TILE_GRAVITY_CENTER or TILE_GRAVITY_BACKGROUND,
                                              ATTR_SSH_BITMAP_NAME, ATTR_SSH_BM_BUTTONS or THEME)
 
 /** Стиль по умолчанию для Кнопки футера */
@@ -563,7 +563,7 @@ const val ATTR_SSH_SIZE_SELECTOR_SEL_TAB= 237 or ATTR_INT
                                              ATTR_MIN_HEIGHT, R.dimen.heightButton,
                                              ATTR_SSH_PRESSED_OFFS, R.dimen.pressedOffs,
                                              ATTR_SSH_STATES, TILE_STATE_HOVER,
-                                             ATTR_SSH_GRAVITY, TILE_GRAVITY_CENTER,
+                                             ATTR_SSH_GRAVITY, TILE_GRAVITY_CENTER or TILE_GRAVITY_BACKGROUND,
                                              ATTR_SSH_BITMAP_NAME, ATTR_SSH_BM_BUTTONS or THEME,
                                              ATTR_SSH_HORZ, 2,
                                              ATTR_SSH_TILE, 1)
@@ -575,7 +575,7 @@ const val ATTR_SSH_SIZE_SELECTOR_SEL_TAB= 237 or ATTR_INT
                                              ATTR_SSH_HORZ, 3,
                                              ATTR_SSH_TILE, 0,
                                              ATTR_SSH_STATES, TILE_STATE_HOVER,
-                                             ATTR_SSH_GRAVITY, TILE_GRAVITY_CENTER,
+                                             ATTR_SSH_GRAVITY, TILE_GRAVITY_CENTER or TILE_GRAVITY_BACKGROUND,
                                              ATTR_SSH_BITMAP_NAME, ATTR_SSH_BM_TOOLS or THEME)
 
 /** Стиль по умолчанию для Кнопки со стрелкой */
@@ -583,7 +583,7 @@ const val ATTR_SSH_SIZE_SELECTOR_SEL_TAB= 237 or ATTR_INT
                                              ATTR_MIN_HEIGHT, R.dimen.heightButton,
                                              ATTR_SSH_PRESSED_OFFS, R.dimen.pressedOffs,
                                              ATTR_SSH_STATES, TILE_STATE_PRESS or TILE_STATE_SHADOW,
-                                             ATTR_SSH_GRAVITY, TILE_GRAVITY_CENTER,
+                                             ATTR_SSH_GRAVITY, TILE_GRAVITY_CENTER or TILE_GRAVITY_BACKGROUND,
                                              ATTR_SSH_BITMAP_NAME, ATTR_SSH_BM_TOOLS or THEME,
                                              ATTR_SSH_HORZ, 3,
                                              ATTR_SSH_TILE, 1)
@@ -607,7 +607,7 @@ const val ATTR_SSH_SIZE_SELECTOR_SEL_TAB= 237 or ATTR_INT
                                                        ATTR_FOCUSABLE, 0,
                                                        ATTR_SSH_SCALE, TILE_SCALE_NONE,
                                                        ATTR_SSH_WIDTH_SELECTOR, 0,
-                                                       ATTR_SSH_GRAVITY, TILE_GRAVITY_CENTER,
+                                                       ATTR_SSH_GRAVITY, TILE_GRAVITY_CENTER or TILE_GRAVITY_BACKGROUND,
                                                        ATTR_GRAVITY, Gravity.CENTER,
                                                        ATTR_COLOR_DEFAULT, ATTR_SSH_COLOR_NORMAL or THEME,
                                                        ATTR_FONT, R.string.font_normal,
@@ -667,7 +667,7 @@ object Theme {
 	/** Вернуть drawable значение [value], если [isName] установлен в false, или имя картинки, в противном случае */
 	@JvmStatic fun drawable(context: Context, value: Int, isName: Boolean = false): Drawable? {
 		return when(value and ATTR_VPROPS_MSK) {
-			THEME   -> drawable(context, theme.themeAttrValue(value, -1), isName)
+			THEME   -> drawable(context, theme.themeAttrValue(value, -1, ATTR_DRW), isName)
 			else    -> try {
 				if(!isName) context.resources.getDrawable(value)
 				else {
@@ -688,7 +688,7 @@ object Theme {
 	/** Вернуть dimen значение [value] (ID в ресурсах, непосредственное значение, значение из темы) */
 	@JvmStatic fun dimen(context: Context, value: Int, isFloat: Boolean = false): Int {
 		return when(value and ATTR_VPROPS_MSK) {
-			THEME   -> dimen(context, theme.themeAttrValue(value, -1))
+			THEME   -> dimen(context, theme.themeAttrValue(value, -1, ATTR_DMN), isFloat)
 			IDRES   -> {
 				val ret = (context.resources.getDimensionPixelOffset(value) * config.multiplySW).toInt()
 				if(isFloat) ret.sp2px else ret
@@ -701,7 +701,7 @@ object Theme {
 	@JvmStatic fun integer(context: Context, value: Int): Int {
 		return when(value and ATTR_VPROPS_MSK) {
 			COLOR   -> value.color
-			THEME   -> integer(context, theme.themeAttrValue(value, -1))
+			THEME   -> integer(context, theme.themeAttrValue(value, -1, ATTR_INT))
 			IDRES   -> context.resources.getInteger(value)
 			else    -> value
 		}
@@ -710,7 +710,7 @@ object Theme {
 	/** Вернуть строковое значение [value] (ID в ресурсах strings или значение из темы) */
 	@JvmStatic fun string(context: Context, value: Int): String {
 		return when(value and ATTR_VPROPS_MSK) {
-			THEME   -> string(context, theme.themeAttrValue(value, -1))
+			THEME   -> string(context, theme.themeAttrValue(value, -1, ATTR_STR))
 			else    -> context.resources.getString(value)
 		}
 	}
@@ -718,7 +718,7 @@ object Theme {
 	/** Вернуть логическое значение [value] (ID в ресурсах, непосредственное значение, значение из темы) */
 	@JvmStatic fun boolean(context: Context, value: Int): Boolean {
 		return when(value and ATTR_VPROPS_MSK) {
-			THEME   -> boolean(context, theme.themeAttrValue(value, -1))
+			THEME   -> boolean(context, theme.themeAttrValue(value, -1, ATTR_BOL))
 			IDRES   -> context.resources.getBoolean(value)
 			else    -> value != 0
 		}

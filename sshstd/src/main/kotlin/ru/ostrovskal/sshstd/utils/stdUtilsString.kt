@@ -7,22 +7,22 @@ import ru.ostrovskal.sshstd.Common.hexChars
 import ru.ostrovskal.sshstd.objects.Settings
 
 /** Установка/Получение текстовых настроек системы */
-inline var String.optText
+inline var String.s
 	get()                       = Settings.text(this)
 	set(value)                  { Settings[this] = value }
 
 /** Установка/Получение целочисленных настроек системы */
-inline var String.optInt
+inline var String.i
 	get()                       = Settings.integer(this)
 	set(v)                      { Settings[this] = v }
 
 /** Установка/Получение логических настроек системы */
-inline var String.optBool
+inline var String.b
 	get()                       = Settings.boolean(this)
 	set(v)                      { Settings[this] = v }
 
 /** Установка/Получение вещественных настроек системы */
-inline var String.optFloat
+inline var String.f
 	get()                       = Settings.float(this)
 	set(v)                      { Settings[this] = v }
 

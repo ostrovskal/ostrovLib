@@ -1,11 +1,11 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="ru.ostrovskal.ostrovlib">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" package="ru.ostrovskal.ostrovlib">
     <application android:allowBackup="true"
                  android:fullBackupContent="true"
                  android:icon="@mipmap/ic_launcher"
                  android:label="@string/app_name"
                  android:supportsRtl="true"
-                 android:theme="@style/StdTheme">
-        <activity android:name=".MainWnd">
+                 android:theme="@style/StdTheme" tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".MainWnd" android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

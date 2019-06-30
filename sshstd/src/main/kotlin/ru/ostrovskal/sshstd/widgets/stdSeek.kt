@@ -65,7 +65,7 @@ open class Seek(context: Context, id: Int, range: IntRange, enabled: Boolean, st
 					drawable.angle = 30f * f
 				}
 				if (animThumb test Common.SEEK_ANIM_SCALE) {
-					drawable.scaleFactor = if (f >= 6) 1f - (12 - f) * 0.08333f else 1f - f * 0.08333f
+					drawable.zoom = if (f >= 6) 1f - (12 - f) * 0.08333f else 1f - f * 0.08333f
 				}
 			}
 			result
@@ -81,7 +81,7 @@ open class Seek(context: Context, id: Int, range: IntRange, enabled: Boolean, st
 	// Сброс параметров анимации ползунка
 	private fun resetThumbAnimator() {
 		drawable.angle = 0f
-		drawable.scaleFactor = 1f
+		drawable.zoom = 1f
 	}
 	
 	override fun onChangeTheme() {
@@ -115,7 +115,7 @@ open class Seek(context: Context, id: Int, range: IntRange, enabled: Boolean, st
 	override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
 		super.onLayout(changed, left, top, right, bottom)
 		if(changed) {
-			resolveTile(1, tileTrack)
+			resolveTile(2, tileTrack)
 			rect.set(drawablePosition)
 			deltaThumb = (right - left - horizontalPadding) / 1000f
 		}
@@ -128,7 +128,7 @@ open class Seek(context: Context, id: Int, range: IntRange, enabled: Boolean, st
 		if(w > 0) {
 			bitmap?.let {
 				// трэк
-				val count = (width / w) + 1
+				val count =(width / w) + 1
 				canvas.withSave {
 					clipRect(leftPadding, topPadding, width - rightPadding, height - bottomPadding)
 					val f = (animator.frame * animSpeedTrack) % w
@@ -137,7 +137,7 @@ open class Seek(context: Context, id: Int, range: IntRange, enabled: Boolean, st
 					}
 				}
 			}
-			rect.offset((scrollX + data * deltaThumb - w / 2).toInt(), 0, drawable.bounds)
+			rect.offset((scrollX + data * deltaThumb - w / 2f).toInt(), 0, drawable.bounds)
 			super.onDraw(canvas)
 		}
 	}

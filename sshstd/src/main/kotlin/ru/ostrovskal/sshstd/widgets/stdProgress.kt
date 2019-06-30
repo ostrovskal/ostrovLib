@@ -9,6 +9,8 @@ import android.view.View
 import ru.ostrovskal.sshstd.Common.*
 import ru.ostrovskal.sshstd.objects.*
 import ru.ostrovskal.sshstd.utils.*
+import kotlin.math.min
+import kotlin.math.roundToInt
 
 /**
  * @author Шаталов С.В.
@@ -17,7 +19,9 @@ import ru.ostrovskal.sshstd.utils.*
 
 /** Класс, реализующий полосу продвижения */
 open class Progress(context: Context, id: Int, max: Int, mode: Int, style: IntArray): Tile(context, style) {
-	
+
+	private val rectProgress	= Rect()
+
 	// Угол отображения текста
 	private var rot             = 0f
 	
@@ -49,7 +53,7 @@ open class Progress(context: Context, id: Int, max: Int, mode: Int, style: IntAr
 				DIRU         -> DIRR
 				else         -> DIRD
 			}
-			if(v == DIRU || v == DIRD) rot = 90f
+			if(mode == SSH_MODE_DIAGRAM && (v == DIRU || v == DIRD)) rot = 90f
 			measure()
 		}
 
@@ -77,7 +81,7 @@ open class Progress(context: Context, id: Int, max: Int, mode: Int, style: IntAr
 		paint.textAlign = Paint.Align.CENTER
 		animator.apply { duration = 70; frames = Int.MAX_VALUE }
 		
-		Theme.setBaseAttr(context, this, style)
+		//Theme.setBaseAttr(context, this, style)
 		
 		style.loopAttrs { attr, value ->
 			Theme.attrProps(context, attr, value)
@@ -102,71 +106,86 @@ open class Progress(context: Context, id: Int, max: Int, mode: Int, style: IntAr
 	private fun measure() {
 		val w = measuredWidth
 		val h = measuredHeight
-		if(mode == SSH_MODE_DIAGRAM) {
+		if(w != 0 && h != 0) {
 			val pl = paddingStart
 			val pr = paddingEnd
 			val pt = paddingTop
 			val pb = paddingBottom
-			
-			fun measureProgress(v: Int, r: Rect) {
-				if(v >= 0) {
-					val mx = max.toFloat()
-					val vw = (((w - pr - pl) / mx) * v).toInt()
-					val vh = (((h - pt - pb) / mx) * v).toInt()
-					
-					var x1 = 0; var y1 = 0
-					var x2 = 0; var y2 = 0
-					
-					when(direction) {
-						DIRL -> { x1 = pl + w - vw; y1 = pt; x2 = w - pr; y2 = h - pb }
-						DIRR -> { x1 = pl; y1 = pt; x2 = vw; y2 = h - pb }
-						DIRU -> { x1 = pl; y1 = pt + h - vh; x2 = w - pr; y2 = h - pb }
-						DIRD -> { x1 = pl; y1 = pt; x2 = w - pr; y2 = vh }
+			if (mode == SSH_MODE_DIAGRAM) {
+				fun measureProgress(v: Int, r: Rect) {
+					if (v >= 0) {
+						val mx = max.toFloat()
+						val vw = (((w - pr - pl) / mx) * v).roundToInt()
+						val vh = (((h - pb - pt) / mx) * v).roundToInt()
+
+						var x1 = 0
+						var y1 = 0
+						var x2 = 0
+						var y2 = 0
+
+						//"$direction pl:$pl pr:$pr pt:$pt pb:$pb w:$w h:$h vw:$vw vh:$vh v: $v".info()
+						when (direction) {
+							DIRL -> { x1 = (w - vw) - pl; y1 = pt; x2 = w - pr; y2 = h - pb }
+							DIRR -> { x1 = pl; y1 = pt; x2 = vw + pr; y2 = h - pb }
+							DIRU -> { x1 = pl; y1 = (h - vh) - pt; x2 = w - pr; y2 = h - pb }
+							DIRD -> { x1 = pl; y1 = pt; x2 = w - pr; y2 = vh + pb }
+						}
+						r.set(x1, y1, x2, y2)
+					} else r.set(0, 0, 0, 0)
+				}
+				measureProgress(max, rectProgress)
+				measureProgress(primaryProgress, rectPrimary)
+				measureProgress((secondaryProgress - primaryProgress), rectSecondary)
+				rectSecondary.apply {
+					val ws = rectPrimary.width()
+					val hs = rectPrimary.height()
+					when (direction) {
+						DIRL -> offset(-ws, 0)
+						DIRR -> offset(ws, 0)
+						DIRU -> offset(0, -hs)
+						DIRD -> offset(0, hs)
 					}
-					r.set(x1, y1, x2, y2)
-				} else r.set(0, 0, 0, 0)
+				}
+			} else {
+				iRect.set(pl, pt, w - pr, h - pb)
+				drawable.updateBound(iRect)
+				drawablePosition.offset(0, 0, rectProgress)
+				val c = min(rectProgress.width(), rectProgress.height()) / 2
+				val cx = rectProgress.centerX()
+				val cy = rectProgress.centerY()
+				rectProgress.set(cx - c, cy - c, cx + c, cy + c)
 			}
-			rectScreen.set(0, 0, w, h)
-			measureProgress(primaryProgress, rectPrimary)
-			measureProgress((secondaryProgress - primaryProgress), rectSecondary)
-			when(direction) {
-				DIRL        -> rectSecondary.offset(-rectPrimary.width(), 0)
-				DIRR        -> rectSecondary.offset(rectPrimary.width(), 0)
-				DIRU        -> rectSecondary.offset(0, -rectPrimary.height())
-				DIRD        -> rectSecondary.offset(0, rectPrimary.height())
-			}
-		} else {
-			iRect.set(0, 0, w, h)
-			drawable.updateBound(iRect)
-			drawablePosition.offset(0, 0, rectScreen)
+			invalidate()
 		}
-		invalidate()
 	}
-	
+
+	private	fun drawDiagram(canvas: Canvas, idx: Int, r: Rect) {
+		if(!r.isEmpty) {
+			drawable.apply {
+				xyInt[0] = colors[idx]; xyInt[1] = colors[idx + 1]
+				gradient = xyInt
+				bounds = r
+				draw(canvas)
+			}
+		}
+	}
+
 	/** Отображение прогресса */
 	override fun draw(canvas: Canvas) {
 		super.draw(canvas)
-		val cx = rectScreen.centerX().toFloat()
-		val cy = rectScreen.centerY().toFloat()
-		when(mode) {
-			SSH_MODE_DIAGRAM  -> drawable.apply {
-				fun drawDiagram(idx: Int, r: Rect) {
-					if(!r.isEmpty) {
-						gradient[0] = colors[idx]; gradient[1] = colors[idx + 1]
-						gradient = gradient
-						bounds = r
-						draw(canvas)
-					}
+		val cx = rectProgress.centerX().toFloat()
+		val cy = rectProgress.centerY().toFloat()
+		canvas.withSave {
+			when(mode) {
+				SSH_MODE_DIAGRAM -> {
+					drawDiagram(this, 0, rectProgress)
+					drawDiagram(this, 2, rectPrimary)
+					drawDiagram(this, 4, rectSecondary)
 				}
-				drawDiagram(0, rectScreen)
-				drawDiagram(2, rectPrimary)
-				drawDiagram(4, rectSecondary)
-			}
-			SSH_MODE_CIRCULAR -> {
-				canvas.withSave {
+				SSH_MODE_CIRCULAR -> {
 					bitmap?.apply {
 						rotate(drawable.angle, cx, cy)
-						drawBitmap(this, tileRect, rectScreen, paint)
+						drawBitmap(this, tileRect, rectProgress, paint)
 					}
 				}
 			}

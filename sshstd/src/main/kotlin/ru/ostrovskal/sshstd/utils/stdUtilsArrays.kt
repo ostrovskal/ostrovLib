@@ -2,9 +2,9 @@
 
 package ru.ostrovskal.sshstd.utils
 
+import com.github.ostrovskal.sshstd.R
 import ru.ostrovskal.sshstd.Common
-import ru.ostrovskal.sshstd.objects.ATTR_ATTR_MSK
-import ru.ostrovskal.sshstd.objects.ATTR_VALUE_MSK
+import ru.ostrovskal.sshstd.objects.*
 
 /** Создание двумерного байтового массива размерностью [dim1] на [dim2] */
 inline fun byteArrayOf2D(dim1: Int, dim2: Int): ByteArray {
@@ -35,11 +35,19 @@ inline fun IntArray.loopAttrs(action: (attr: Int, value: Int) -> Unit) {
 	}
 }
 
-/** Поиск значения атрибута [attribute] в теме. [def] Значение по умолчанию */
-fun IntArray.themeAttrValue(attribute: Int, def: Int): Int {
+/** Поиск значения атрибута [attribute] в теме, [def] Значение по умолчанию, [type] Тип значения */
+fun IntArray.themeAttrValue(attribute: Int, def: Int, type: Int = ATTR_INT): Int {
 	val attr = attribute and ATTR_VALUE_MSK
 	loopAttrs { a, v -> if(attr == a) return v }
-	return if(def == -1) error("Атрибут ${attribute and ATTR_ATTR_MSK} не обнаружен в текущей теме!") else def
+	return if(def != -1) def
+	else {
+		"Атрибут ${attribute and ATTR_ATTR_MSK} не обнаружен в текущей теме!".info()
+		return when(type) {
+			ATTR_DRW	-> R.drawable.drawable_not_found
+			ATTR_STR	-> R.string.string_not_found
+			else		-> 0
+		}
+	}
 }
 
 /** Получение первого доступного состояния элемента из списка возможных [states] */

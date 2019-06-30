@@ -197,8 +197,20 @@ public final class Common
     /** Флаги при старте активити. Скрывать область уведомлений */
     public static final int SSH_APP_MODE_FULLSCREEN = 4;
 
-    /** Тип выравнивания тайла. Без выравнивания */
-    public static final int TILE_GRAVITY_NONE       = 128;
+    /** Тип выравнивания тайла. Слева от текста */
+    public static final int TILE_GRAVITY_LEFT       = 128;
+
+    /** Тип выравнивания тайла. Выше текста */
+    public static final int TILE_GRAVITY_UP         = 256;
+
+    /** Тип выравнивания тайла. Справа от текста */
+    public static final int TILE_GRAVITY_RIGHT      = 512;
+
+    /** Тип выравнивания тайла. Ниже текста */
+    public static final int TILE_GRAVITY_DOWN       = 1024;
+
+    /** Тип выравнивания тайла. Внутри текста */
+    public static final int TILE_GRAVITY_BACKGROUND = 2048;
 
     /** Тип выравнивания тайла. По левой границе */
     public static final int TILE_GRAVITY_START      = 1;

@@ -8,13 +8,11 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
-import android.view.MotionEvent
 import android.view.SurfaceHolder
-import android.view.View
+import android.view.View.TEXT_ALIGNMENT_CENTER
 import android.view.ViewGroup
 import ru.ostrovskal.sshstd.*
 import ru.ostrovskal.sshstd.Common.*
-import ru.ostrovskal.sshstd.adapters.ArrayListAdapter
 import ru.ostrovskal.sshstd.json.JAdapter
 import ru.ostrovskal.sshstd.layouts.AbsoluteLayout
 import ru.ostrovskal.sshstd.objects.*
@@ -23,8 +21,6 @@ import ru.ostrovskal.sshstd.sql.Table
 import ru.ostrovskal.sshstd.ui.*
 import ru.ostrovskal.sshstd.utils.*
 import ru.ostrovskal.sshstd.widgets.Controller
-import ru.ostrovskal.sshstd.widgets.Seek
-import ru.ostrovskal.sshstd.widgets.charts.Chart
 import ru.ostrovskal.sshstd.widgets.html.Html
 
 
@@ -156,7 +152,8 @@ val std_theme_l = intArrayOf(ATTR_SSH_THEME_NAME, R.string.std_theme_l,
                            ATTR_SSH_BM_RADIO, R.drawable.theme_radio_light,
                            ATTR_SSH_BM_CHECK, R.drawable.theme_check_light,
                            ATTR_SSH_BM_SEEK, R.drawable.theme_seek_light,
-                           ATTR_SSH_BM_SWITCH, R.drawable.theme_switch_light)
+                           ATTR_SSH_BM_SWITCH, R.drawable.theme_switch_light
+)
 
 enum class MsgEx {
 	EMPTY1, INIT1, TAB_CHANGED
@@ -191,7 +188,7 @@ class MainWnd : Wnd() {
 		if(hand == null) {
 			hand = Handler(Looper.getMainLooper(), this)
 			applyTheme()
-			if(!SQL.connection(this, true, Serg, Ostrov)) {
+			if(!SQL.connection(this, false, Serg, Ostrov)) {
 				"sql conn failed!".info()
 			}
 			"sql conn ok!".info()
@@ -275,15 +272,7 @@ class Abs(val wnd: MainWnd): UiComponent() {
 		cellLayout(10, 10) {
 			stretchLayout(true) {
 				padding = 15.dp
-				setOnTouchListener { _, event ->
-					if(event.action == MotionEvent.ACTION_UP) {
-						byIdx<Chart>(0).startAnimation()
-						byIdx<Seek>(1).apply {
-							animThumb = (animThumb + 1) % 4
-						}
-					}
-					true
-				}
+				/*
 				chartCircular {
 					this.beginAngle = 20f
 					this.checkedRadius = 15
@@ -292,6 +281,23 @@ class Abs(val wnd: MainWnd): UiComponent() {
 					this.currentValuesSegments = intArrayOf(600, 800, 100, 400, 350, 1000, 700, 500, 650, 900)
 					this.colorsSegments = context.resources.getString(R.string.colors_chart_circular).toIntArray(10, Color.RED, 10, true, ',')
 				}
+				*/
+				button {
+					iconResource = R.integer.I_YES
+					states = TILE_STATE_PRESS or TILE_STATE_SHADOW
+					scaleIcon = 0.5f
+					alignIcon = TILE_GRAVITY_START
+					text = "Sergey"
+				}
+				radioGroup(false) {
+					radio(10001, R.string.radio1) {
+						align = TILE_GRAVITY_LEFT or TILE_GRAVITY_RIGHT or TILE_GRAVITY_CENTER
+						textAlignment = TEXT_ALIGNMENT_CENTER
+					}
+					radio(10002, R.string.radio2) {
+
+					}
+				}//.lps(MATCH, 120.dp)
 				/*
 				chartDiagram {
 					backgroundSet {
@@ -309,11 +315,34 @@ class Abs(val wnd: MainWnd): UiComponent() {
 					this.currentValuesSegments = intArrayOf(600, 800, 200, 400, 350, 1000, 700)
 				}
 				*/
-				seek(R.id.seek, 0..10, true) {
-					animThumb = SEEK_ANIM_ROTATE or SEEK_ANIM_SCALE
+				seek(R.id.seek, 0..9, true) {
+					//animThumb = SEEK_ANIM_ROTATE// or SEEK_ANIM_SCALE
 					progress = 5
+					//scale = TILE_SCALE_HEIGHT
+					align = TILE_GRAVITY_LEFT
+					//align = TILE_GRAVITY_LEFT or TILE_GRAVITY_END
 				}
-			}.lps(0, 0, 10, 5)
+				stretchLayout(true) {
+					progress(10004, 100, SSH_MODE_DIAGRAM) {
+						padding = 5.dp
+						direction = DIRR
+						textSize = 20f
+						primaryProgress = 50
+						secondaryProgress = 80
+						//keyBitmap = "blue"
+					}//.lps(40.dp, MATCH)
+					progress(R.id.progress1, 100, SSH_MODE_CIRCULAR) {
+						padding = 15.dp
+						direction = DIRD
+						textSize = 20f
+						primaryProgress = 0
+						secondaryProgress = 0
+						keyBitmap = "blue"
+					}//.lps(40.dp, MATCH)
+				}//.lps(MATCH, 110.dp)
+			}.lps(0, 0, 10, 10)
+//			surface = custom<ExampleSurface> {}.lps(0, 0, MATCH, if(config.portrait) 300.dp else 200.dp)
+			/*
 			setOnTouchListener { _, event ->
 				onTouch(event)?.let {
 					(if(it.ptCurrent.x > (dMetrics.widthPixels / 2)) ctr1 else ctr2).apply {
@@ -325,7 +354,6 @@ class Abs(val wnd: MainWnd): UiComponent() {
 				}
 				true
 			}
-//			surface = custom<ExampleSurface> {}.lps(0, 0, MATCH, if(config.portrait) 300.dp else 200.dp)
 			tabLayout {
 				tabChangeListener = {tab, content ->
 					if(tab == 0) {
@@ -376,6 +404,7 @@ class Abs(val wnd: MainWnd): UiComponent() {
 					}
 				}
 			}.lps(0, 5, 10, 5)
+			*/
 /*
 			tabLayout {
 				content.apply {
