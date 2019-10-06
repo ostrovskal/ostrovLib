@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.Rect
 import ru.ostrovskal.sshstd.Common.hexChars
 import ru.ostrovskal.sshstd.objects.Settings
+import java.util.*
 
 /** Установка/Получение текстовых настроек системы */
 inline var String.s
@@ -113,7 +114,7 @@ fun String.toFlagsArray(count: Int, map: Map<String, Int>, def: Int, delimiter1:
 }
 
 /** Получение значения флагов из строки */
-fun String.getFlags(map: Map<String, Int>, def: Int, delimiter: Char) = toUpperCase().split(delimiter).run {
+fun String.getFlags(map: Map<String, Int>, def: Int, delimiter: Char) = toUpperCase(Locale.ROOT).split(delimiter).run {
 	var flags = 0
 	forEach { flags = flags or map.getOrElse(it) { def } }
 	flags
@@ -172,9 +173,13 @@ fun StringBuilder.toHex(bt: Byte, idx: Int): StringBuilder {
 /** Преобразование целого [int] в шестадцатиричное представление и помещение его в строку по индексу [idx] */
 fun StringBuilder.toHex(int: Int , idx: Int): StringBuilder {
 	var i = int
-	for(t in 6 downTo 0 step 2) {
-		setCharAt(idx + t, hexChars[(i and 240) shr 4])
-		setCharAt(idx + t + 1, hexChars[i and 15])
+	val p = when {
+		i < 256 	-> 2
+		i < 65536 	-> 4
+		else 		-> 6
+	}
+	for(t in p downTo 0 step 2) {
+		toHex(i.toByte(), idx + t)
 		i = i shr 8
 	}
 	return this

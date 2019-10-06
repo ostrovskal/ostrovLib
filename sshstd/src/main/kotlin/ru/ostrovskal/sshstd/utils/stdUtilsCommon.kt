@@ -269,7 +269,7 @@ inline fun <R> Parcel.recycledRun(block: Parcel.() -> R): R { return block().app
 inline fun Canvas.withSave(block: Canvas.()->Unit) { save(); block(); restore() }
 
 /** Возвращает величину диапазона */
-inline val IntRange.interval get() = (endInclusive - start) + 1
+inline val IntRange.interval get() = (endInclusive - start)// + 1
 
 /** Обрезать значение [v] по диапазону */
 inline fun IntRange.clamp(v: Int) = if(v < start) start else if(v > endInclusive) endInclusive else v

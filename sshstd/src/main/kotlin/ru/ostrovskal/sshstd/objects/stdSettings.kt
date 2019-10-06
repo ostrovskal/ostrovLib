@@ -23,7 +23,7 @@ object Settings {
 	// Класс хранящий параметр
 	private class Option(@JvmField var v: String, @JvmField val def: String) {
 		@JvmField val f	= v.fval(0f)
-		@JvmField val i	= v.ival(0, 10)
+		@JvmField val i	= if(v == "true") 1 else v.ival(0, 10)
 		@JvmField val b	= v.bval(false)
 	}
 	

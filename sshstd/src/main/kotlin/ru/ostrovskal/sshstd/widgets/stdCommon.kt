@@ -26,7 +26,7 @@ open class Check(context: Context, id: Int, text: Int, style: IntArray) : Tile(c
 	
 	override var isChecked
 		get()               = super.isChecked
-		set(v)              { super.isChecked = v; tile = data.toInt(); invalidate() }
+		set(v)              { super.isChecked = v; tile = data.toInt(); performClick(); invalidate() }
 	
 	init {
 		this.id = id
@@ -37,10 +37,7 @@ open class Check(context: Context, id: Int, text: Int, style: IntArray) : Tile(c
 		onTouch(event)
 		touchClick(0, rectScreen) {
 			if(this@Check is Radio) radioClickNotify?.invoke(this@Check)
-			else {
-				isChecked = !isChecked
-				performClick()
-			}
+			else isChecked = !isChecked
 		}
 		return true
 	}

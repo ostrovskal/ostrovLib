@@ -92,13 +92,15 @@ open class Seek(context: Context, id: Int, range: IntRange, enabled: Boolean, st
 	
 	/** Обработка события касания */
 	override fun onTouchEvent(event: MotionEvent): Boolean {
-		onTouch(event)?.apply {
-			val resolvePosition = (0..1000).clamp(((ptCurrent.x - leftPadding - scrollX) / deltaThumb).toInt())
-			val oldProgress = progress
-			data = resolvePosition.toFloat()
-			if(oldProgress != progress) {
-				performClick()
-				invalidate()
+		if(isEnabled) {
+			onTouch(event)?.apply {
+				val resolvePosition = (0..1000).clamp(((ptCurrent.x - leftPadding - scrollX) / deltaThumb).toInt())
+				val oldProgress = progress
+				data = resolvePosition.toFloat()
+				if (oldProgress != progress) {
+					performClick()
+					invalidate()
+				}
 			}
 		}
 		return true
@@ -115,7 +117,7 @@ open class Seek(context: Context, id: Int, range: IntRange, enabled: Boolean, st
 	override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
 		super.onLayout(changed, left, top, right, bottom)
 		if(changed) {
-			resolveTile(2, tileTrack)
+			resolveTile(1, tileTrack)
 			rect.set(drawablePosition)
 			deltaThumb = (right - left - horizontalPadding) / 1000f
 		}

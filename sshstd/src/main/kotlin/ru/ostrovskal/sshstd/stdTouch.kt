@@ -16,6 +16,9 @@ import kotlin.math.*
 
 /** Менеджер обработки касания */
 class Touch {
+	/** Количество точек касания */
+	@JvmField var count           = 0
+
 	/** Начальная координата касания */
 	@JvmField var ptBegin       = PointF()
 	
@@ -100,9 +103,6 @@ class Touch {
 	companion object {
 		/** Массив объектов касания */
 		@JvmField var touch = Array(10) { Touch() }
-		
-		/** Количество объектов касания */
-		@JvmField var count           = 0
 		
 		/** Индекс области клика */
 		@JvmField var clk             = -1
@@ -227,10 +227,10 @@ fun touchReset() {
 			tmBegin = 0L; tmCurrent = 0L
 			ptBegin.x = 0f; ptBegin.y = 0f
 			ptCurrent.x = 0f; ptCurrent.y = 0f
+			count = 0
 			press = false
 		}
 	}
-	Touch.count = 0
 }
 
 /** Найти объект касания по определенному индексу [idx] с учетом признака нажатия [pressed] */
@@ -240,39 +240,33 @@ fun findTouch(idx: Int, pressed: Boolean = true): Touch? = Touch.touch[idx].run 
 }
 
 /** Обработка события касания */
-fun onTouch(event: MotionEvent): Touch? {
-	// время события
+fun onTouch(event: MotionEvent): Touch {
+	// время
 	val tm = System.currentTimeMillis()
-	// событие касания
+	// событие
 	val act = event.actionMasked
-	// число касаний
-	Touch.count = event.pointerCount
-	repeat(Touch.count) {
-		val x = event.getX(it)
-		val y = event.getY(it)
-		// касание
-		Touch.touch[it].apply {
-			when(act) {
-				MotionEvent.ACTION_DOWN, MotionEvent.ACTION_POINTER_DOWN                        -> {
-					press = true
-					ptCurrent.x = x; ptBegin.x = x
-					ptCurrent.y = y; ptBegin.y = y
-					Touch.pt.x = x; Touch.pt.y = y
-					tmBegin = tm; tmCurrent = tm
-					id = event.getPointerId(it)
-				}
-				MotionEvent.ACTION_MOVE                                                         -> {
-					ptCurrent.x = x; ptCurrent.y = y
-					tmCurrent = tm
-				}
-				MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_POINTER_UP -> {
-					press = false
-					ptCurrent.x = x; ptCurrent.y = y
-					tmCurrent = tm
-				}
+	// индекс
+	val idx = event.actionIndex
+	// координаты
+	val x = event.getX(idx)
+	val y = event.getY(idx)
+	// ИД
+	val id = event.getPointerId(idx)
+	return Touch.touch[id].apply {
+		this.id = id
+		count = event.pointerCount
+		when(act) {
+			MotionEvent.ACTION_DOWN								-> {
+				press = true
+				ptBegin.x = x; ptBegin.y = y
+				Touch.pt.x = x; Touch.pt.y = y
+				tmBegin = tm
+			}
+			MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL	-> {
+				press = false
 			}
 		}
+		tmCurrent = tm
+		ptCurrent.x = x; ptCurrent.y = y
 	}
-	return findTouch(0)
 }
-

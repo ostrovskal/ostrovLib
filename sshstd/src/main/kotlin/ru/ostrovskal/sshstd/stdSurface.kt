@@ -70,7 +70,9 @@ abstract class Surface(context: Context) : SurfaceView(context, null, 0), Handle
 	 */
 	override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
 		touchReset()
-		thread?.start()
+		if(thread?.isAlive == false)
+			thread?.start()
+		running = true
 	}
 	
 	/** Создание поверхности и фонового треда */
@@ -121,15 +123,15 @@ abstract class Surface(context: Context) : SurfaceView(context, null, 0), Handle
 				if(isInterrupted) return@Runnable
 				val surface = weak.get() ?: return@Runnable
 				val delay = surface.delay
-				var diff = delay
+				var diff = 0L
 				if(surface.running) {
 					var canvas: Canvas? = null
 					try {
 						canvas = surface.holder.lockCanvas()?.apply {
 							val start = System.currentTimeMillis()
 							surface.draw(this)
-							diff = System.currentTimeMillis() - start
-							surface.fps = (1000 / (delay - diff)).toInt()
+							diff = (System.currentTimeMillis() - start)
+							surface.fps = (1000 / if(diff > 0) diff else 1).toInt()
 						}
 					}
 					finally {
@@ -137,10 +139,7 @@ abstract class Surface(context: Context) : SurfaceView(context, null, 0), Handle
 					}
 				}
 				surface.hand?.apply {
-					// компенсация задержки при отправке сообщения хэндлера
-					diff += 10
 					postDelayed(runner, if(diff < delay) delay - diff else 0)
-					//if(diff < delay) postDelayed(runner, delay - diff) else post(runner)
 				}
 				
 			}

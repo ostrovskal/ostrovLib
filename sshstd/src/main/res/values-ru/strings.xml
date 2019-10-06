@@ -2,5 +2,4 @@
 <resources>
     <string name="again_press_for_exit">Нажми ещё раз!</string>
     <string name="error404"><![CDATA["<h3>Страница не найдена</h3>Ссылка \"%s\" не найдена<p>Убедитесь в доступности ресурса<h5><a href="back">Назад</a></h5>"]]></string>
-    <string name="string_not_found">STRING NOT FOUND!!!</string>
 </resources>

@@ -43,16 +43,16 @@ open class Form : DialogFragment(), LoaderManager.LoaderCallbacks<RecordSet>, Vi
 	private var prevTag                         = ""
 	
 	/** Разметка */
-	protected lateinit var content: ViewGroup
+	lateinit var content: ViewGroup
 	
 	/** Корневой элемент */
-	protected lateinit var root: ViewGroup
+	lateinit var root: ViewGroup
 	
 	/** Адаптер */
 	protected lateinit var adapter: RecordAdapter
 	
 	/** Анимация дрожания */
-	@JvmField protected val shake: Animation = AnimationUtils.loadAnimation(wnd, R.anim.shake)
+	protected lateinit var shake: Animation
 	
 	/** Передача результата */
 	@JvmField protected var result     = Result
@@ -111,6 +111,7 @@ open class Form : DialogFragment(), LoaderManager.LoaderCallbacks<RecordSet>, Vi
 	
 	/** Создание представления формы */
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+		shake = AnimationUtils.loadAnimation(wnd, R.anim.shake)
 		wnd.toast = null
 		// загружаем/создаем содержимое
 		content = (inflateContent(inflater).view as ViewGroup).apply {

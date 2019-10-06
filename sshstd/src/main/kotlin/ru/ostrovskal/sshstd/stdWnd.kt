@@ -124,17 +124,27 @@ abstract class Wnd : Activity(), Handler.Callback {
 		// тэг для поиска формы
 		val tag 		= getString(forms[idx * 4 + 2])
 		// признак добавления в стэк
-		val stack	= forms[idx * 4 + 3] == 1
+		val stack	= forms[idx * 4 + 3]// == 1
 		// основные/переданные аргументы
 		params.put("IDX", idx)
-		for(index in 0 until args.size step 2) { params.put(args[index].toString(), args[index + 1]) }
+		for(index in args.indices step 2) { params.put(args[index].toString(), args[index + 1]) }
 		form.arguments = params
 		// отображаем фрагмент
 		val trans = fragmentManager.beginTransaction()
 		form.setAnimation(trans)
 		// выбираем как создать
-		if(container == 0) trans.add(form, tag) else trans.replace(container, form, tag)
-		if(stack) trans.addToBackStack(null)
+		if(container == 0) {
+			trans.add(form, tag)
+		} else {
+			if(stack == 2) {
+				trans.add(container, form, tag)
+			} else {
+				trans.replace(container, form, tag)
+			}
+		}
+		if(stack != 0) {
+			trans.addToBackStack(null)
+		}
 		trans.commit()
 	}
 	

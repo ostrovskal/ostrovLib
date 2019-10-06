@@ -10,11 +10,10 @@ plugins {
 }
 apply {
     plugin("kotlin-android")
-    plugin("kotlin-android-extensions")
 }
 
 // версия библиотеки
-val libVersion = "0.8.9"
+val libVersion = "0.9.4"
 
 // ссылка на сайт размещения проекта
 val siteUrl = "https://github.com/ostrovskal/sshSTD"
@@ -28,7 +27,7 @@ android {
     defaultConfig {
         minSdkVersion(19)
         targetSdkVersion(28)
-        versionCode = 18
+        versionCode = 19
         versionName = libVersion
         resValue("string", "app_name", "sshSTD")
     }
@@ -62,16 +61,16 @@ tasks.named("dokka", DokkaTask::class) {
 
 task<Jar>("sourcesJar") {
     from(android.sourceSets["main"].java.srcDirs)
-    classifier = "sources"
+    archiveClassifier.set("sources")
 }
 
 task<Jar>("dokkaJar") {
-    classifier = "javadoc"
+    archiveClassifier.set("javadoc")
     from(tasks["dokka"])
 }
 
 task<Jar>("assembleJar") {
-    classifier = ""
+    archiveClassifier.set("")
     val arr = rootProject.tasks["assembleRelease"]
     println(arr.name)
     from(arr)
@@ -83,7 +82,6 @@ version = libVersion
 publishing {
     publications {
         create<MavenPublication>("sergey") {
-//            val arr = tasks["assembleJar"]
             artifact(tasks["sourcesJar"])
             artifact(tasks["dokkaJar"])
             artifact("$buildDir/outputs/aar/${project.name}-release.aar")

@@ -83,7 +83,7 @@ const val ATTR_FONT                 = 5 or ATTR_STR
 /** Стиль начертания текста */
 const val ATTR_STYLE                = 6 or ATTR_INT
 /** Выравнивание текста */
-const val ATTR_ALIGN                = 7 or ATTR_INT
+const val ATTR_TEXT_ALIGN           = 7 or ATTR_INT
 /** Тип клавиатуры при вводе текста в поле ввода */
 const val ATTR_IME_OPTIONS          = 8 or ATTR_INT
 /** Тип вводимого текста в поле ввода (текст, цифра и тд.) */
@@ -371,7 +371,7 @@ const val ATTR_SSH_SIZE_SELECTOR_SEL_TAB= 237 or ATTR_INT
                                              ATTR_COLOR_DEFAULT, ATTR_SSH_COLOR_NORMAL or THEME,
                                              ATTR_SIZE, R.dimen.normal,
                                              ATTR_FONT, R.string.font_small,
-                                             ATTR_ALIGN, TEXT_ALIGNMENT_GRAVITY,
+                                             ATTR_TEXT_ALIGN, TEXT_ALIGNMENT_GRAVITY,
                                              ATTR_MIN_HEIGHT, R.dimen.heightRadio,
                                              ATTR_SSH_HORZ, 2, ATTR_SSH_TILE, 0,
                                              ATTR_SSH_SCALE, TILE_SCALE_MIN,
@@ -385,7 +385,7 @@ const val ATTR_SSH_SIZE_SELECTOR_SEL_TAB= 237 or ATTR_INT
                                              ATTR_COLOR_DEFAULT, ATTR_SSH_COLOR_NORMAL or THEME,
                                              ATTR_SIZE, R.dimen.normal,
                                              ATTR_FONT, R.string.font_small,
-                                             ATTR_ALIGN, TEXT_ALIGNMENT_GRAVITY,
+                                             ATTR_TEXT_ALIGN, TEXT_ALIGNMENT_GRAVITY,
                                              ATTR_MIN_HEIGHT, R.dimen.heightCheck,
                                              ATTR_SSH_HORZ, 2,
                                              ATTR_SSH_TILE, 0,
@@ -400,7 +400,7 @@ const val ATTR_SSH_SIZE_SELECTOR_SEL_TAB= 237 or ATTR_INT
                                              ATTR_COLOR_DEFAULT, ATTR_SSH_COLOR_NORMAL or THEME,
                                              ATTR_SIZE, R.dimen.normal,
                                              ATTR_FONT, R.string.font_small,
-                                             ATTR_ALIGN, TEXT_ALIGNMENT_GRAVITY,
+                                             ATTR_TEXT_ALIGN, TEXT_ALIGNMENT_GRAVITY,
                                              ATTR_MIN_HEIGHT, R.dimen.heightSwitch,
                                              ATTR_PADDING_HORZ, 3.dp,
                                              ATTR_SSH_VERT, 2,
@@ -428,7 +428,7 @@ const val ATTR_SSH_SIZE_SELECTOR_SEL_TAB= 237 or ATTR_INT
 
 /** Стиль по умолчанию для Слайдера */
 @JvmField val style_seek                  = intArrayOf(ATTR_MIN_HEIGHT, R.dimen.heightSeek,
-                                             ATTR_SSH_HORZ, 3,
+                                             ATTR_SSH_VERT, 2,
                                              ATTR_SSH_TILE, 0,
                                              ATTR_PADDING_HORZ, 18,
                                              ATTR_MIN_WIDTH, R.dimen.widthSeek,
@@ -449,7 +449,7 @@ const val ATTR_SSH_SIZE_SELECTOR_SEL_TAB= 237 or ATTR_INT
                                              ATTR_CLICKABLE, 1,
                                              ATTR_SSH_TILE, 0,
                                              ATTR_PADDING_HORZ, R.dimen.paddingHorzEdit,
-                                             ATTR_ALIGN, TEXT_ALIGNMENT_GRAVITY,
+                                             ATTR_TEXT_ALIGN, TEXT_ALIGNMENT_GRAVITY,
                                              ATTR_PADDING_VERT, R.dimen.paddingVertEdit,
                                              ATTR_IME_OPTIONS, IME_FLAG_NO_EXTRACT_UI,
                                              ATTR_INPUT_TYPE, android.text.InputType.TYPE_CLASS_TEXT,
@@ -669,9 +669,11 @@ object Theme {
 		return when(value and ATTR_VPROPS_MSK) {
 			THEME   -> drawable(context, theme.themeAttrValue(value, -1, ATTR_DRW), isName)
 			else    -> try {
-				if(!isName) context.resources.getDrawable(value)
+                // Если имя темы не указано, то возвращаем "пустую" картинку
+                val nvalue = if(name.isBlank()) R.drawable.drawable_not_found else value
+                if(!isName) context.resources.getDrawable(nvalue)
 				else {
-					val resName = context.resources.getResourceEntryName(value)
+					val resName = context.resources.getResourceEntryName(nvalue)
 					str = if(resName.startsWith("theme_"))
 						// Вырезаем имя картинки, с именем текущей темы в конце
 						resName.substringBeforeLast('_')
@@ -739,7 +741,10 @@ object Theme {
 					if(attr == ATTR_BACKGROUND) background = drw
 				}
 				(obj as? Tile)?.apply {
-					if(attr == ATTR_SSH_BACKGROUND) drawable.background = drw
+                    when(attr) {
+                        ATTR_SSH_BACKGROUND -> drawable.background = drw
+                        ATTR_SSH_BITMAP_NAME-> setBitmap(str, drawable.horz, drawable.vert, tile)
+                    }
 				}
 				(obj as? TextView)?.apply {
 					when(attr) {
@@ -812,7 +817,7 @@ object Theme {
 					ATTR_COLOR_HIGHLIGHT -> highlightColor = int
 					ATTR_FONT            -> typeface = context.makeFont(str)
 					ATTR_STYLE           -> setTypeface(typeface, int)
-					ATTR_ALIGN           -> textAlignment = int
+					ATTR_TEXT_ALIGN      -> textAlignment = int
 					ATTR_IME_OPTIONS     -> imeOptions = int
 					ATTR_INPUT_TYPE      -> inputType = int
 					ATTR_MAX_LENGTH      -> filters = arrayOf(InputFilter.LengthFilter(int))
@@ -863,7 +868,7 @@ object Theme {
 	
 	/** Установка текущей темы [theme] */
 	@JvmStatic fun setTheme(context: Context, theme: IntArray) {
-		this.name = '_' + string(context, theme.themeAttrValue(ATTR_SSH_THEME_NAME, -1))
+		this.name = string(context, theme.themeAttrValue(ATTR_SSH_THEME_NAME, -1, ATTR_STR))
 		this.theme = theme
 	}
 }

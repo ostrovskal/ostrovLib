@@ -25,24 +25,24 @@ import kotlin.math.roundToInt
  */
 
 /** Символы карты контроллера */
-@JvmField val controllerCharsMap = charArrayOf('F', 'U', 'D', 'L', 'R', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'S', 'D', 'W', ' ')
+@JvmField val controllerCharsMap = charArrayOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ' ')
 
 /** Карта контроллера по умолчанию 8x8 */
-const val mapController = "ULULUUUUUUUUURUR\n" +
-                          "ULULUUUUUUUUURUR\n" +
-                          "LLLLULUFUFURRRRR\n" +
-                          "LLLLLFFFFFRFRRRR\n" +
-                          "LLLLLFFFFFRFRRRR\n" +
-                          "LLLLDLDFDFDRRRRR\n" +
-                          "DLDLDDDDDDDDDRDR\n" +
-                          "DLDLDDDDDDDDDRDR"
+const val mapController = "1313111111111414\n" +
+                          "1313111111111414\n" +
+                          "3333131010144444\n" +
+                          "3333300000404444\n" +
+                          "3333300000404444\n" +
+                          "3333232020244444\n" +
+                          "2323222222222424\n" +
+                          "2323222222222424"
 
 /** Класс, реализующий контроллер управления игровыми событиями со стилем по умолчанию style_controller */
-open class Controller(context: Context, ID: Int, show: Boolean, style: IntArray = style_controller): Tile(context, style) {
+open class Controller(context: Context, ID: Int, grid: Boolean, style: IntArray = style_controller): Tile(context, style) {
 	
 	// Позиция
-	private var tmpPt                  = PointF(-1f, -1f)
-	
+	private var tmpPt				= PointF(-1f, -1f)
+
 	// Нажатые кнопки
 	private var pressedButtons		= 0
 	
@@ -83,7 +83,7 @@ open class Controller(context: Context, ID: Int, show: Boolean, style: IntArray 
 		}
 		// определить ректы всех тайлов
 		buttonsRects = Array(countTiles) { resolveTile(it, Rect()) }
-		if(show) pts = floatArrayOf()
+		if(grid) pts = floatArrayOf()
 		// карта контроллера
 		setControllerMap(mapController)
 	}
@@ -93,18 +93,16 @@ open class Controller(context: Context, ID: Int, show: Boolean, style: IntArray 
 		position.set(xPos, yPos)
 		var mx = 0
 		var my = 0
-		val cellW = szController.w / sizeMap.w
-		val cellH = szController.h / sizeMap.h
 		var xx = xPos - szController.w / 2
 		var yy = yPos - szController.h / 2
 		(parent as? ViewGroup)?.apply {
 			mx = measuredWidth
 			my = measuredHeight
 		}
-		if(xx < -cellW) xx = -cellW
-		else if(mx > 0 && xx + szController.w > mx) xx = mx - szController.w + cellW
-		if(yy < -cellH) yy = -cellH
-		else if(my > 0 && yy + szController.h > my) yy = my - szController.h + cellH
+		if(xx < 0) xx = 0
+		else if(mx > 0 && xx + szController.w > mx) xx = mx - szController.w
+		if(yy < 0) yy = 0
+		else if(my > 0 && yy + szController.h > my) yy = my - szController.h
 		(layoutParams as? AbsoluteLayout.LayoutParams)?.apply {
 			x = xx; y = yy
 			width = szController.w
@@ -116,7 +114,6 @@ open class Controller(context: Context, ID: Int, show: Boolean, style: IntArray 
 	// index of [controllerCharsMap] -> number bit to button of controller
 	/** Установка карты [strMap] кнопок контроллера */
 	fun setControllerMap(strMap: String) {
-		
 		val map = strMap.lines()
 		val cols = map[0].length / 2
 		val rows = map.size
@@ -129,11 +126,20 @@ open class Controller(context: Context, ID: Int, show: Boolean, style: IntArray 
 				controllerMap[x, y] = (f or s).toByte()
 			}
 		}
-		relativeSizeMap.set((cols - 1f) / szController.w, (rows - 1f) / szController.h)
-		if(pts != null) pts = makeWired(cols, rows, szController.w.toFloat(), szController.h.toFloat(),
-		                         szController.w / cols.toFloat(), szController.h / rows.toFloat())
+		setSize(szController.w, szController.h)
 	}
-	
+
+	/** Установка размера */
+	fun setSize(width: Int, height: Int) {
+		val cols = controllerMap[0].toInt()
+		val rows = controllerMap[1].toInt()
+		relativeSizeMap.set((cols - 1f) / width, (rows - 1f) / height)
+		if(pts != null) pts = makeWired(cols, rows, width.toFloat(), height.toFloat(),
+			width / cols.toFloat(), height / rows.toFloat())
+		szController.w = width
+		szController.h = height
+	}
+
 	override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
 		super.onLayout(changed, left, top, right, bottom)
 		if(tmpPt.x >= 0f && tmpPt.y >= 0f && visibility == View.VISIBLE) {
@@ -146,28 +152,26 @@ open class Controller(context: Context, ID: Int, show: Boolean, style: IntArray 
 	
 	/** Обработка событий касания кнопок контроллера */
 	override fun onTouchEvent(event: MotionEvent): Boolean {
-		onTouch(event)
-		repeat(Touch.count) {
-			onButtons(findTouch(it))
-		}
+		onButtons(onTouch(event))
 		return true
 	}
 	
 	/** Обработка события касания кнопок */
-	open fun onButtons(touch: Touch?): Int {
+	open fun onButtons(touch: Touch) {
 		var ret = DIRN
-		val flg = pressedButtons
-		touch?.apply {
-			// определить куда нажали, тип нажатия, вызвать уведомитель и обновить представление
-			val xx = (relativeSizeMap.w * ptCurrent.x).roundToInt()
-			val yy = (relativeSizeMap.h * ptCurrent.y).roundToInt()
-			if(xx < 0 || xx >= controllerMap[0] || yy < 0 || yy >= controllerMap[1]) return pressedButtons
-			ret = controllerMap[xx, yy]
+		val old = pressedButtons
+		// определить куда нажали, тип нажатия, вызвать уведомитель и обновить представление
+		touch.apply {
+			if (press) {
+				val xx = (relativeSizeMap.w * ptCurrent.x).roundToInt()
+				val yy = (relativeSizeMap.h * ptCurrent.y).roundToInt()
+				if (xx >= 0 && xx < controllerMap[0] && yy >= 0 && yy < controllerMap[1])
+					ret = controllerMap[xx, yy]
+			}
 		}
 		pressedButtons = ret
-		controllerButtonNotify?.invoke(pressedButtons)
-		if(flg != ret) invalidate()
-		return ret
+		controllerButtonNotify?.invoke(ret)
+		if (old != ret) invalidate()
 	}
 	
 	/** Сброс */
@@ -181,9 +185,9 @@ open class Controller(context: Context, ID: Int, show: Boolean, style: IntArray 
 		super.draw(canvas)
 		bitmap?.let {
 			if(pressedButtons != 0) {
-				for(bit in 0..31) {
+				for(bit in 0..10) {
 					if(pressedButtons bits bit) {
-						canvas.drawBitmap(it, buttonsRects[bit + 1], drawablePosition, paint)
+						canvas.drawBitmap(it, buttonsRects[bit + 1], drawablePosition, drawable.paint)
 					}
 				}
 			}

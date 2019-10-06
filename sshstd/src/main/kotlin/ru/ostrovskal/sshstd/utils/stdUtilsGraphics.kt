@@ -166,23 +166,23 @@ fun <T> Context.loadResource(name: String, type: String, def: T): T {
 	val ret: Any? = try {
 		resources.run {
 			if(name.isEmpty()) def else {
-				val id = getIdentifier(name, if(type == "fraction") "dimen" else type, packageName)
+				val id = getIdentifier(name, type.split('_')[0], packageName)
 				when(type) {
-					"fraction"  -> getFraction(id, 1, 1)
-					"integer"   -> getInteger(id)
-					"dimen"     -> getDimension(id)
-					"drawable"  -> (getDrawable(id) as? BitmapDrawable)?.bitmap
-					"text"      -> getText(id)
-					"bool"      -> getBoolean(id)
-					"string"    -> getString(id)
-					"array_str" -> getStringArray(id)
-					"array_int" -> getIntArray(id)
-					"array"     -> {
+					"dimen_fraction"	-> getFraction(id, 1, 1)
+					"integer"			-> getInteger(id)
+					"dimen"     		-> getDimension(id)
+					"drawable"  		-> (getDrawable(id) as? BitmapDrawable)?.bitmap
+					"text"      		-> getText(id)
+					"bool"      		-> getBoolean(id)
+					"string"    		-> getString(id)
+					"array_str" 		-> getStringArray(id)
+					"array_int" 		-> getIntArray(id)
+					"color"     		-> getColor(id)
+					"array"     		-> {
 						obtainTypedArray(id).recycledRun {
 							IntArray(length()) { peekValue(it).run { if(resourceId == 0) data else resourceId } }
 						}
 					}
-					"color"     -> getColor(id)
 					else        -> error("Context.getResource() - Неизвестный тип ресурса $type!")
 				}
 			}

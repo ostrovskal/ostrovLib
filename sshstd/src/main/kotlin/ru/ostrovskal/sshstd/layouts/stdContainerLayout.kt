@@ -19,8 +19,8 @@ import ru.ostrovskal.sshstd.utils.*
  * @property percentHeight  Высота, в процентах, относительно родителя
  * @property aligned        Выравниевание по умолчанию
  * */
-open class ContainerLayout(context: Context, @JvmField protected var percentWidth: Int,
-                           @JvmField protected var percentHeight: Int, @JvmField protected var aligned: Boolean):
+open class ContainerLayout(context: Context, @JvmField var percentWidth: Int,
+                           @JvmField var percentHeight: Int, @JvmField protected var aligned: Boolean):
 		FrameLayout(context, null, 0) {
 	
 	/** Установка параметров разметки с шириной [width], высотой [height] и гравитацией [gravity] */

@@ -4,7 +4,6 @@ plugins {
 }
 apply {
     plugin("kotlin-android")
-    plugin("kotlin-android-extensions")
 }
 
 android {
@@ -22,8 +21,8 @@ android {
         applicationId = "com.github.ostrovskal.ostrovlib"
         minSdkVersion(19)
         targetSdkVersion(28)
-        versionCode = 18
-        versionName = "0.8.9"
+        versionCode = 19
+        versionName = "0.9.1"
         resValue("string", "app_name", "ostrovLib")
     }
     buildTypes {

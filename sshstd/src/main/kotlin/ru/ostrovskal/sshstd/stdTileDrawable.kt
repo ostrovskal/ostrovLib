@@ -50,12 +50,15 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 	// Признак внутреннего обновления(для избегания зацикливания)
 	private var isInnerUpdate				= false
 
-	// Количество тайлов по вертикали
-	private var vert                        = 1
+	// оригинальная область
+	private val boundRect					= Rect()
+
+	/** Количество тайлов по вертикали */
+	var vert                        		= 1
 		set(v)                              { field = if(v <= 0) 1 else v }
 	
-	// Количество тайлов по горизонтали
-	private var horz                        = 1
+	/** Количество тайлов по горизонтали */
+	var horz                        		= 1
 		set(v)                              { field = if(v <= 0) 1 else v }
 
 	// Область для восстановления клиппинга
@@ -236,6 +239,7 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 				ATTR_SSH_GRAVITY_ICON   -> alignIcon = Theme.int
 			}
 		}
+		copyBounds(boundRect)
 		setBitmap(keyBitmap, horz, vert, tile)
 	}
 	
@@ -296,7 +300,7 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 	/** Обновление габаритов */
 	fun updateBound(rc: Rect?) {
 		if(isInnerUpdate) return
-		val r = rc ?: bounds
+		val r = rc ?: boundRect
 		val w: Int
 		val h: Int
 		var xx = r.left
@@ -348,6 +352,7 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 	
 	/** Вызывается при изменение габаритов [r] */
 	override fun onBoundsChange(r: Rect) {
+		copyBounds(boundRect)
 		updateBound(r)
 	}
 	

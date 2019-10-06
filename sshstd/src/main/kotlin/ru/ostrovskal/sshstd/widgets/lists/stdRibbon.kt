@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.View
 import ru.ostrovskal.sshstd.objects.Theme
 import ru.ostrovskal.sshstd.utils.edge
+import ru.ostrovskal.sshstd.utils.info
 
 /**
  * @author Шаталов С.В.
@@ -46,7 +47,7 @@ open class Ribbon(context: Context, id: Int, vert: Boolean, style: IntArray) : B
 		var pos = position
 		val h = dividerHeight
 		
-		while(next < mEdgeEnd && pos < mCount) {
+		while(next < mEdgeEnd && pos < mCount && pos >= 0) {
 			next = addView(next, pos, true, -1).edge(mIsVert, true) + h
 			pos++
 		}

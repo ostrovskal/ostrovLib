@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable
 import android.os.Parcelable
 import android.view.Gravity
 import android.view.View
+import android.view.ViewConfiguration
 import android.view.ViewGroup
 import android.widget.Adapter
 import android.widget.ListAdapter
@@ -32,8 +33,8 @@ open class Spinner(context: Context, id: Int, @JvmField val style: IntArray, sty
 	// Обсервер принимающий данные от адаптера
 	private var observer                = SpinnerObserver()
 	
-	// Признак изменения позиции выделения
-	private var mIsSelection           = true
+	/** Признак изменения позиции выделения */
+	@JvmField var mIsSelection          = true
 	
 	/** Всплывающий список */
 	@JvmField protected var mDropdown   = DropdownPopup(context)
@@ -103,7 +104,10 @@ open class Spinner(context: Context, id: Int, @JvmField val style: IntArray, sty
 		set(v)                          {
 			adapter?.apply {
 				repeat(count) {
-					if(v == getItem(it)) { selection = it; return }
+					if(v == getItem(it)) {
+						selection = it
+						return
+					}
 				}
 //				selection = 0
 			}
@@ -154,7 +158,15 @@ open class Spinner(context: Context, id: Int, @JvmField val style: IntArray, sty
 		if(!isShowing) mDropdown.show(textDirection, textAlignment)
 		return true
 	}
-	
+
+	// Объект отложенного клика по элементу
+	private val mClick = Runnable {
+		adapter?.apply {
+			val pos = selection
+			itemClickListener?.invoke(this@Spinner, getChildAt(0), pos, getItemId(pos))
+		}
+	}
+
 	/** @see android.view.View.onLayout */
 	override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
 		removeAllViewsInLayout()
@@ -162,10 +174,6 @@ open class Spinner(context: Context, id: Int, @JvmField val style: IntArray, sty
 			if(count > 0) {
 				val pos = selection
 				val child = getView(pos, null, this@Spinner)
-				if(mIsSelection) {
-					itemClickListener?.invoke(this@Spinner, child, pos, getItemId(pos))
-					mIsSelection = false
-				}
 				val lp = child.layoutParams ?: generateDefaultLayoutParams()
 				addViewInLayout(child, 0, lp)
 				measureChild(child, measuredHeightAndState, measuredWidthAndState)
@@ -183,14 +191,17 @@ open class Spinner(context: Context, id: Int, @JvmField val style: IntArray, sty
 					else                      -> childrenLeft
 				}
 				child.offsetLeftAndRight(selectedOffset)
+				if(mIsSelection) postDelayed(mClick, ViewConfiguration.getTapTimeout().toLong())
+				mIsSelection = false
 			}
 		}
 		
 		invalidate()
 	}
 	
-	/** Вычисленте габаритов заголовка */
+	/** Вычисление габаритов заголовка */
 	override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+		super.onMeasure(widthMeasureSpec, heightMeasureSpec)
 		val widthMode = MeasureSpec.getMode(widthMeasureSpec)
 		
 		var preferredHeight = verticalPadding
@@ -207,15 +218,14 @@ open class Spinner(context: Context, id: Int, @JvmField val style: IntArray, sty
 				}
 			}
 		}
-		preferredHeight = Math.max(preferredHeight, suggestedMinimumHeight)
-		preferredWidth = Math.max(preferredWidth, suggestedMinimumWidth)
+		preferredHeight = preferredHeight.coerceAtLeast(suggestedMinimumHeight)
+		preferredWidth = preferredWidth.coerceAtLeast(suggestedMinimumWidth)
 		
 		val heightSize = View.resolveSizeAndState(preferredHeight, heightMeasureSpec, 0)
 		val widthSize = View.resolveSizeAndState(preferredWidth, widthMeasureSpec, 0)
 		
 		if(widthMode == MeasureSpec.AT_MOST)
-			setMeasuredDimension(Math.min(Math.max(measuredWidth, measureContentWidth(adapter)),
-			                              MeasureSpec.getSize(widthMeasureSpec)), measuredHeight)
+			setMeasuredDimension(measuredWidth.coerceAtLeast(measureContentWidth(adapter)).coerceAtMost(MeasureSpec.getSize(widthMeasureSpec)), measuredHeight)
 		else setMeasuredDimension(widthSize, heightSize)
 	}
 	
@@ -226,17 +236,17 @@ open class Spinner(context: Context, id: Int, @JvmField val style: IntArray, sty
 		val widthMeasureSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
 		val heightMeasureSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
 		
-		var start = Math.max(0, mDropdown.selection)
-		val end = Math.min(adapter?.count ?: 0, start + 15)
+		var start = 0.coerceAtLeast(mDropdown.selection)
+		val end = (adapter?.count ?: 0).coerceAtMost(start + 15)
 		val count = end - start
 		
-		start = Math.max(0, start - (15 - count))
+		start = 0.coerceAtLeast(start - (15 - count))
 		
 		for(i in start until end) {
 			itemView = adapter?.getView(i, itemView, this)?.apply {
 				if(layoutParams == null) layoutParams = LayoutParams(WRAP, WRAP)
 				measure(widthMeasureSpec, heightMeasureSpec)
-				width = Math.max(width, measuredWidth)
+				width = width.coerceAtLeast(measuredWidth)
 			}
 		}
 		return width
@@ -281,7 +291,7 @@ open class Spinner(context: Context, id: Int, @JvmField val style: IntArray, sty
 					var contentWidth = measureContentWidth(adapter)
 					val contentWidthLimit = dMetrics.widthPixels
 					if(contentWidth > contentWidthLimit) contentWidth = contentWidthLimit
-					Math.max(contentWidth, spinnerPadding)
+					contentWidth.coerceAtLeast(spinnerPadding)
 				}
 				MATCH -> spinnerPadding
 				else  -> dropdownWidth

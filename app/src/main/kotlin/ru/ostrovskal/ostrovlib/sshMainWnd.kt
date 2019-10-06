@@ -9,10 +9,10 @@ import android.os.Handler
 import android.os.Looper
 import android.os.Message
 import android.view.SurfaceHolder
-import android.view.View.TEXT_ALIGNMENT_CENTER
 import android.view.ViewGroup
 import ru.ostrovskal.sshstd.*
 import ru.ostrovskal.sshstd.Common.*
+import ru.ostrovskal.sshstd.adapters.ArrayListAdapter
 import ru.ostrovskal.sshstd.json.JAdapter
 import ru.ostrovskal.sshstd.layouts.AbsoluteLayout
 import ru.ostrovskal.sshstd.objects.*
@@ -171,6 +171,7 @@ class MainWnd : Wnd() {
 		ret.info()
 		j.deserialize(this, ret)
 */
+
 		Abs(this).setContent(this, SSH_APP_MODE_GAME)
 		// загружаем фрагмент
 		if(savedInstanceState == null) {
@@ -179,7 +180,7 @@ class MainWnd : Wnd() {
 	}
 	
 	override fun applyTheme() {
-		Theme.setTheme(this, if(typeTheme == 0) std_theme_d else std_theme_l)
+		Theme.setTheme(this, if(typeTheme == 0) std_theme_l else std_theme_d)
 	}
 	
 	override fun initialize(restart: Boolean) {
@@ -216,9 +217,6 @@ class MainWnd : Wnd() {
 		super.onStart()
 	}
 	
-	override fun onBackPressed() {
-		if(nhtml?.back() == false) super.onBackPressed()
-	}
 }
 
 class SpinnerItem1 : UiComponent() {
@@ -270,119 +268,29 @@ class ExampleSurface(context: Context) : Surface(context) {
 class Abs(val wnd: MainWnd): UiComponent() {
 	override fun createView(ui: UiCtx) = with(ui) {
 		cellLayout(10, 10) {
-			stretchLayout(true) {
-				padding = 15.dp
-				/*
-				chartCircular {
-					this.beginAngle = 20f
-					this.checkedRadius = 15
-					this.innerRadius = 30
-					this.checkedSegments = intArrayOf(0, 2, 4, 6, 8)
-					this.currentValuesSegments = intArrayOf(600, 800, 100, 400, 350, 1000, 700, 500, 650, 900)
-					this.colorsSegments = context.resources.getString(R.string.colors_chart_circular).toIntArray(10, Color.RED, 10, true, ',')
-				}
-				*/
-				button {
-					iconResource = R.integer.I_YES
-					states = TILE_STATE_PRESS or TILE_STATE_SHADOW
-					scaleIcon = 0.5f
-					alignIcon = TILE_GRAVITY_START
-					text = "Sergey"
-				}
-				radioGroup(false) {
-					radio(10001, R.string.radio1) {
-						align = TILE_GRAVITY_LEFT or TILE_GRAVITY_RIGHT or TILE_GRAVITY_CENTER
-						textAlignment = TEXT_ALIGNMENT_CENTER
-					}
-					radio(10002, R.string.radio2) {
-
-					}
-				}//.lps(MATCH, 120.dp)
-				/*
-				chartDiagram {
-					backgroundSet {
-						gradient = intArrayOf(Color.WHITE, Color.GRAY)
-						gradientDir = DIRD
-						shape = TILE_SHAPE_ROUND
-						radii = floatArrayOf(20f, 10f, 20f, 10f, 20f, 10f, 20f, 10f)
-						setBitmap("menu_common")
-						selectorColor = Color.WHITE
-						selectorWidth = 5f
-					}
-					this.direction = DIRD
-					this.colorsSegments = context.resources.getString(R.string.colors_chart_diagram).toIntArray(14, Color.RED, 10, true, ',')
-					this.maxValuesSegments = intArrayOf(1000, 1000, 1000, 1000, 1000, 1000, 1000)
-					this.currentValuesSegments = intArrayOf(600, 800, 200, 400, 350, 1000, 700)
-				}
-				*/
-				seek(R.id.seek, 0..9, true) {
-					//animThumb = SEEK_ANIM_ROTATE// or SEEK_ANIM_SCALE
-					progress = 5
-					//scale = TILE_SCALE_HEIGHT
-					align = TILE_GRAVITY_LEFT
-					//align = TILE_GRAVITY_LEFT or TILE_GRAVITY_END
-				}
-				stretchLayout(true) {
-					progress(10004, 100, SSH_MODE_DIAGRAM) {
-						padding = 5.dp
-						direction = DIRR
-						textSize = 20f
-						primaryProgress = 50
-						secondaryProgress = 80
-						//keyBitmap = "blue"
-					}//.lps(40.dp, MATCH)
-					progress(R.id.progress1, 100, SSH_MODE_CIRCULAR) {
-						padding = 15.dp
-						direction = DIRD
-						textSize = 20f
-						primaryProgress = 0
-						secondaryProgress = 0
-						keyBitmap = "blue"
-					}//.lps(40.dp, MATCH)
-				}//.lps(MATCH, 110.dp)
-			}.lps(0, 0, 10, 10)
-//			surface = custom<ExampleSurface> {}.lps(0, 0, MATCH, if(config.portrait) 300.dp else 200.dp)
-			/*
-			setOnTouchListener { _, event ->
-				onTouch(event)?.let {
-					(if(it.ptCurrent.x > (dMetrics.widthPixels / 2)) ctr1 else ctr2).apply {
-						if(visibility != View.VISIBLE) {
-							visibility = View.VISIBLE
-							updatePosition(it.ptCurrent.x.toInt(), it.ptCurrent.y.toInt())
-						}
-					}
-				}
-				true
-			}
 			tabLayout {
-				tabChangeListener = {tab, content ->
-					if(tab == 0) {
-						content.byIdx<Chart>(0).startAnimation()
-					}
-					wnd.hand?.send(act = MsgEx.TAB_CHANGED.ordinal, a1 = tab)
-				}
-				page(R.id.page1, nIcon = R.integer.I_CANCEL) {
-					linearLayout(true) {
+				page(R.id.page1, R.string.check1) {
+					cellLayout(20, 10, 0, true) {
 						chartDiagram {
 							this.direction = DIRD
 							this.colorsSegments = context.resources.getString(R.string.colors_chart_diagram).toIntArray(14, Color.RED, 10, true, ',')
 							this.maxValuesSegments = intArrayOf(1000, 1000, 1000, 1000, 1000, 1000, 1000)
 							this.currentValuesSegments = intArrayOf(600, 800, 200, 400, 350, 1000, 700)
-						}.lps(MATCH, MATCH)
+						}.lps(0, 0, 20, 10)
 					}
 				}
-				page(R.id.page2, nIcon = R.integer.I_EDITOR) {
-					linearLayout(true) {
+				page(R.id.page2, R.string.check2) {
+					cellLayout(10, 10) {
 						chartDiagram {
 							this.direction = DIRU
 							this.colorsSegments = context.resources.getString(R.string.colors_chart_diagram).toIntArray(14, Color.RED, 10, true, ',')
 							this.maxValuesSegments = intArrayOf(1000, 1000, 1000, 1000, 1000, 1000, 1000)
 							this.currentValuesSegments = intArrayOf(600, 800, 200, 400, 350, 1000, 700)
-						}.lps(MATCH, MATCH)
+						}.lps(0, 0, 10, 10)
 					}
 				}
-				page(R.id.page3, nIcon = R.integer.I_OPTIONS) {
-					cellLayout(10, 10) {
+				page(R.id.page3, R.string.check3) {
+					cellLayout(10, 20, 0, true) {
 						backgroundSet {
 							setBitmap("menu_common")
 						}
@@ -403,8 +311,7 @@ class Abs(val wnd: MainWnd): UiComponent() {
 						}.lps(2, 2, 6, 6)
 					}
 				}
-			}.lps(0, 5, 10, 5)
-			*/
+			}//.lps(0, 0, 10, 10)
 /*
 			tabLayout {
 				content.apply {

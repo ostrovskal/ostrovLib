@@ -45,7 +45,7 @@ open class TabLayout(context: Context, idContent: Int, @JvmField protected val c
 	@JvmField var isDrawInactiveStrips  = false
 	
 	/** Содержимое текущей вкладки */
-	@JvmField var currentContent: ViewGroup? = null
+	lateinit var currentContent: ViewGroup
 
 	/** Заголовок */
 	@JvmField val caption               = Caption(context, captionPos test DIRH)
@@ -68,7 +68,8 @@ open class TabLayout(context: Context, idContent: Int, @JvmField protected val c
 			if(v != field && v >= 0 && v < content.childCount) {
 				if(field != -1) content.getChildAt(field).visibility = View.GONE
 				field = v
-				currentContent = (content.getChildAt(v) as? ViewGroup)?.apply {
+                currentContent = content.getChildAt(v) as ViewGroup
+				currentContent.apply {
 					tabChangeListener?.invoke(v, this)
 					visibility = View.VISIBLE
 					caption.invalidate()
@@ -90,14 +91,16 @@ open class TabLayout(context: Context, idContent: Int, @JvmField protected val c
 	/** Позиционирование на разметке */
 	@SuppressLint("DrawAllocation")
 	override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+		super.onLayout(changed, l, t, r, b)
 		if(changed) {
 			val vert = captionPos test DIRV
-			caption.layoutParams = LayoutParams(if(vert) MATCH else measuredWidth.fromPercent(sizeCaption),
-			                                   if(vert) measuredHeight.fromPercent(sizeCaption) else MATCH)
+			caption.layoutParams = LayoutParams(
+				if (vert) MATCH else measuredWidth.fromPercent(sizeCaption),
+				if (vert) measuredHeight.fromPercent(sizeCaption) else MATCH
+			)
 		}
-		super.onLayout(changed, l, t, r, b)
 	}
-	
+
 	/** Удаление всех представлений */
 	override fun removeAllViews() {
 		super.removeAllViews()
@@ -107,7 +110,7 @@ open class TabLayout(context: Context, idContent: Int, @JvmField protected val c
 	}
 	
 	/** Добавление страницы с текстом [text], либо рисунком [nTile], либо иконкой [nIcon] */
-	fun page(id: Int, text: String = "", nTile: Int = -1, nIcon: Int = -1, init: Content.() -> View) {
+	fun page(id: Int, text: Int = -1, nTile: Int = -1, nIcon: Int = -1, init: Content.() -> View) {
 		val indicator = Tile(context, style).apply {
 			if(nTile != -1) {
 				if(nTile test 0x7f000000) tileResource = nTile else tile = nTile
@@ -115,7 +118,7 @@ open class TabLayout(context: Context, idContent: Int, @JvmField protected val c
 			if(nIcon != -1) {
 				if(nIcon test 0x7f000000) iconResource = nIcon else tileIcon = nIcon
 			}
-			this.text = text.toUpperCase()
+			this.text = if(text != -1) resources.getString(text) else ""
 		}
 		indicator.tag = caption.childCount
 		caption.addView(indicator, LayoutParams(MATCH, MATCH))
