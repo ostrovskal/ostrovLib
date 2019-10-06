@@ -8,10 +8,8 @@ import android.graphics.Paint
 import android.graphics.Point
 import android.view.View
 import android.view.ViewGroup
-import ru.ostrovskal.sshstd.Common.MATCH
-import ru.ostrovskal.sshstd.Common.WRAP
+import ru.ostrovskal.sshstd.Common.*
 import ru.ostrovskal.sshstd.SizeF
-import ru.ostrovskal.sshstd.objects.ATTR_SSH_COLOR_WIRED
 import ru.ostrovskal.sshstd.objects.Theme
 import ru.ostrovskal.sshstd.utils.*
 import kotlin.math.roundToInt
@@ -159,7 +157,7 @@ open class CellLayout(context: Context, @JvmField protected var cols: Int, @JvmF
 		if(!willNotDraw())
 			pts = makeWired(cols, rows, (r - l).toFloat(), (b - t).toFloat(), cellW, cellH)
 	}
-	
+
 	/** Проверка параметров */
 	override fun checkLayoutParams(p: ViewGroup.LayoutParams): Boolean = p is LayoutParams
 	

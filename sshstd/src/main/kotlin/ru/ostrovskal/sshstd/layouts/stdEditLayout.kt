@@ -1,10 +1,10 @@
 package ru.ostrovskal.sshstd.layouts
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.View
-import android.view.ViewGroup
 import ru.ostrovskal.sshstd.Animator
-import ru.ostrovskal.sshstd.objects.style_text_hint
+import ru.ostrovskal.sshstd.Common.style_text_hint
 import ru.ostrovskal.sshstd.widgets.Edit
 import ru.ostrovskal.sshstd.widgets.Text
 
@@ -14,39 +14,43 @@ import ru.ostrovskal.sshstd.widgets.Text
  */
 
 /** Класс, реализующий разметку с полем ввода, имеющим всплывающую текстовую подсказку */
-open class EditLayout(context: Context, cols: Int, rows: Int) : CellLayout(context, cols, rows) {
-	
+open class EditLayout(context: Context) : AbsoluteLayout(context) {
+
+	private var isInit					= false
+
 	// Текущая вертикальная позиция редактора
 	private var yEditor					= 0
 	
 	// Текущая высота редактора
 	private var hEditor					= 0
-	
+
 	// Текущая вертикальная позиция хинта
 	private var yHint					= 0
 	
 	/** Редактор */
-	lateinit var edit: Edit
+	private var edit: Edit?				= null
 	
 	// Хинт
 	private val hint					= Text(context, style_text_hint)
 	
 	// Признак пустого текста в редакторе
 	private var emptyText				= true
-	
+
 	// Аниматор
 	private val animator				by lazy {
-		Animator(this, 7, 50) { _, animator, frame, direction, began ->
-			(edit.layoutParams as? LayoutParams)?.apply {
+		Animator(this, 8, 40) { _, animator, frame, direction, began ->
+			(edit?.layoutParams as? LayoutParams)?.apply {
 				(hint.layoutParams as? LayoutParams)?.let { lh ->
+					val v = frame * 4
 					if(began) {
 						yEditor = y
-						hEditor = h
+						hEditor = height
 						yHint = lh.y
 					}
-					lh.y = yHint - frame
-					y = yEditor + frame
-					h = hEditor - frame / 2
+					lh.y = yHint - v
+					//lh.x = xHint
+					y = yEditor + v
+					height = hEditor - v
 				}
 			}
 			requestLayout()
@@ -59,17 +63,15 @@ open class EditLayout(context: Context, cols: Int, rows: Int) : CellLayout(conte
 		set(v) {
 			val state 		= if(v) View.VISIBLE else View.GONE
 			visibility 			= state
-			edit.visibility 	= state
+			edit?.visibility 	= state
 			hint.visibility 	= state
 		}
 	
 	/** Добавление нового представления в разметку */
-	override fun addView(child: View?, idx: Int, params: ViewGroup.LayoutParams?) {
-		var lp = params
+	override fun addView(child: View?, idx: Int) {
 		if(child is Edit) {
 			hint.text = child.hint
 			hint.visibility = visibility
-			lp = LayoutParams(0, 0, cols, rows)
 			edit = child.apply {
 				hint = null
 				changeTextLintener = { text ->
@@ -81,7 +83,21 @@ open class EditLayout(context: Context, cols: Int, rows: Int) : CellLayout(conte
 				}
 			}
 		}
-		super.addView(child, idx, lp)
-		if(edit == child) addView(hint, -1, LayoutParams(1, 0, cols - 2, rows))
+		super.addView(child, idx)
+		if(child == edit) addView(hint, -1)
+	}
+
+	@SuppressLint("DrawAllocation")
+	override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+		super.onLayout(changed, l, t, r, b)
+		edit?.let {
+			val x = (hint.layoutParams as? LayoutParams)?.x ?: return
+			val px = it.paddingLeft
+			if(px == x) isInit = true
+			if(!isInit) {
+				it.layoutParams = LayoutParams(measuredWidth, measuredHeight, 0, 0)
+				hint.layoutParams = LayoutParams(measuredWidth - it.paddingLeft, measuredHeight, px, 0)
+			}
+		}
 	}
 }

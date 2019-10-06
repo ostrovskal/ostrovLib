@@ -51,4 +51,6 @@
     <dimen name="paddingVertToast">8dp</dimen>
     <dimen name="vertOffsSelect">1dp</dimen>
     <dimen name="horzOffsSelect">0dp</dimen>
+    <dimen name="padHorzSwitch">3dp</dimen>
+    <dimen name="paddingEditEx">7dp</dimen>
 </resources>

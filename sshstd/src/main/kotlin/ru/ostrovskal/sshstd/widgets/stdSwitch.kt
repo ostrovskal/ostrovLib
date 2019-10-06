@@ -5,9 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Rect
 import android.os.Parcelable
 import android.view.MotionEvent
-import ru.ostrovskal.sshstd.Common.dMetrics
-import ru.ostrovskal.sshstd.Common.iRect
-import ru.ostrovskal.sshstd.objects.ATTR_SSH_THUMB_WIDTH
+import ru.ostrovskal.sshstd.Common.*
 import ru.ostrovskal.sshstd.objects.Theme
 import ru.ostrovskal.sshstd.onTouch
 import ru.ostrovskal.sshstd.touchClick

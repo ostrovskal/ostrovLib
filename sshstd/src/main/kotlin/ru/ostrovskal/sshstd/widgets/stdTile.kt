@@ -11,7 +11,6 @@ import android.view.View
 import ru.ostrovskal.sshstd.Animator
 import ru.ostrovskal.sshstd.Common.*
 import ru.ostrovskal.sshstd.TileDrawable
-import ru.ostrovskal.sshstd.objects.ATTR_CHECKED
 import ru.ostrovskal.sshstd.objects.Theme
 import ru.ostrovskal.sshstd.utils.*
 

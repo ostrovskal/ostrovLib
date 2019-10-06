@@ -3,8 +3,8 @@ package ru.ostrovskal.sshstd.ui
 import android.view.ViewManager
 import com.github.ostrovskal.sshstd.R
 import ru.ostrovskal.sshstd.Common.DIRU
+import ru.ostrovskal.sshstd.Common.style_tab_page
 import ru.ostrovskal.sshstd.layouts.*
-import ru.ostrovskal.sshstd.objects.style_tab_page
 import ru.ostrovskal.sshstd.utils.uiView
 
 /** Реализация линейной разметки с ориентацией [vert] и инициализатором [init] */
@@ -47,5 +47,5 @@ inline fun ViewManager.cellLayout(cols: Int, rows: Int, spacing: Int = 0, show: 
 		= uiView({ CellLayout(it, cols, rows, spacing, show) }, init)
 
 /** Реализация разметки для анимированного поля ввода с инициализатором [init] */
-inline fun ViewManager.editLayout(cols: Int = 19, rows: Int = 18, init: EditLayout.() -> Unit) = uiView({ EditLayout(it, cols, rows) }, init)
+inline fun ViewManager.editLayout(init: EditLayout.() -> Unit) = uiView({ EditLayout(it) }, init)
 

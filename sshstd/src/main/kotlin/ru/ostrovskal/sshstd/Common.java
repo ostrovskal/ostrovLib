@@ -6,9 +6,17 @@ import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.widget.ListPopupWindow;
+
+import com.github.ostrovskal.sshstd.R;
+
+import static android.view.View.GONE;
+import static android.view.View.TEXT_ALIGNMENT_GRAVITY;
+import static android.view.inputmethod.EditorInfo.IME_FLAG_NO_EXTRACT_UI;
 
 /** Java класс, являющийся контейнером для глобальных переменных и констант */
 public final class Common
@@ -80,6 +88,32 @@ public final class Common
     public static final ColorMatrixColorFilter fltFocused =
             new ColorMatrixColorFilter(new ColorMatrix(new float[]{1.35f, 0.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.35f, 0.00f, 0.00f, 0.00f,
                                                                    0.00f, 0.00f, 1.35f, 0.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.35f, 0.00f}));
+    /** Цветовые фильтры. Красный */
+    public static final ColorMatrixColorFilter fltRed =
+            new ColorMatrixColorFilter(new ColorMatrix(new float[]{1.00f, 1.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 0.00f, 0.00f, 0.00f,
+                                                                   0.00f, 0.00f, 0.00f, 0.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f}));
+    /** Цветовые фильтры. Зеленый */
+    public static final ColorMatrixColorFilter fltGreem =
+            new ColorMatrixColorFilter(new ColorMatrix(new float[]{0.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 1.00f, 1.00f, 0.00f, 0.00f,
+                                                                   0.00f, 0.00f, 0.00f, 0.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f}));
+    /** Цветовые фильтры. Синий */
+    public static final ColorMatrixColorFilter fltBlue =
+            new ColorMatrixColorFilter(new ColorMatrix(new float[]{0.00f, 0.00f, 0.00f, 0.00f, 0.00f, 0.00f, 0.00f, 0.00f, 0.00f, 0.00f,
+                                                                   1.00f, 1.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f}));
+    /** Цветовые фильтры. Инверсия */
+    public static final ColorMatrixColorFilter fltInvert =
+            new ColorMatrixColorFilter(new ColorMatrix(new float[]{-1.00f, 0.00f, 0.00f, 0.00f, 255.00f, 0.00f, -1.00f, 0.00f, 0.00f, 255.00f,
+                                                                   0.00f, 0.00f, -1.00f, 0.00f, 255.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f}));
+    /** Цветовые фильтры. Черный бинарный */
+    public static final ColorMatrixColorFilter fltBlackBinary =
+            new ColorMatrixColorFilter(new ColorMatrix(new float[]{85.00f, 85.00f, 85.00f, 0.00f, -128.00f * 255.00f, 85.00f, 85.00f, 85.00f, 0.00f,
+                                                                   -128.00f * 255.00f, 85.00f, 85.00f, 85.00f, 0.00f, -128.00f * 255.00f, 0.00f, 0.00f,
+                                                                   0.00f, 1.00f, 0.00f}));
+    /** Цветовые фильтры. Черный бинарный */
+    public static final ColorMatrixColorFilter fltBinary =
+            new ColorMatrixColorFilter(new ColorMatrix(new float[]{255.0f, 0.00f, 0.00f, 0.00f, -128.00f * 255.00f, 0.00f, 255.00f, 0.00f, 0.00f,
+                                                                   -128.00f * 255.00f, 0.00f, 0.00f, 255.00f, 0.00f, -128.00f * 255.00f, 0.00f,
+                                                                   0.00f, 0.00f, 1.00f, 0.00f}));
     /** Идентификатор загрузчика */
     public static final int CONNECTOR           = 1;
 
@@ -504,4 +538,669 @@ public final class Common
                                                                   GradientDrawable.Orientation.BL_TR,
                                                                   GradientDrawable.Orientation.BOTTOM_TOP,
                                                                   GradientDrawable.Orientation.TL_BR};
+
+    /** Свойство атрибута. Целое  */
+    public static final int ATTR_INT              = 0x00800000;
+
+    /** Свойство атрибута. Вещественное  */
+    public static final int ATTR_FLT              = 0x00400000;
+
+    /** Свойство атрибута. Строка  */
+    public static final int ATTR_STR              = 0x00200000;
+
+    /** Свойство атрибута. Логическое  */
+    public static final int ATTR_BOL              = 0x00100000;
+
+    /** Свойство атрибута. dimen  */
+    public static final int ATTR_DMN              = 0x00080000;
+
+    /** Свойство атрибута. Drawable  */
+    public static final int ATTR_DRW              = 0x00040000;
+
+    /** Типы атрибута. Значение из текущей темы  */
+    public static final int THEME                 = -0x80000000;
+
+    /** Типы атрибута. Цвет  */
+    public static final int COLOR                 = 0x40000000;
+
+    /** Типы атрибута. Значение из ресурсов  */
+    public static final int IDRES                 = 0x70000000;
+
+    /** Маска значения атрибута  */
+    public static final int ATTR_VALUE_MSK        = 0x0fffffff;
+
+    /** Маска свойств значения атрибута  */
+    public static final int ATTR_APROPS_MSK       = 0x00fc0000;
+
+    /** Маска свойств типа атрибута  */
+    public static final int ATTR_VPROPS_MSK       = -0x10000000;
+
+    /** Маска индекса атрибута  */
+    public static final int ATTR_ATTR_MSK         = 0x0000ffff;
+
+// Текстовые атрибуты стилей
+    /** Цвет текста по умолчанию */
+    public static final int ATTR_COLOR_DEFAULT        = 0 | ATTR_INT;
+    /** Цвет подсказки поля ввода */
+    public static final int ATTR_COLOR_HINT           = 1 | ATTR_INT;
+    /** Цвет ссылки в html */
+    public static final int ATTR_COLOR_LINK           = 2 | ATTR_INT;
+    /** Цвет подсвеченного текста */
+    public static final int ATTR_COLOR_HIGHLIGHT      = 3 | ATTR_INT;
+    /** Размер шрифта */
+    public static final int ATTR_SIZE                 = 4 | ATTR_FLT;
+    /** Шрифт */
+    public static final int ATTR_FONT                 = 5 | ATTR_STR;
+    /** Стиль начертания текста */
+    public static final int ATTR_STYLE                = 6 | ATTR_INT;
+    /** Выравнивание текста */
+    public static final int ATTR_TEXT_ALIGN           = 7 | ATTR_INT;
+    /** Тип клавиатуры при вводе текста в поле ввода */
+    public static final int ATTR_IME_OPTIONS          = 8 | ATTR_INT;
+    /** Тип вводимого текста в поле ввода (текст, цифра и тд.) */
+    public static final int ATTR_INPUT_TYPE           = 9 | ATTR_INT;
+    /** Максимальная длина текста в поле ввода */
+    public static final int ATTR_MAX_LENGTH           = 10 | ATTR_INT;
+    /** Параметры тени текста */
+    public static final int ATTR_SHADOW_TEXT          = 11 | ATTR_STR;
+
+// Стандартные атрибуты стилей
+    /** Внутренний отступ */
+    public static final int ATTR_PADDING              = 50 | ATTR_DMN;
+    /** Внутренний горизонтальный отступ */
+    public static final int ATTR_PADDING_HORZ         = 51 | ATTR_DMN;
+    /** Внутренний вертикальный отступ */
+    public static final int ATTR_PADDING_VERT         = 52 | ATTR_DMN;
+    /** Внутренний левый отступ */
+    public static final int ATTR_PADDING_LEFT         = 53 | ATTR_DMN;
+    /** Внутренний правый отступ */
+    public static final int ATTR_PADDING_RIGHT        = 54 | ATTR_DMN;
+    /** Внутренний верхний отступ */
+    public static final int ATTR_PADDING_TOP          = 55 | ATTR_DMN;
+    /** Внутренний нижний отступ */
+    public static final int ATTR_PADDING_BOTTOM       = 56 | ATTR_DMN;
+    /** Признак возможности клика на представлении */
+    public static final int ATTR_CLICKABLE            = 57 | ATTR_BOL;
+    /** Признак получения фокуса */
+    public static final int ATTR_FOCUSABLE            = 58 | ATTR_BOL;
+    /** Режим отображение представления */
+    public static final int ATTR_VISIBILITY           = 59 | ATTR_INT;
+    /** Гравитация представления */
+    public static final int ATTR_GRAVITY              = 60 | ATTR_INT;
+    /** Минимальная высота представления */
+    public static final int ATTR_MIN_HEIGHT           = 61 | ATTR_DMN;
+    /** Минимальная ширина представления */
+    public static final int ATTR_MIN_WIDTH            = 62 | ATTR_DMN;
+    /** Максимальная высота представления */
+    public static final int ATTR_MAX_HEIGHT           = 63 | ATTR_DMN;
+    /** Максимальная ширина представления */
+    public static final int ATTR_MAX_WIDTH            = 64 | ATTR_DMN;
+    /** Признак доступности представления */
+    public static final int ATTR_ENABLED              = 65 | ATTR_BOL;
+    /** Виды прокруток у представления */
+    public static final int ATTR_SCROLLBARS           = 66 | ATTR_INT;
+    /** Вид отбрасывания тени у представления */
+    public static final int ATTR_FADING_EDGE          = 67 | ATTR_INT;
+    /** Расстояние между ячейками в Grid */
+    public static final int ATTR_SPACING_CELL         = 68 | ATTR_DMN;
+    /** Расстояние между строками в Grid */
+    public static final int ATTR_SPACING_LINE         = 69 | ATTR_DMN;
+    /** Размер ячейки */
+    public static final int ATTR_CELL_SIZE            = 70 | ATTR_DMN;
+    /**  Количество ячеек в Grid */
+    public static final int ATTR_CELL_NUM             = 71 | ATTR_INT;
+    /** Режим отображения ячеек в Grid */
+    public static final int ATTR_STRETCH_MODE         = 72 | ATTR_INT;
+    /** Фон представления */
+    public static final int ATTR_BACKGROUND           = 73 | ATTR_DRW;
+    /** Признак длинного клика на представлении */
+    public static final int ATTR_LONG_CLICKABLE       = 74 | ATTR_BOL;
+    /** Селектор */
+    public static final int ATTR_SELECTOR             = 75 | ATTR_DRW;
+    /** Разделитель */
+    public static final int ATTR_DIVIDER              = 76 | ATTR_DRW;
+    /** Размер разделителя */
+    public static final int ATTR_DIVIDER_SIZE         = 77 | ATTR_DMN;
+    /** Признак того, что  представление было выбрано */
+    public static final int ATTR_CHECKED              = 78 | ATTR_BOL;
+    /** Признак получения фокуса ввода при касании на виджете (поле ввода) */
+    public static final int ATTR_FOCUSABLE_TOUCH_MODE = 79 | ATTR_BOL;
+
+// Библиотечные атрибуты стилей, Доступ к картинкам
+    /** Картинка для тайлов иконок */
+    public static final int ATTR_SSH_BM_ICONS         = 100 | ATTR_DRW;
+    /** Картинка для базовых тайлов */
+    public static final int ATTR_SSH_BM_TILES         = 101 | ATTR_DRW;
+    /** Картинка для фона форм */
+    public static final int ATTR_SSH_BM_BACKGROUND    = 102 | ATTR_DRW;
+    /** Картинка для заголовка форм/диалогов */
+    public static final int ATTR_SSH_BM_HEADER        = 103 | ATTR_DRW;
+    /** Картинка для кнопок */
+    public static final int ATTR_SSH_BM_BUTTONS       = 104 | ATTR_DRW;
+    /** Картинка для инструментальных кнопок */
+    public static final int ATTR_SSH_BM_TOOLS         = 105 | ATTR_DRW;
+    /** Картинка для радио кнопок */
+    public static final int ATTR_SSH_BM_RADIO         = 106 | ATTR_DRW;
+    /** Картинка для флажков */
+    public static final int ATTR_SSH_BM_CHECK         = 107 | ATTR_DRW;
+    /** Картинка для спиннера */
+    public static final int ATTR_SSH_BM_SPINNER       = 108 | ATTR_DRW;
+    /** Картинка для переключателя */
+    public static final int ATTR_SSH_BM_SWITCH        = 109 | ATTR_DRW;
+    /** Картинка для поля ввода */
+    public static final int ATTR_SSH_BM_EDIT          = 110 | ATTR_DRW;
+    /** Картинка для слайдера */
+    public static final int ATTR_SSH_BM_SEEK          = 111 | ATTR_DRW;
+    /** Картинка для главного экрана приложения */
+    public static final int ATTR_SSH_BM_MENU          = 112 | ATTR_DRW;
+
+// Библиотечные атрибуты стилей, Цвета
+    /** Цвет обычного текста */
+    public static final int ATTR_SSH_COLOR_NORMAL     = 150 | ATTR_INT;
+    /** Цвет маленького текста */
+    public static final int ATTR_SSH_COLOR_SMALL      = 151 | ATTR_INT;
+    /** Цвет большого текста */
+    public static final int ATTR_SSH_COLOR_LARGE      = 152 | ATTR_INT;
+    /** Цвет html ссылки */
+    public static final int ATTR_SSH_COLOR_LINK       = 153 | ATTR_INT;
+    /** Цвет подсказки в поле ввода */
+    public static final int ATTR_SSH_COLOR_HINT       = 154 | ATTR_INT;
+    /** Цвет текста заголовка формы/диалога */
+    public static final int ATTR_SSH_COLOR_HEADER     = 155 | ATTR_INT;
+    /** Цвет фона разметки */
+    public static final int ATTR_SSH_COLOR_LAYOUT     = 156 | ATTR_INT;
+    /** Цвет отладочной сетки */
+    public static final int ATTR_SSH_COLOR_WIRED      = 157 | ATTR_INT;
+    /** Цвет разделителя */
+    public static final int ATTR_SSH_COLOR_DIVIDER    = 158 | ATTR_INT;
+    /** Цвет сообщений */
+    public static final int ATTR_SSH_COLOR_MESSAGE    = 159 | ATTR_INT;
+    /** Цвет окон */
+    public static final int ATTR_SSH_COLOR_WINDOW     = 160 | ATTR_INT;
+    /** Цвет html заголовков */
+    public static final int ATTR_SSH_COLOR_HTML_HEADER= 161 | ATTR_INT;
+    /** Цвет селектора */
+    public static final int ATTR_SSH_COLOR_SELECTOR   = 162 | ATTR_INT;
+
+// Библиотечные атрибуты стилей, Виджеты
+    /** Состояние виджета */
+    public static final int ATTR_SSH_STATES               = 200 | ATTR_INT;
+    /** Ограничительная фигура виджета */
+    public static final int ATTR_SSH_SHAPE                = 201 | ATTR_INT;
+    /** Градиентная заливка фона виджета */
+    public static final int ATTR_SSH_GRADIENT             = 202 | ATTR_STR;
+    /** Сплошной цвет заливки фона виджета */
+    public static final int ATTR_SSH_SOLID                = 203 | ATTR_INT;
+    /** Признак отображения отладочной сетки/Текста */
+    public static final int ATTR_SSH_SHOW                 = 204 | ATTR_BOL;
+    /** Реальная ширина ползунка переключателя */
+    public static final int ATTR_SSH_THUMB_WIDTH          = 205 | ATTR_INT;
+    /** Щирина селектора */
+    public static final int ATTR_SSH_WIDTH_SELECTOR       = 206 | ATTR_DMN;
+    /** Направление градиентной заливки фона виджета */
+    public static final int ATTR_SSH_GRADIENT_DIR         = 207 | ATTR_INT;
+    /** Гравитация виджета */
+    public static final int ATTR_SSH_GRAVITY              = 208 | ATTR_INT;
+    /** Имя картинки виджета */
+    public static final int ATTR_SSH_BITMAP_NAME          = 210 | ATTR_DRW;
+    /** Тип анимации ползунка слайдера */
+    public static final int ATTR_SSH_SEEK_ANIM            = 211 | ATTR_INT;
+    /** Ширина контроллера */
+    public static final int ATTR_SSH_CONTROLLER_WIDTH     = 212 | ATTR_DMN;
+    /** Высота контроллера */
+    public static final int ATTR_SSH_CONTROLLER_HEIGHT    = 213 | ATTR_DMN;
+    /** Альфа виджета */
+    public static final int ATTR_SSH_ALPHA                = 214 | ATTR_INT;
+    /** Патч9 для виджета */
+    public static final int ATTR_SSH_PATCH9               = 216 | ATTR_STR;
+    /** Массив углов для скругленного прямоугольника виджета */
+    public static final int ATTR_SSH_RADII                = 217 | ATTR_STR;
+    /** Задержка в анимации */
+    public static final int ATTR_SSH_ANIMATOR_DURATION    = 218 | ATTR_INT;
+    /** Массив цветов(начальный..конечный) сегментов диаграммы */
+    public static final int ATTR_SSH_COLORS               = 219 | ATTR_STR;
+    /** Начальный угол первого сегмента круговой диаграммы */
+    public static final int ATTR_SSH_CHART_BEGIN_ANGLE    = 220 | ATTR_FLT;
+    /** Радиус, в процентах, выделенных сегментов круговой диаграммы */
+    public static final int ATTR_SSH_CHART_CHECK_RADIUS   = 221 | ATTR_INT;
+    /** Величина, в процентах, внутреннего радиуса круговой диаграммы */
+    public static final int ATTR_SSH_CHART_INNER_RADIUS   = 222 | ATTR_INT;
+    /** Смещение тени/нажатия виджета */
+    public static final int ATTR_SSH_PRESSED_OFFS         = 223 | ATTR_FLT;
+    /** Количество тайлов по горизонтали в картинке виджета */
+    public static final int ATTR_SSH_HORZ                 = 224 | ATTR_INT;
+    /** Количество тайлов по вертикали в картинке виджета */
+    public static final int ATTR_SSH_VERT                 = 225 | ATTR_INT;
+    /** Номер тайла по умолчанию в картинке виджета */
+    public static final int ATTR_SSH_TILE                 = 226 | ATTR_INT;
+    /** Номер тайла иконки виджета */
+    public static final int ATTR_SSH_ICON                 = 227 | ATTR_INT;
+    /** Тип масштабирования виджета */
+    public static final int ATTR_SSH_SCALE                = 228 | ATTR_INT;
+    /** Смещение по вертикали при отображение выпадающего списка спиннера */
+    public static final int ATTR_SSH_DROPDOWN_VERT_OFFS   = 220 | ATTR_DMN;
+    /** Смещение по горизонтали при отображение выпадающего списка спиннера */
+    public static final int ATTR_SSH_DROPDOWN_HORZ_OFFS   = 230 | ATTR_DMN;
+    /** Ширина выпадающего списка спиннера */
+    public static final int ATTR_SSH_DROPDOWN_WIDTH       = 231 | ATTR_INT;
+    /** Имя темы */
+    public static final int ATTR_SSH_THEME_NAME           = 232 | ATTR_STR;
+    /** Фон рисунка виджета */
+    public static final int ATTR_SSH_BACKGROUND           = 233 | ATTR_DRW;
+    /** Коеффицент масштабирования иконки относительно размеров виджета */
+    public static final int ATTR_SSH_SCALE_ICON           = 234 | ATTR_INT;
+    /** Тип выравнивания иконки относительно виджета */
+    public static final int ATTR_SSH_GRAVITY_ICON         = 235 | ATTR_INT;
+    /** Размер селектора вкладки */
+    public static final int ATTR_SSH_SIZE_SELECTOR_TAB    = 236 | ATTR_INT;
+    /** Размер селектора активно вкладки */
+    public static final int ATTR_SSH_SIZE_SELECTOR_SEL_TAB= 237 | ATTR_INT;
+
+    /** Стиль по умолчанию для Большого текста */
+    public static final int[] style_text_large            = {
+            ATTR_SHADOW_TEXT, R.string.shadow_text,
+            ATTR_GRAVITY, Gravity.CENTER_VERTICAL,
+            ATTR_COLOR_DEFAULT, ATTR_SSH_COLOR_LARGE | THEME,
+            ATTR_SIZE, R.dimen.large,
+            ATTR_FONT, R.string.font_large};
+
+    /** Стиль по умолчанию для Обычного текста */
+    public static final int[] style_text_normal           = {
+            ATTR_SHADOW_TEXT, R.string.shadow_text,
+            ATTR_GRAVITY, Gravity.CENTER_VERTICAL,
+            ATTR_COLOR_DEFAULT, ATTR_SSH_COLOR_NORMAL | THEME,
+            ATTR_SIZE, R.dimen.normal,
+            ATTR_FONT, R.string.font_normal};
+
+    /** Стиль по умолчанию для Маленького текста */
+    public static final int[] style_text_small            = {
+            ATTR_SHADOW_TEXT, R.string.shadow_text,
+            ATTR_GRAVITY, Gravity.CENTER_VERTICAL,
+            ATTR_COLOR_DEFAULT, ATTR_SSH_COLOR_SMALL | THEME,
+            ATTR_SIZE, R.dimen.small,
+            ATTR_FONT, R.string.font_small
+    };
+
+    /** Стиль по умолчанию для Заголовка форма/диалога */
+    public static final int[] style_text_header           = {
+            ATTR_SHADOW_TEXT, R.string.shadow_text,
+            ATTR_GRAVITY, Gravity.CENTER,
+            ATTR_STYLE, Typeface.BOLD_ITALIC,
+            ATTR_COLOR_DEFAULT, ATTR_SSH_COLOR_HEADER | THEME,
+            ATTR_SIZE, R.dimen.header,
+            ATTR_PADDING, 1,
+            ATTR_SSH_TILE, 0,
+            ATTR_SSH_BITMAP_NAME, ATTR_SSH_BM_HEADER | THEME,
+            ATTR_SSH_PATCH9, R.string.patch9_header,
+            ATTR_FONT, R.string.font_large,
+            ATTR_MIN_HEIGHT, R.dimen.heightHeader
+    };
+
+    /** Стиль по умолчанию для Текста подсказки в поле ввода */
+    public static final int[] style_text_hint             = {
+            ATTR_SHADOW_TEXT, R.string.shadow_text,
+            ATTR_GRAVITY, Gravity.CENTER_VERTICAL,
+            ATTR_COLOR_DEFAULT, ATTR_SSH_COLOR_HINT | THEME,
+            ATTR_SIZE, R.dimen.hint,
+            ATTR_FONT, R.string.font_small};
+
+    /** Стиль по умолчанию для HTML текста */
+    public static final int[] style_text_html             = {
+            ATTR_PADDING, 2,
+            ATTR_SHADOW_TEXT, R.string.shadow_text,
+            ATTR_COLOR_LINK, 0x00ffff | COLOR,
+            ATTR_GRAVITY, Gravity.CENTER,
+            ATTR_COLOR_DEFAULT, ATTR_SSH_COLOR_NORMAL | THEME,
+            ATTR_SIZE, R.dimen.html,
+            ATTR_FONT, R.string.font_small
+    };
+
+    /** Стиль по умолчанию для Текста в диалоге */
+    public static final int[] style_text_dlg              = {
+            ATTR_PADDING, R.dimen.paddingDlg,
+            ATTR_SHADOW_TEXT, R.string.shadow_text,
+            ATTR_GRAVITY, Gravity.CENTER,
+            ATTR_COLOR_DEFAULT, ATTR_SSH_COLOR_LARGE | THEME,
+            ATTR_SIZE, R.dimen.large,
+            ATTR_FONT, R.string.font_normal
+    };
+
+    /** Стиль по умолчанию для Тайла */
+    public static final int[] style_tile                  = {
+            ATTR_SSH_WIDTH_SELECTOR, 0,
+            ATTR_SSH_PRESSED_OFFS, 0,
+            ATTR_COLOR_DEFAULT, ATTR_SSH_COLOR_NORMAL | THEME,
+            ATTR_SIZE, R.dimen.normal,
+            ATTR_FONT, R.string.font_normal,
+            ATTR_CLICKABLE, 0,
+            ATTR_FOCUSABLE, 0,
+            ATTR_SSH_BITMAP_NAME, ATTR_SSH_BM_TILES | THEME
+    };
+
+    /** Стиль по умолчанию для Иконок */
+    public static final int[] style_icon                  = {
+            ATTR_SSH_PRESSED_OFFS, R.dimen.pressedOffs,
+            ATTR_SSH_SCALE, TILE_SCALE_MIN,
+            ATTR_CLICKABLE, 0,
+            ATTR_FOCUSABLE, 0,
+            ATTR_SSH_GRAVITY, TILE_GRAVITY_CENTER | TILE_GRAVITY_BACKGROUND,
+            ATTR_SSH_BITMAP_NAME, ATTR_SSH_BM_ICONS | THEME,
+            ATTR_SSH_SCALE_ICON, 40000,
+            ATTR_SSH_VERT, 3,
+            ATTR_SSH_HORZ, 10
+    };
+
+    /** Стиль по умолчанию для Радио кнопки */
+    public static final int[] style_radio                 = {
+            ATTR_SHADOW_TEXT, R.string.shadow_text,
+            ATTR_STYLE, Typeface.BOLD,
+            ATTR_GRAVITY, Gravity.START | Gravity.CENTER_VERTICAL,
+            ATTR_COLOR_DEFAULT, ATTR_SSH_COLOR_NORMAL | THEME,
+            ATTR_SIZE, R.dimen.normal,
+            ATTR_FONT, R.string.font_small,
+            ATTR_TEXT_ALIGN, TEXT_ALIGNMENT_GRAVITY,
+            ATTR_MIN_HEIGHT, R.dimen.heightRadio,
+            ATTR_SSH_HORZ, 2, ATTR_SSH_TILE, 0,
+            ATTR_SSH_SCALE, TILE_SCALE_MIN,
+            ATTR_SSH_GRAVITY, TILE_GRAVITY_LEFT | TILE_GRAVITY_CENTER_VERT,
+            ATTR_SSH_BITMAP_NAME, ATTR_SSH_BM_RADIO | THEME
+    };
+
+    /** Стиль по умолчанию для Флажка */
+    public static final int[] style_check                 = {
+            ATTR_SHADOW_TEXT, R.string.shadow_text,
+            ATTR_STYLE, Typeface.BOLD,
+            ATTR_GRAVITY, Gravity.START | Gravity.CENTER_VERTICAL,
+            ATTR_COLOR_DEFAULT, ATTR_SSH_COLOR_NORMAL | THEME,
+            ATTR_SIZE, R.dimen.normal,
+            ATTR_FONT, R.string.font_small,
+            ATTR_TEXT_ALIGN, TEXT_ALIGNMENT_GRAVITY,
+            ATTR_MIN_HEIGHT, R.dimen.heightCheck,
+            ATTR_SSH_HORZ, 2,
+            ATTR_SSH_TILE, 0,
+            ATTR_SSH_SCALE, TILE_SCALE_MIN,
+            ATTR_SSH_GRAVITY, TILE_GRAVITY_LEFT | TILE_GRAVITY_CENTER_VERT,
+            ATTR_SSH_BITMAP_NAME, ATTR_SSH_BM_CHECK | THEME
+    };
+
+    /** Стиль по умолчанию для Переключателя */
+    public static final int[] style_switch                = {
+            ATTR_SHADOW_TEXT, R.string.shadow_text,
+            ATTR_STYLE, Typeface.BOLD_ITALIC,
+            ATTR_GRAVITY, Gravity.START | Gravity.CENTER_VERTICAL,
+            ATTR_COLOR_DEFAULT, ATTR_SSH_COLOR_NORMAL | THEME,
+            ATTR_SIZE, R.dimen.normal,
+            ATTR_FONT, R.string.font_small,
+            ATTR_TEXT_ALIGN, TEXT_ALIGNMENT_GRAVITY,
+            ATTR_MIN_HEIGHT, R.dimen.heightSwitch,
+            ATTR_PADDING_HORZ, R.dimen.padHorzSwitch,
+            ATTR_SSH_VERT, 2,
+            ATTR_SSH_TILE, 0,
+            ATTR_SSH_THUMB_WIDTH, 32,
+            ATTR_SSH_SCALE, TILE_SCALE_HEIGHT,
+            ATTR_SSH_GRAVITY, TILE_GRAVITY_RIGHT | TILE_GRAVITY_CENTER_VERT,
+            ATTR_SSH_BITMAP_NAME, ATTR_SSH_BM_SWITCH | THEME
+    };
+
+    /** Стиль по умолчанию для Простой диаграммы */
+    public static final int[] style_chart_diagram         = {
+            ATTR_COLOR_DEFAULT, 0 | COLOR,
+            ATTR_SSH_SHOW, 1,
+            ATTR_SSH_GRADIENT_DIR, DIRU,
+            ATTR_SIZE, R.dimen.chart,
+            ATTR_FONT, R.string.font_small
+    };
+
+    /** Стиль по умолчанию для Круговой диаграммы */
+    public static final int[] style_chart_circular        = {
+            ATTR_COLOR_DEFAULT, 0 | COLOR,
+            ATTR_SSH_SHOW, 1,
+            ATTR_SIZE, R.dimen.chart,
+            ATTR_FONT, R.string.font_small,
+            ATTR_SSH_CHART_BEGIN_ANGLE, 30,
+            ATTR_SSH_CHART_CHECK_RADIUS, 15,
+            ATTR_SSH_CHART_INNER_RADIUS, 50
+    };
+
+    /** Стиль по умолчанию для Слайдера */
+    public static final int[] style_seek                  = {
+            ATTR_MIN_HEIGHT, R.dimen.heightSeek,
+            ATTR_SSH_VERT, 2,
+            ATTR_SSH_TILE, 0,
+            ATTR_PADDING_HORZ, 18,
+            ATTR_MIN_WIDTH, R.dimen.widthSeek,
+            ATTR_SSH_SCALE, TILE_SCALE_MIN,
+            ATTR_SSH_GRAVITY, TILE_GRAVITY_LEFT | TILE_GRAVITY_CENTER_VERT,
+            ATTR_SSH_BITMAP_NAME, ATTR_SSH_BM_SEEK | THEME,
+            ATTR_SSH_SEEK_ANIM, ATTR_SSH_SEEK_ANIM | THEME
+    };
+
+    /** Стиль по умолчанию для Поля ввода */
+    public static final int[] style_edit                  = {
+            ATTR_SHADOW_TEXT, R.string.shadow_text,
+            ATTR_GRAVITY, Gravity.CENTER_VERTICAL,
+            ATTR_COLOR_DEFAULT, ATTR_SSH_COLOR_NORMAL | THEME,
+            ATTR_SIZE, R.dimen.edit,
+            ATTR_FONT, R.string.font_small,
+            ATTR_FOCUSABLE_TOUCH_MODE, 1,
+            ATTR_COLOR_HINT, ATTR_SSH_COLOR_HINT | THEME,
+            ATTR_FOCUSABLE, 1,
+            ATTR_CLICKABLE, 1,
+            ATTR_SSH_TILE, 0,
+            ATTR_PADDING_HORZ, R.dimen.paddingHorzEdit,
+            ATTR_TEXT_ALIGN, TEXT_ALIGNMENT_GRAVITY,
+            ATTR_PADDING_VERT, R.dimen.paddingVertEdit,
+            ATTR_IME_OPTIONS, IME_FLAG_NO_EXTRACT_UI,
+            ATTR_INPUT_TYPE, android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS,
+            ATTR_MAX_LENGTH, 15,
+            ATTR_SSH_BITMAP_NAME, ATTR_SSH_BM_EDIT | THEME,
+            ATTR_SSH_PATCH9, R.string.patch9_edit
+    };
+
+    public static final int[] style_editEx              = {
+            ATTR_FOCUSABLE, 1,
+            ATTR_CLICKABLE, 1,
+            ATTR_SSH_TILE, 0,
+            ATTR_SSH_HORZ, 1,
+            ATTR_SSH_VERT, 1,
+            ATTR_PADDING, R.dimen.paddingEditEx,
+            ATTR_SSH_GRAVITY, TILE_GRAVITY_BACKGROUND,
+            ATTR_SSH_STATES, TILE_STATE_HOVER,
+            ATTR_SSH_BITMAP_NAME, R.drawable.edit_ex
+    };
+
+    /** Стиль по умолчанию для элемента выпадающего списка Spinner */
+    public static final int[] style_spinner_item          = {
+            ATTR_SHADOW_TEXT, R.string.shadow_text,
+            ATTR_COLOR_DEFAULT, ATTR_SSH_COLOR_LARGE | THEME,
+            ATTR_COLOR_HIGHLIGHT, ATTR_SSH_COLOR_NORMAL | THEME,
+            ATTR_GRAVITY, Gravity.CENTER,
+            ATTR_SIZE, R.dimen.normal,
+            ATTR_FONT, R.string.font_normal,
+            ATTR_SSH_BITMAP_NAME, ATTR_SSH_BM_SPINNER | THEME,
+            ATTR_MIN_HEIGHT, R.dimen.heightSelectItem,
+            ATTR_PADDING_HORZ, R.dimen.paddingHorzSelectItem,
+            ATTR_SSH_VERT, 3,
+            ATTR_SSH_PATCH9, R.string.patch9_select_item,
+            ATTR_SSH_TILE, 2
+    };
+
+    /** Стиль по умолчанию для заголовка Spinner */
+    public static final int[] style_spinner_title         = {
+            ATTR_SHADOW_TEXT, R.string.shadow_text,
+            ATTR_COLOR_DEFAULT, ATTR_SSH_COLOR_LARGE | THEME,
+            ATTR_COLOR_HIGHLIGHT, ATTR_SSH_COLOR_NORMAL | THEME,
+            ATTR_PADDING_HORZ, R.dimen.paddingHorzSelectItem,
+            ATTR_GRAVITY, Gravity.CENTER,
+            ATTR_SIZE, R.dimen.large,
+            ATTR_FONT, R.string.font_normal,
+            ATTR_SSH_BITMAP_NAME, ATTR_SSH_BM_SPINNER | THEME,
+            ATTR_SSH_VERT, 3,
+            ATTR_SSH_TILE, 0
+    };
+
+    /** Стиль по умолчанию для объекта Spinner */
+    public static final int[] style_spinner               = {
+            ATTR_CLICKABLE, 1,
+            ATTR_GRAVITY, Gravity.CENTER,
+            ATTR_MIN_HEIGHT, R.dimen.heightSelectCaption,
+            ATTR_SSH_PATCH9, R.string.patch9_select_caption,
+            ATTR_SSH_BITMAP_NAME, ATTR_SSH_BM_SPINNER | THEME,
+            ATTR_SSH_VERT, 3,
+            ATTR_SSH_TILE, 1,
+            ATTR_SSH_DROPDOWN_VERT_OFFS, R.dimen.vertOffsSelect,
+            ATTR_SSH_DROPDOWN_WIDTH, MATCH,
+            ATTR_SELECTOR, ATTR_SSH_COLOR_SELECTOR | THEME,
+            ATTR_DIVIDER_SIZE, 0
+    };
+
+    /** Стиль по умолчанию для Выпадающего списка Spinner*/
+    public static final int[] style_spinner_dropdown      = {
+            ATTR_SSH_BITMAP_NAME, ATTR_SSH_BM_SPINNER | THEME,
+            ATTR_SSH_VERT, 3,
+            ATTR_SSH_TILE, 0,
+            ATTR_PADDING, 5,
+            ATTR_SSH_PATCH9, R.string.patch9_dropdown
+    };
+
+    /** Стиль по умолчанию для Progress */
+    public static final int[] style_progress              = {
+            ATTR_COLOR_DEFAULT, 0xffffff | COLOR,
+            ATTR_SSH_SHOW, 1,
+            ATTR_SIZE, R.dimen.heightProgress,
+            ATTR_SSH_STATES, TILE_STATE_HOVER,
+            ATTR_FONT, R.string.font_small
+    };
+
+    /** Стиль по умолчанию для Элемента списка */
+    public static final int[] style_item                  = {
+            ATTR_SSH_BITMAP_NAME, ATTR_SSH_BM_SPINNER | THEME,
+            ATTR_SSH_VERT, 3,
+            ATTR_SSH_TILE, 2,
+            ATTR_SSH_PATCH9, R.string.patch9_item
+    };
+
+    /** Стиль по умолчанию для Формы */
+    public static final int[] style_form                  = {
+            ATTR_SSH_BITMAP_NAME, ATTR_SSH_BM_BACKGROUND | THEME,
+            ATTR_SSH_TILE, 0
+    };
+
+    /** Стиль по умолчанию для Диалога */
+    public static final int[] style_dlg                   = {
+            ATTR_SSH_BITMAP_NAME, ATTR_SSH_BM_BACKGROUND | THEME,
+            ATTR_SSH_SHAPE, TILE_SHAPE_ROUND,
+            ATTR_SSH_RADII, R.string.radii_dlg
+    };
+
+    /** Стиль по умолчанию для Главного экрана приложения */
+    public static final int[] style_menu                  = {
+            ATTR_SSH_BITMAP_NAME, ATTR_SSH_BM_MENU | THEME,
+            ATTR_SSH_TILE, 0
+    };
+
+    /** Стиль по умолчанию для Контроллера */
+    public static final int[] style_controller            = {
+            ATTR_VISIBILITY, GONE,
+            ATTR_SSH_CONTROLLER_WIDTH, 160,
+            ATTR_SSH_CONTROLLER_HEIGHT, 160,
+            ATTR_SSH_ALPHA, 184,
+            ATTR_SSH_GRAVITY, TILE_GRAVITY_CENTER | TILE_GRAVITY_BACKGROUND,
+            ATTR_SSH_BITMAP_NAME, R.drawable.controller_tiles,
+            ATTR_SSH_HORZ, 6,
+            ATTR_SSH_VERT, 1,
+            ATTR_SSH_TILE, 0
+    };
+
+    /** Стиль по умолчанию для Кнопки */
+    public static final int[] style_button                = {
+            ATTR_SHADOW_TEXT, R.string.shadow_text,
+            ATTR_SIZE, R.dimen.button,
+            ATTR_FONT, R.string.font_normal,
+            ATTR_COLOR_DEFAULT, ATTR_SSH_COLOR_NORMAL | THEME,
+            ATTR_CLICKABLE, 1,
+            ATTR_PADDING, 1,
+            ATTR_MIN_HEIGHT, R.dimen.heightButton,
+            ATTR_SSH_PRESSED_OFFS, R.dimen.pressedOffs,
+            ATTR_SSH_WIDTH_SELECTOR, R.dimen.widthSelector,
+            ATTR_SSH_COLOR_SELECTOR, ATTR_SSH_COLOR_SELECTOR | THEME,
+            ATTR_SSH_HORZ, 2,
+            ATTR_SSH_TILE, 0,
+            ATTR_SSH_STATES, TILE_STATE_HOVER,
+            ATTR_GRAVITY, Gravity.CENTER,
+            ATTR_SSH_GRAVITY, TILE_GRAVITY_CENTER | TILE_GRAVITY_BACKGROUND,
+            ATTR_SSH_BITMAP_NAME, ATTR_SSH_BM_BUTTONS | THEME
+    };
+
+    /** Стиль по умолчанию для Кнопки футера */
+    public static final int[] style_footer                = {
+            ATTR_CLICKABLE, 1,
+            ATTR_MIN_HEIGHT, R.dimen.heightButton,
+            ATTR_SSH_PRESSED_OFFS, R.dimen.pressedOffs,
+            ATTR_SSH_STATES, TILE_STATE_HOVER,
+            ATTR_SSH_GRAVITY, TILE_GRAVITY_CENTER | TILE_GRAVITY_BACKGROUND,
+            ATTR_SSH_BITMAP_NAME, ATTR_SSH_BM_BUTTONS | THEME,
+            ATTR_SSH_HORZ, 2,
+            ATTR_SSH_TILE, 1
+    };
+
+    /** Стиль по умолчанию для Инструментальной кнопки */
+    public static final int[] style_tool                  = {
+            ATTR_CLICKABLE, 1,
+            ATTR_MIN_HEIGHT, R.dimen.heightButton,
+            ATTR_SSH_PRESSED_OFFS, R.dimen.pressedOffs,
+            ATTR_SSH_HORZ, 3,
+            ATTR_SSH_TILE, 0,
+            ATTR_SSH_STATES, TILE_STATE_HOVER,
+            ATTR_SSH_GRAVITY, TILE_GRAVITY_CENTER | TILE_GRAVITY_BACKGROUND,
+            ATTR_SSH_BITMAP_NAME, ATTR_SSH_BM_TOOLS | THEME
+    };
+
+    /** Стиль по умолчанию для Кнопки со стрелкой */
+    public static final int[] style_tool_arrow            = {
+            ATTR_CLICKABLE, 1,
+            ATTR_MIN_HEIGHT, R.dimen.heightButton,
+            ATTR_SSH_PRESSED_OFFS, R.dimen.pressedOffs,
+            ATTR_SSH_STATES, TILE_STATE_PRESS | TILE_STATE_SHADOW,
+            ATTR_SSH_GRAVITY, TILE_GRAVITY_CENTER | TILE_GRAVITY_BACKGROUND,
+            ATTR_SSH_BITMAP_NAME, ATTR_SSH_BM_TOOLS | THEME,
+            ATTR_SSH_HORZ, 3,
+            ATTR_SSH_TILE, 1
+    };
+
+    /** Стиль по умолчанию для Списка */
+    public static final int[] style_ribbon                = {
+            ATTR_SELECTOR, ATTR_SSH_COLOR_SELECTOR | THEME,
+            ATTR_PADDING, 2
+    };
+
+    /** Стиль по умолчанию для GridView */
+    public static final int[] style_grid                  = {
+            ATTR_SELECTOR, ATTR_SSH_COLOR_SELECTOR | THEME,
+            ATTR_SPACING_LINE, 1,
+            ATTR_SPACING_CELL, 1,
+            ATTR_CELL_SIZE, 130,
+            ATTR_PADDING, 2,
+            ATTR_STRETCH_MODE, GRID_STRETCH_UNIFORM
+    };
+
+    /** Стиль по умолчанию для вкладки TabLayout */
+    public static final int[] style_tab_page              = {
+            ATTR_SSH_VERT, 1,
+            ATTR_SSH_HORZ, 2,
+            ATTR_CLICKABLE, 1,
+            ATTR_FOCUSABLE, 0,
+            ATTR_SSH_SCALE, TILE_SCALE_NONE,
+            ATTR_SSH_WIDTH_SELECTOR, 0,
+            ATTR_SSH_GRAVITY, TILE_GRAVITY_CENTER | TILE_GRAVITY_BACKGROUND,
+            ATTR_GRAVITY, Gravity.CENTER,
+            ATTR_COLOR_DEFAULT, ATTR_SSH_COLOR_NORMAL | THEME,
+            ATTR_FONT, R.string.font_normal,
+            ATTR_SIZE, R.dimen.normal,
+            ATTR_SSH_BITMAP_NAME, ATTR_SSH_BM_BUTTONS | THEME
+    };
+
+    /** Стиль по умолчанию для DrawableTile */
+    public static final int[] style_drawable_tile         = {};
+
 }

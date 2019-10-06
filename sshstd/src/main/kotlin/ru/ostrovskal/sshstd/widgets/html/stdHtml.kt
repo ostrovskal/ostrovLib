@@ -15,9 +15,7 @@ import android.view.View
 import android.widget.ScrollView
 import android.widget.TableRow
 import com.github.ostrovskal.sshstd.R
-import ru.ostrovskal.sshstd.Common
-import ru.ostrovskal.sshstd.Common.HTML_TAG_H1
-import ru.ostrovskal.sshstd.Common.htmlHeaderSize
+import ru.ostrovskal.sshstd.Common.*
 import ru.ostrovskal.sshstd.Form
 import ru.ostrovskal.sshstd.TileDrawable
 import ru.ostrovskal.sshstd.Wnd
@@ -216,7 +214,7 @@ open class Html(context: Context, @JvmField val style: IntArray): ScrollView(con
 		parser.parseFromAssets(context.assets, link, context.resources.getString(R.string.error404, link)) { what, out ->
 			when(what) {
 				HTML_TEXT_TAG   -> text.append(out)
-				else            -> parseTag(what == HTML_OPEN_TAG, out.toString().toLowerCase())
+				else            -> parseTag(what == HTML_OPEN_TAG, out.toString().toLowerCase(Locale.ROOT))
 			}
 		}
 		addEmptyTable()
@@ -281,7 +279,7 @@ open class Html(context: Context, @JvmField val style: IntArray): ScrollView(con
 			return null
 		}
 		val bitmap = alias.bmp
-		val tile = TileDrawable(context, style_tile).apply { scale = Common.TILE_SCALE_MIN }
+		val tile = TileDrawable(context, style_tile).apply { scale = TILE_SCALE_MIN }
 		val width: Int
 		val height: Int
 		var tileNum = 0
@@ -474,13 +472,13 @@ open class Html(context: Context, @JvmField val style: IntArray): ScrollView(con
 			val count = table.widths.size
 			if(idx + colspan > count) error("Colspan $colspan columns out of range!")
 			Text(context, textStyle).apply {
-				addView(this, TableRow.LayoutParams(Common.WRAP, Common.MATCH).apply { span = colspan })
+				addView(this, TableRow.LayoutParams(WRAP, MATCH).apply { span = colspan })
 				linksClickable = true
 				text = spanned
 				gravity = align?.getFlags(mapHtmlArray, Gravity.CENTER, '|') ?: table.aligns[idx]
 				var width = 0
 				repeat(colspan) { width += table.widths[it + idx] }
-				setTag(Common.HTML_KEY_WIDTH, width)
+				setTag(HTML_KEY_WIDTH, width)
 				movementMethod = LinkMovementMethod.getInstance()
 			}
 		}
@@ -494,7 +492,7 @@ open class Html(context: Context, @JvmField val style: IntArray): ScrollView(con
 			// расчитать ширину и максимальную высоту
 			loopChildren {
 				(it.layoutParams as? TableRow.LayoutParams)?.apply {
-					val childWidthSpec = MeasureSpec.makeMeasureSpec(w.fromPercent(it.tag(Common.HTML_KEY_WIDTH)), MeasureSpec.EXACTLY)
+					val childWidthSpec = MeasureSpec.makeMeasureSpec(w.fromPercent(it.tag(HTML_KEY_WIDTH)), MeasureSpec.EXACTLY)
 					val childHeightSpec = MeasureSpec.makeMeasureSpec(h, MeasureSpec.UNSPECIFIED)
 					it.measure(childWidthSpec, childHeightSpec)
 					hMax = max(hMax, it.measuredHeight)

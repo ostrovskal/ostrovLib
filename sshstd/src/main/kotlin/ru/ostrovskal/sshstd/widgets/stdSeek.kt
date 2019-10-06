@@ -4,11 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.view.MotionEvent
-import ru.ostrovskal.sshstd.Common
-import ru.ostrovskal.sshstd.Common.SEEK_ANIM_NONE
-import ru.ostrovskal.sshstd.Common.iRect
-import ru.ostrovskal.sshstd.objects.ATTR_SSH_SEEK_ANIM
-import ru.ostrovskal.sshstd.objects.THEME
+import ru.ostrovskal.sshstd.Common.*
 import ru.ostrovskal.sshstd.objects.Theme
 import ru.ostrovskal.sshstd.onTouch
 import ru.ostrovskal.sshstd.utils.*
@@ -61,10 +57,10 @@ open class Seek(context: Context, id: Int, range: IntRange, enabled: Boolean, st
 			if(animThumb == SEEK_ANIM_NONE) {
 				if(animSpeedTrack == 0) result = true else invalidate()
 			} else {
-				if (animThumb test Common.SEEK_ANIM_ROTATE) {
+				if (animThumb test SEEK_ANIM_ROTATE) {
 					drawable.angle = 30f * f
 				}
-				if (animThumb test Common.SEEK_ANIM_SCALE) {
+				if (animThumb test SEEK_ANIM_SCALE) {
 					drawable.zoom = if (f >= 6) 1f - (12 - f) * 0.08333f else 1f - f * 0.08333f
 				}
 			}
@@ -93,7 +89,7 @@ open class Seek(context: Context, id: Int, range: IntRange, enabled: Boolean, st
 	/** Обработка события касания */
 	override fun onTouchEvent(event: MotionEvent): Boolean {
 		if(isEnabled) {
-			onTouch(event)?.apply {
+			onTouch(event).apply {
 				val resolvePosition = (0..1000).clamp(((ptCurrent.x - leftPadding - scrollX) / deltaThumb).toInt())
 				val oldProgress = progress
 				data = resolvePosition.toFloat()

@@ -9,12 +9,12 @@ import android.os.Parcelable
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import ru.ostrovskal.sshstd.Common
-import ru.ostrovskal.sshstd.Common.MATCH
+import ru.ostrovskal.sshstd.Common.*
 import ru.ostrovskal.sshstd.objects.*
 import ru.ostrovskal.sshstd.utils.*
 import ru.ostrovskal.sshstd.widgets.Tile
 import ru.ostrovskal.sshstd.widgets.lists.Ribbon
+import java.util.*
 
 /**
  * @author  Шаталов С.В.
@@ -23,7 +23,7 @@ import ru.ostrovskal.sshstd.widgets.lists.Ribbon
 
 /** Класс, реализующий ленту с вкладками */
 open class TabRibbonLayout(context: Context, idContent: Int, @JvmField protected val captionPos: Int, @JvmField protected val sizeCaption: Int,
-                     @JvmField protected val style: IntArray) : CommonLayout(context, captionPos test Common.DIRV) {
+							  @JvmField protected val style: IntArray) : CommonLayout(context, captionPos test DIRV) {
 	
 	// Рисователь
 	private val paint                   = Paint()
@@ -41,10 +41,10 @@ open class TabRibbonLayout(context: Context, idContent: Int, @JvmField protected
 	@JvmField var currentContent: ViewGroup? = null
 	
 	/** Заголовок */
-	@JvmField val caption               = Caption(context, captionPos test Common.DIRH)
+	@JvmField val caption               = Caption(context, captionPos test DIRH)
 	
 	/** Содержимое */
-	@JvmField val content               = Content(context, captionPos test Common.DIRH).apply { id = idContent }
+	@JvmField val content               = Content(context, captionPos test DIRH).apply { id = idContent }
 	
 	/** Количество вкладок */
 	val tabsCount
@@ -88,13 +88,13 @@ open class TabRibbonLayout(context: Context, idContent: Int, @JvmField protected
 	@SuppressLint("DrawAllocation")
 	override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
 		if(changed) {
-			val vert = captionPos test Common.DIRV
+			val vert = captionPos test DIRV
 			val width = measuredWidth.fromPercent(sizeCaption)
 			val height = measuredHeight.fromPercent(sizeCaption)
 			caption.layoutParams = LayoutParams(if(vert) MATCH else width, if(vert) height else MATCH)
 			content.layoutParams = LayoutParams(if(vert) MATCH else measuredWidth - width, if(vert) measuredHeight - height else MATCH)
 			if(content.adapter == null) {
-				if(captionPos == Common.DIRU || captionPos == Common.DIRL) {
+				if(captionPos == DIRU || captionPos == DIRL) {
 					addView(caption)
 					addView(content)
 				}
@@ -126,7 +126,7 @@ open class TabRibbonLayout(context: Context, idContent: Int, @JvmField protected
 			if(nIcon != -1) {
 				if(nIcon test 0x7f000000) iconResource = nIcon else tileIcon = nIcon
 			}
-			this.text = text.toUpperCase()
+			this.text = text.toUpperCase(Locale.ROOT)
 			isFocusable = false
 			isClickable = false
 		}
@@ -174,16 +174,16 @@ open class TabRibbonLayout(context: Context, idContent: Int, @JvmField protected
 						it.getHitRect(rectTmp)
 						val sz = paintSel.strokeWidth.toInt() - 1
 						when(captionPos) {
-							Common.DIRR -> Common.iRect.set(rectTmp.left, rectTmp.top + it.paddingTop,
+							DIRR -> iRect.set(rectTmp.left, rectTmp.top + it.paddingTop,
 							                                rectTmp.left + sz, rectTmp.bottom - it.paddingBottom)
-							Common.DIRD -> Common.iRect.set(rectTmp.left + it.paddingStart, rectTmp.top,
+							DIRD -> iRect.set(rectTmp.left + it.paddingStart, rectTmp.top,
 							                                rectTmp.right - it.paddingEnd, rectTmp.top + sz)
-							Common.DIRL -> Common.iRect.set(rectTmp.right - sz, rectTmp.top + it.paddingTop,
+							DIRL -> iRect.set(rectTmp.right - sz, rectTmp.top + it.paddingTop,
 							                                rectTmp.right, rectTmp.bottom - it.paddingBottom)
-							Common.DIRU -> Common.iRect.set(rectTmp.left + it.paddingStart, rectTmp.bottom - sz,
+							DIRU -> iRect.set(rectTmp.left + it.paddingStart, rectTmp.bottom - sz,
 							                                rectTmp.right - it.paddingEnd, rectTmp.bottom)
 						}
-						canvas.drawRect(Common.iRect, paintSel)
+						canvas.drawRect(iRect, paintSel)
 					}
 				}
 			}

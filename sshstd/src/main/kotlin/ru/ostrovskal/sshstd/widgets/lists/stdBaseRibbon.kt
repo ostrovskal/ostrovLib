@@ -15,10 +15,7 @@ import android.widget.OverScroller
 import com.github.ostrovskal.sshstd.R
 import ru.ostrovskal.sshstd.*
 import ru.ostrovskal.sshstd.Common.*
-import ru.ostrovskal.sshstd.objects.ATTR_SSH_COLOR_SELECTOR
-import ru.ostrovskal.sshstd.objects.THEME
 import ru.ostrovskal.sshstd.objects.Theme
-import ru.ostrovskal.sshstd.objects.style_drawable_tile
 import ru.ostrovskal.sshstd.utils.*
 import ru.ostrovskal.sshstd.widgets.Text
 import kotlin.math.abs

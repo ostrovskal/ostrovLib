@@ -9,8 +9,7 @@ import android.view.View.TEXT_ALIGNMENT_GRAVITY
 import android.view.ViewGroup
 import android.view.ViewManager
 import com.github.ostrovskal.sshstd.R
-import ru.ostrovskal.sshstd.Common.DIRDR
-import ru.ostrovskal.sshstd.Common.TILE_SHAPE_ROUND
+import ru.ostrovskal.sshstd.Common.*
 import ru.ostrovskal.sshstd.layouts.CELL_LAYOUT_INSERT_BEGIN
 import ru.ostrovskal.sshstd.layouts.CellLayout
 import ru.ostrovskal.sshstd.objects.*
@@ -95,7 +94,7 @@ fun ViewManager.formFooter(vararg btn: Int) {
 	}
 	cellLayout(33, 2) {
 		lps(0, -200, -1, 2)
-		for(bt in 0 until btn.size step 2) {
+		for(bt in btn.indices step 2) {
 			button(style_footer) {
 				id = btn[bt]
 				iconResource = btn[bt + 1]

@@ -5,10 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Path
 import android.graphics.RectF
 import ru.ostrovskal.sshstd.Common
-import ru.ostrovskal.sshstd.Common.fRect
-import ru.ostrovskal.sshstd.objects.ATTR_SSH_CHART_BEGIN_ANGLE
-import ru.ostrovskal.sshstd.objects.ATTR_SSH_CHART_CHECK_RADIUS
-import ru.ostrovskal.sshstd.objects.ATTR_SSH_CHART_INNER_RADIUS
+import ru.ostrovskal.sshstd.Common.*
 import ru.ostrovskal.sshstd.objects.Theme
 import ru.ostrovskal.sshstd.utils.*
 import kotlin.math.min

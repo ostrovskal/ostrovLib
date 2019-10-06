@@ -3,8 +3,7 @@
 package ru.ostrovskal.sshstd.utils
 
 import com.github.ostrovskal.sshstd.R
-import ru.ostrovskal.sshstd.Common
-import ru.ostrovskal.sshstd.objects.*
+import ru.ostrovskal.sshstd.Common.*
 
 /** Создание двумерного байтового массива размерностью [dim1] на [dim2] */
 inline fun byteArrayOf2D(dim1: Int, dim2: Int): ByteArray {
@@ -52,7 +51,7 @@ fun IntArray.themeAttrValue(attribute: Int, def: Int, type: Int = ATTR_INT): Int
 
 /** Получение первого доступного состояния элемента из списка возможных [states] */
 fun IntArray.checkStates(vararg states: Int): Int {
-	if(!checkState(Common.STATE_ENABLED)) return Common.STATE_DISABLED
+	if(!checkState(STATE_ENABLED)) return STATE_DISABLED
 	states.forEach { if(checkState(it)) return it }
 	return 0
 }

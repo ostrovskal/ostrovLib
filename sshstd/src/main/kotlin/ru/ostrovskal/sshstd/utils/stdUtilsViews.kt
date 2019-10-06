@@ -144,7 +144,7 @@ inline var View.bottomPadding
 
 /** Установка горизонтального внутреннего отступа */
 var View.horizontalPadding
-	get()                                           = paddingStart + paddingEnd
+	get()                                           = paddingLeft + paddingRight
 	set(value)                                      = setPadding(value, paddingTop, value, paddingBottom)
 
 /** Установка вертикального внутреннего отступа */

@@ -4,8 +4,8 @@ package ru.ostrovskal.sshstd.ui
 
 import android.view.View
 import android.view.ViewManager
+import ru.ostrovskal.sshstd.Common.*
 import ru.ostrovskal.sshstd.TileDrawable
-import ru.ostrovskal.sshstd.objects.*
 import ru.ostrovskal.sshstd.utils.getUiContext
 import ru.ostrovskal.sshstd.utils.uiCustom
 import ru.ostrovskal.sshstd.utils.uiView
@@ -41,6 +41,13 @@ inline fun ViewManager.edit(id: Int, hint: Int, style: IntArray = style_edit) = 
 /** Реализация поля ввода с кастомным стилем [style], подсказкой [hint] и инициализатором [init] */
 inline fun ViewManager.edit(id: Int, hint: Int, style: IntArray = style_edit, init: Edit.() -> Unit) =
 		uiView( { Edit(it, id, hint, style) }, init)
+
+/** Реализация поля ввода с кастомным стилем [style] и подсказкой [hint] */
+inline fun ViewManager.editEx(id: Int, hint: Int, style: IntArray = style_edit, styleEx: IntArray = style_editEx) = editEx(id, hint, style, styleEx) {}
+
+/** Реализация поля ввода с кастомным стилем [style], подсказкой [hint] и инициализатором [init] */
+inline fun ViewManager.editEx(id: Int, hint: Int, style: IntArray = style_edit, styleEx: IntArray = style_editEx, init: Edit.() -> Unit) =
+	uiView( { EditEx(it, id, hint, style, styleEx) }, init)
 
 /** Реализация текста с кастомным стилем [style] и текстом [text] */
 inline fun ViewManager.text(text: Int, style: IntArray = style_text_normal) = text(text, style) {}

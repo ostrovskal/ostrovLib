@@ -14,7 +14,6 @@ import android.widget.SpinnerAdapter
 import ru.ostrovskal.sshstd.Common.*
 import ru.ostrovskal.sshstd.TileDrawable
 import ru.ostrovskal.sshstd.objects.Theme
-import ru.ostrovskal.sshstd.objects.style_spinner_dropdown
 import ru.ostrovskal.sshstd.utils.*
 
 /**

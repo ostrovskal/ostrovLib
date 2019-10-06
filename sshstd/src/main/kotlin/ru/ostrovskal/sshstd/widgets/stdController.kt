@@ -10,12 +10,9 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import ru.ostrovskal.sshstd.*
-import ru.ostrovskal.sshstd.Common.DIRN
+import ru.ostrovskal.sshstd.Common.*
 import ru.ostrovskal.sshstd.layouts.AbsoluteLayout
-import ru.ostrovskal.sshstd.objects.ATTR_SSH_CONTROLLER_HEIGHT
-import ru.ostrovskal.sshstd.objects.ATTR_SSH_CONTROLLER_WIDTH
 import ru.ostrovskal.sshstd.objects.Theme
-import ru.ostrovskal.sshstd.objects.style_controller
 import ru.ostrovskal.sshstd.utils.*
 import kotlin.math.roundToInt
 

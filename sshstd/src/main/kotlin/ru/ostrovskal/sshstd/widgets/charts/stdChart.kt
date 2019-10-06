@@ -2,8 +2,8 @@ package ru.ostrovskal.sshstd.widgets.charts
 
 import android.content.Context
 import android.graphics.Paint
+import ru.ostrovskal.sshstd.Common.ATTR_SSH_SHOW
 import ru.ostrovskal.sshstd.TileDrawable
-import ru.ostrovskal.sshstd.objects.ATTR_SSH_SHOW
 import ru.ostrovskal.sshstd.objects.Theme
 import ru.ostrovskal.sshstd.utils.themeAttrValue
 import ru.ostrovskal.sshstd.widgets.Tile

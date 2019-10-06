@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.RectF
 import ru.ostrovskal.sshstd.Common.*
-import ru.ostrovskal.sshstd.objects.ATTR_SSH_GRADIENT_DIR
 import ru.ostrovskal.sshstd.objects.Theme
 import ru.ostrovskal.sshstd.utils.*
 

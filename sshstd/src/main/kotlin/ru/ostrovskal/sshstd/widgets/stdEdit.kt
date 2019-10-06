@@ -3,14 +3,15 @@ package ru.ostrovskal.sshstd.widgets
 import android.content.Context
 import android.text.InputType.TYPE_CLASS_NUMBER
 import android.text.InputType.TYPE_NUMBER_FLAG_SIGNED
+import android.view.KeyEvent
+import android.view.View
+import android.view.ViewGroup
 import android.widget.EditText
 import ru.ostrovskal.sshstd.Common.*
 import ru.ostrovskal.sshstd.TileDrawable
+import ru.ostrovskal.sshstd.layouts.AbsoluteLayout
 import ru.ostrovskal.sshstd.objects.Theme
-import ru.ostrovskal.sshstd.utils.checkStates
-import ru.ostrovskal.sshstd.utils.interval
-import ru.ostrovskal.sshstd.utils.ival
-import ru.ostrovskal.sshstd.utils.noGetter
+import ru.ostrovskal.sshstd.utils.*
 
 /**
  * @author Шаталов С.В.
@@ -24,7 +25,10 @@ open class Edit(context: Context, id: Int, hint: Int, @JvmField val style: IntAr
 	
 	/** Уведомление о изменении текста в редакторе */
 	@JvmField var changeTextLintener: ((text: CharSequence?) -> Unit)? = null
-	
+
+	/** Уведомление о нажатии клавиши ENTER */
+	@JvmField var notifyKeyEnter: ((v: View, event: KeyEvent)->Unit)? = null
+
 	/** Установка подсказки текста из ресурсов */
 	var hintResource: Int
 		get()           = noGetter()
@@ -60,6 +64,11 @@ open class Edit(context: Context, id: Int, hint: Int, @JvmField val style: IntAr
 		background = TileDrawable(context, style)
 		this.id = id
 		hintResource = hint
+		setOnKeyListener { v, keyCode, event ->
+			if(event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER)
+				notifyKeyEnter?.invoke(v, event)
+			false
+		}
 	}
 	
 	/** Вызов события, при изменении текста */
@@ -96,3 +105,42 @@ open class Edit(context: Context, id: Int, hint: Int, @JvmField val style: IntAr
  * @property et  Объект поля ввода, который вызвал ошибку
  */
 class EditInvalidException(@JvmField val msg: String, @JvmField val et: Edit? = null): RuntimeException()
+
+/**
+ * @author Шаталов С.В.
+ * @since  0.9.4
+ */
+
+/** Класс, реализующий Поле ввода с кнопкой и со стилем по умолчанию style_edit и style_editEx */
+open class EditEx(context: Context, id: Int, hint: Int, style: IntArray, styleEx: IntArray) : Edit(context, id, hint, style) {
+
+	/** Действие при нажатии на кнопку */
+	@JvmField var clickEditExButton: ((v: View, e: EditEx)->Unit) = { _, e -> e.setText("") }
+
+	// Кнопка очистики текста
+	private val action	= Tile(context, styleEx).apply { setOnClickListener { clickEditExButton.invoke(it, this@EditEx) }}
+
+	// Абсолютная разметка. Накладывается поверх поля ввода
+	private val lyt		= AbsoluteLayout(context)
+
+	override fun onAttachedToWindow() {
+		super.onAttachedToWindow()
+		(parent as? ViewGroup)?.addView(lyt, layoutParams)
+		lyt.addView(action)
+	}
+
+	/** Позиционирование кнопки на поле ввода */
+	open fun onLayoutButton(action: Tile) {
+		val h = measuredHeight
+		action.apply {
+			layoutParams = AbsoluteLayout.LayoutParams(h - horizontalPadding, h - verticalPadding, left + leftPadding, top + topPadding)
+			invalidate()
+		}
+		leftPadding = h
+	}
+
+	override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+		super.onLayout(changed, left, top, right, bottom)
+		onLayoutButton(action)
+	}
+}

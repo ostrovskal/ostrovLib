@@ -2,16 +2,14 @@ package ru.ostrovskal.sshstd
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Rect
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.Message
 import android.view.SurfaceHolder
 import android.view.SurfaceView
-import ru.ostrovskal.sshstd.utils.marshall
-import ru.ostrovskal.sshstd.utils.put
-import ru.ostrovskal.sshstd.utils.send
-import ru.ostrovskal.sshstd.utils.unmarshall
+import ru.ostrovskal.sshstd.utils.*
 import java.lang.ref.WeakReference
 
 /**
@@ -19,18 +17,23 @@ import java.lang.ref.WeakReference
  * @since 0.1.0
 */
 
-/** Базовый класс, реализующий представление с обработкой в фоновом потоке и обеспечивающей передачу сообщений фоновым тредом и UI тредом */
-abstract class Surface(context: Context) : SurfaceView(context, null, 0), Handler.Callback, SurfaceHolder.Callback {
-	
+/** Базовый класс, реализующий представление с обработкой в фоновом потоке и обеспечивающей передачу сообщений фоновым тредом и UI тредом
+ * @property tagMarshalling Имя для маршиллинга параметров
+ */
+abstract class Surface(context: Context, private val tagMarshalling: String = "main") : SurfaceView(context, null, 0), Handler.Callback, SurfaceHolder.Callback {
+
+	// Фоновый тред
+	private var thread: SurfaceThread? 		= null
+
+	/** Область канвы */
+	@JvmField val canvasRect          		= Rect()
+
 	/** Задержка отрисовки */
 	@JvmField var delay			            = 100L
 	
 	/** Хэндлер */
 	@JvmField var hand: Handler? 		    = null
 
-	// Фоновый тред
-	private var thread: SurfaceThread? 		= null
-	
 	/** Усыпить\Возобновить тред */
 	@JvmField var running                   = true
 	
@@ -73,6 +76,7 @@ abstract class Surface(context: Context) : SurfaceView(context, null, 0), Handle
 		if(thread?.isAlive == false)
 			thread?.start()
 		running = true
+		canvasRect.set(0, 0, width, height)
 	}
 	
 	/** Создание поверхности и фонового треда */
@@ -90,7 +94,7 @@ abstract class Surface(context: Context) : SurfaceView(context, null, 0), Handle
 	 * Восстановливаются только те поля, которые помечены аннотацией @STORAGE.
 	 */
 	open fun restoreState(state: Bundle, vararg params: Any?) {
-		unmarshall(state.getByteArray("main") ?: byteArrayOf() )
+		unmarshall(state.getByteArray(tagMarshalling) ?: byteArrayOf() )
 		params.forEach { it?.apply { it.unmarshall(state.getByteArray(it.toString()) ?: byteArrayOf() ) } }
 	}
 	
@@ -101,7 +105,7 @@ abstract class Surface(context: Context) : SurfaceView(context, null, 0), Handle
 	 */
 	open fun saveState(state: Bundle, vararg params: Any?) {
 		stopThread()
-		state.put("main", marshall())
+		state.put(tagMarshalling, marshall())
 		params.forEach { it?.apply { state.put(it.toString(), it.marshall()) } }
 	}
 	
@@ -122,26 +126,27 @@ abstract class Surface(context: Context) : SurfaceView(context, null, 0), Handle
 			runner = Runnable {
 				if(isInterrupted) return@Runnable
 				val surface = weak.get() ?: return@Runnable
-				val delay = surface.delay
-				var diff = 0L
-				if(surface.running) {
-					var canvas: Canvas? = null
-					try {
-						canvas = surface.holder.lockCanvas()?.apply {
-							val start = System.currentTimeMillis()
-							surface.draw(this)
-							diff = (System.currentTimeMillis() - start)
-							surface.fps = (1000 / if(diff > 0) diff else 1).toInt()
+				surface.apply {
+					var diff = 0L
+					if(running) {
+						var canvas: Canvas? = null
+						try {
+							canvas = holder.lockCanvas()?.apply {
+								val start = System.currentTimeMillis()
+								draw(this)
+								diff = (System.currentTimeMillis() - start)
+								"diff $diff ${delay - diff}".info()
+								fps = (1000 / if(diff > 0) diff else 1).toInt()
+							}
+						}
+						finally {
+							if(canvas != null) holder.unlockCanvasAndPost(canvas)
 						}
 					}
-					finally {
-						if(canvas != null) surface.holder.unlockCanvasAndPost(canvas)
+					hand?.apply {
+						postDelayed(runner, if(diff < delay) delay - diff else 0)
 					}
 				}
-				surface.hand?.apply {
-					postDelayed(runner, if(diff < delay) delay - diff else 0)
-				}
-				
 			}
 		}
 	}

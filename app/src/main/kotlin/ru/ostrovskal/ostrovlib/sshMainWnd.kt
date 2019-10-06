@@ -270,13 +270,12 @@ class Abs(val wnd: MainWnd): UiComponent() {
 		cellLayout(10, 10) {
 			tabLayout {
 				page(R.id.page1, R.string.check1) {
-					cellLayout(20, 10, 0, true) {
-						chartDiagram {
-							this.direction = DIRD
-							this.colorsSegments = context.resources.getString(R.string.colors_chart_diagram).toIntArray(14, Color.RED, 10, true, ',')
-							this.maxValuesSegments = intArrayOf(1000, 1000, 1000, 1000, 1000, 1000, 1000)
-							this.currentValuesSegments = intArrayOf(600, 800, 200, 400, 350, 1000, 700)
-						}.lps(0, 0, 20, 10)
+					cellLayout(20, 15, 0, true) {
+						editLayout {
+							editEx(0, R.string.hint, style_edit, style_editEx) {
+						}
+
+						}.lps(0, 0, 20, 2)
 					}
 				}
 				page(R.id.page2, R.string.check2) {
