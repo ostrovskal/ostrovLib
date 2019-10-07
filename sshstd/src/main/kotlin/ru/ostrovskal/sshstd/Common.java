@@ -8,6 +8,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
+import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.widget.ListPopupWindow;
@@ -991,7 +992,7 @@ public final class Common
             ATTR_TEXT_ALIGN, TEXT_ALIGNMENT_GRAVITY,
             ATTR_PADDING_VERT, R.dimen.paddingVertEdit,
             ATTR_IME_OPTIONS, IME_FLAG_NO_EXTRACT_UI,
-            ATTR_INPUT_TYPE, android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS,
+            ATTR_INPUT_TYPE, android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_TEXT_FLAG_AUTO_CORRECT,
             ATTR_MAX_LENGTH, 15,
             ATTR_SSH_BITMAP_NAME, ATTR_SSH_BM_EDIT | THEME,
             ATTR_SSH_PATCH9, R.string.patch9_edit

@@ -2,8 +2,7 @@ package ru.ostrovskal.sshstd.ui
 
 import android.view.ViewManager
 import com.github.ostrovskal.sshstd.R
-import ru.ostrovskal.sshstd.Common.DIRU
-import ru.ostrovskal.sshstd.Common.style_tab_page
+import ru.ostrovskal.sshstd.Common.*
 import ru.ostrovskal.sshstd.layouts.*
 import ru.ostrovskal.sshstd.utils.uiView
 
@@ -47,5 +46,5 @@ inline fun ViewManager.cellLayout(cols: Int, rows: Int, spacing: Int = 0, show: 
 		= uiView({ CellLayout(it, cols, rows, spacing, show) }, init)
 
 /** Реализация разметки для анимированного поля ввода с инициализатором [init] */
-inline fun ViewManager.editLayout(init: EditLayout.() -> Unit) = uiView({ EditLayout(it) }, init)
+inline fun ViewManager.editLayout(styleHint: IntArray = style_text_hint, init: EditLayout.() -> Unit) = uiView({ EditLayout(it, styleHint) }, init)
 

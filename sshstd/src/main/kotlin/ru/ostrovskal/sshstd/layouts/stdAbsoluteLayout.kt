@@ -56,11 +56,13 @@ open class AbsoluteLayout(context: Context) : ViewGroup(context, null, 0) {
 	
 	/** Вычисление позиций дочерних представлений */
 	override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+		val lp = paddingLeft
+		val tp = paddingTop
 		loopChildren {
 			if(it.visibility == View.GONE) return@loopChildren
 			(it.layoutParams as? LayoutParams)?.apply {
-				val childLeft = paddingLeft + x
-				val childTop = paddingTop + y
+				val childLeft = lp + x
+				val childTop = tp + y
 				it.layout(childLeft, childTop, childLeft + it.measuredWidth, childTop + it.measuredHeight)
 			}
 		}

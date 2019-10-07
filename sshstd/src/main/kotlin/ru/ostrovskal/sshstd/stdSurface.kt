@@ -26,10 +26,10 @@ abstract class Surface(context: Context, private val tagMarshalling: String = "m
 	private var thread: SurfaceThread? 		= null
 
 	/** Область канвы */
-	@JvmField val canvasRect          		= Rect()
+	@JvmField val surfaceRect          		= Rect()
 
-	/** Задержка отрисовки */
-	@JvmField var delay			            = 100L
+	/** Максимальное время кадра в миллисекундах */
+	@JvmField var frameTime		            = 50L
 	
 	/** Хэндлер */
 	@JvmField var hand: Handler? 		    = null
@@ -76,7 +76,7 @@ abstract class Surface(context: Context, private val tagMarshalling: String = "m
 		if(thread?.isAlive == false)
 			thread?.start()
 		running = true
-		canvasRect.set(0, 0, width, height)
+		surfaceRect.set(0, 0, width, height)
 	}
 	
 	/** Создание поверхности и фонового треда */
@@ -108,11 +108,14 @@ abstract class Surface(context: Context, private val tagMarshalling: String = "m
 		state.put(tagMarshalling, marshall())
 		params.forEach { it?.apply { state.put(it.toString(), it.marshall()) } }
 	}
-	
+
+	/** Обновление состояния */
+	abstract fun updateState()
+
 	private class SurfaceThread(private val weak: WeakReference<Surface>) : HandlerThread("surfaceThread") {
-		
+
 		private var runner: Runnable? = null
-		
+
 		override fun onLooperPrepared() {
 			weak.get()?.let {
 				it.hand = Handler(looper, it).apply {
@@ -121,30 +124,48 @@ abstract class Surface(context: Context, private val tagMarshalling: String = "m
 				}
 			}
 		}
-		
+
 		init {
 			runner = Runnable {
-				if(isInterrupted) return@Runnable
-				val surface = weak.get() ?: return@Runnable
-				surface.apply {
-					var diff = 0L
-					if(running) {
+				while (true) {
+					if (isInterrupted) break
+					val surface = weak.get() ?: break
+					surface.apply {
 						var canvas: Canvas? = null
 						try {
-							canvas = holder.lockCanvas()?.apply {
-								val start = System.currentTimeMillis()
-								draw(this)
-								diff = (System.currentTimeMillis() - start)
-								"diff $diff ${delay - diff}".info()
-								fps = (1000 / if(diff > 0) diff else 1).toInt()
+							val beginTime = System.currentTimeMillis()
+							// пытаемся заблокировать canvas для изменение картинки на поверхности
+							canvas = holder.lockCanvas()
+							// обнуляем счетчик пропущенных кадров
+							var framesSkipped = 0
+							// обновляем состояние игры
+							updateState()
+							// формируем новый кадр
+							if (canvas != null) draw(canvas)
+							// вычисляем время, которое прошло с момента запуска цикла
+							val timeDiff = System.currentTimeMillis() - beginTime
+							// вычисляем время, которое можно спать
+							var sleepTime = frameTime - timeDiff
+							if (sleepTime > 0) {
+								// если sleepTime > 0 все хорошо, мы идем с опережением
+								try {
+									Thread.sleep(sleepTime)
+								} catch (e: InterruptedException) {
+								}
 							}
+							while (sleepTime < 0 && framesSkipped++ < 5) {
+								// обновляем состояние без отрисовки
+								updateState()
+								sleepTime += frameTime
+							}
+							// вычисляем fps
+							val diff = System.currentTimeMillis() - beginTime
+							fps = (1000 / if (diff > 0) diff else 1).toInt()
+						} finally {
+							// в случае ошибки, плоскость не перешла в
+							// требуемое состояние
+							if (canvas != null) holder.unlockCanvasAndPost(canvas)
 						}
-						finally {
-							if(canvas != null) holder.unlockCanvasAndPost(canvas)
-						}
-					}
-					hand?.apply {
-						postDelayed(runner, if(diff < delay) delay - diff else 0)
 					}
 				}
 			}

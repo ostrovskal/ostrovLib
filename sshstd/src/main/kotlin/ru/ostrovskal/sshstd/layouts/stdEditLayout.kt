@@ -5,6 +5,8 @@ import android.content.Context
 import android.view.View
 import ru.ostrovskal.sshstd.Animator
 import ru.ostrovskal.sshstd.Common.style_text_hint
+import ru.ostrovskal.sshstd.utils.padding
+import ru.ostrovskal.sshstd.utils.textColor
 import ru.ostrovskal.sshstd.widgets.Edit
 import ru.ostrovskal.sshstd.widgets.Text
 
@@ -14,7 +16,7 @@ import ru.ostrovskal.sshstd.widgets.Text
  */
 
 /** Класс, реализующий разметку с полем ввода, имеющим всплывающую текстовую подсказку */
-open class EditLayout(context: Context) : AbsoluteLayout(context) {
+open class EditLayout(context: Context, styleHint: IntArray = style_text_hint) : AbsoluteLayout(context) {
 
 	private var isInit					= false
 
@@ -31,14 +33,14 @@ open class EditLayout(context: Context) : AbsoluteLayout(context) {
 	private var edit: Edit?				= null
 	
 	// Хинт
-	private val hint					= Text(context, style_text_hint)
-	
+	private val hint					= Text(context, styleHint)
+
 	// Признак пустого текста в редакторе
 	private var emptyText				= true
 
 	// Аниматор
 	private val animator				by lazy {
-		Animator(this, 8, 40) { _, animator, frame, direction, began ->
+		Animator(this, 9, 40) { _, animator, frame, direction, began ->
 			(edit?.layoutParams as? LayoutParams)?.apply {
 				(hint.layoutParams as? LayoutParams)?.let { lh ->
 					val v = frame * 4
@@ -50,7 +52,7 @@ open class EditLayout(context: Context) : AbsoluteLayout(context) {
 					lh.y = yHint - v
 					//lh.x = xHint
 					y = yEditor + v
-					height = hEditor - v
+					//height = hEditor - v
 				}
 			}
 			requestLayout()
@@ -72,6 +74,8 @@ open class EditLayout(context: Context) : AbsoluteLayout(context) {
 		if(child is Edit) {
 			hint.text = child.hint
 			hint.visibility = visibility
+			hint.padding = padding
+			hint.textColor = child.currentHintTextColor
 			edit = child.apply {
 				hint = null
 				changeTextLintener = { text ->
@@ -95,8 +99,8 @@ open class EditLayout(context: Context) : AbsoluteLayout(context) {
 			val px = it.paddingLeft
 			if(px == x) isInit = true
 			if(!isInit) {
-				it.layoutParams = LayoutParams(measuredWidth, measuredHeight, 0, 0)
-				hint.layoutParams = LayoutParams(measuredWidth - it.paddingLeft, measuredHeight, px, 0)
+				it.layoutParams = LayoutParams(measuredWidth, measuredHeight - 36, 0, 0)
+				hint.layoutParams = LayoutParams(measuredWidth - it.paddingLeft, measuredHeight - 36, px, 0)
 			}
 		}
 	}

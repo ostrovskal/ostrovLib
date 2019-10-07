@@ -237,7 +237,10 @@ class ExampleSurface(context: Context) : Surface(context) {
 		this.strokeWidth = 1f
 		this.textSize = 24f
 	}
-	
+
+	override fun updateState() {
+	}
+
 	override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
 		super.surfaceChanged(holder, format, width, height)
 		"surfaceChanged $width $height".info()
@@ -271,11 +274,11 @@ class Abs(val wnd: MainWnd): UiComponent() {
 			tabLayout {
 				page(R.id.page1, R.string.check1) {
 					cellLayout(20, 15, 0, true) {
-						editLayout {
+						editLayout(style_edit) {
 							editEx(0, R.string.hint, style_edit, style_editEx) {
-						}
-
-						}.lps(0, 0, 20, 2)
+							}
+						}.lps(0, 0, 20, 3)
+						editEx(0, R.string.hint, style_edit, style_editEx).lps(0, 3, 20, 2)
 					}
 				}
 				page(R.id.page2, R.string.check2) {

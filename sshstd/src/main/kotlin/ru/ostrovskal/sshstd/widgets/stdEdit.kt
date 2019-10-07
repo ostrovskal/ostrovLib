@@ -3,7 +3,6 @@ package ru.ostrovskal.sshstd.widgets
 import android.content.Context
 import android.text.InputType.TYPE_CLASS_NUMBER
 import android.text.InputType.TYPE_NUMBER_FLAG_SIGNED
-import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
@@ -25,9 +24,6 @@ open class Edit(context: Context, id: Int, hint: Int, @JvmField val style: IntAr
 	
 	/** Уведомление о изменении текста в редакторе */
 	@JvmField var changeTextLintener: ((text: CharSequence?) -> Unit)? = null
-
-	/** Уведомление о нажатии клавиши ENTER */
-	@JvmField var notifyKeyEnter: ((v: View, event: KeyEvent)->Unit)? = null
 
 	/** Установка подсказки текста из ресурсов */
 	var hintResource: Int
@@ -64,11 +60,6 @@ open class Edit(context: Context, id: Int, hint: Int, @JvmField val style: IntAr
 		background = TileDrawable(context, style)
 		this.id = id
 		hintResource = hint
-		setOnKeyListener { v, keyCode, event ->
-			if(event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER)
-				notifyKeyEnter?.invoke(v, event)
-			false
-		}
 	}
 	
 	/** Вызов события, при изменении текста */
@@ -130,17 +121,19 @@ open class EditEx(context: Context, id: Int, hint: Int, style: IntArray, styleEx
 	}
 
 	/** Позиционирование кнопки на поле ввода */
-	open fun onLayoutButton(action: Tile) {
+	open fun onLayoutButton(changed: Boolean, t: Tile) {
 		val h = measuredHeight
-		action.apply {
-			layoutParams = AbsoluteLayout.LayoutParams(h - horizontalPadding, h - verticalPadding, left + leftPadding, top + topPadding)
-			invalidate()
+		t.apply {
+			val x = this@EditEx.left - ((parent as? AbsoluteLayout)?.left ?: 0)
+			val y = this@EditEx.top - ((parent as? AbsoluteLayout)?.top ?: 0)
+			layoutParams = AbsoluteLayout.LayoutParams(h - horizontalPadding, h - verticalPadding, x + leftPadding, y + topPadding)
+			parent.requestLayout()
 		}
 		leftPadding = h
 	}
 
 	override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
 		super.onLayout(changed, left, top, right, bottom)
-		onLayoutButton(action)
+		onLayoutButton(changed, action)
 	}
 }
