@@ -65,7 +65,7 @@ open class Edit(context: Context, id: Int, hint: Int, @JvmField val style: IntAr
 	/** Вызов события, при изменении текста */
 	override fun onTextChanged(text: CharSequence?, start: Int, lengthBefore: Int, lengthAfter: Int) {
 		super.onTextChanged(text, start, lengthBefore, lengthAfter)
-		changeTextLintener?.invoke(text)
+		if(lengthAfter != lengthBefore) changeTextLintener?.invoke(text)
 	}
 	
 	/** Установка состояния отображения */

@@ -153,7 +153,7 @@ abstract class Surface(context: Context, private val tagMarshalling: String = "m
 								} catch (e: InterruptedException) {
 								}
 							}
-							while (sleepTime < 0 && framesSkipped++ < 5) {
+							while (sleepTime < -(frameTime / 2) && framesSkipped++ < 5) {
 								// обновляем состояние без отрисовки
 								updateState()
 								sleepTime += frameTime

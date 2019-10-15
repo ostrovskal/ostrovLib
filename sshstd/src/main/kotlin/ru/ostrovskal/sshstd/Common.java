@@ -796,6 +796,10 @@ public final class Common
     public static final int ATTR_SSH_SIZE_SELECTOR_TAB    = 236 | ATTR_INT;
     /** Размер селектора активно вкладки */
     public static final int ATTR_SSH_SIZE_SELECTOR_SEL_TAB= 237 | ATTR_INT;
+    /** Количество иконок тайлов по вертикали */
+    public static final int ATTR_SSH_ICON_VERT            = 238 | ATTR_INT;
+    /** Количество иконок тайлов по горизонтали */
+    public static final int ATTR_SSH_ICON_HORZ            = 239 | ATTR_INT;
 
     /** Стиль по умолчанию для Большого текста */
     public static final int[] style_text_large            = {
@@ -881,14 +885,14 @@ public final class Common
     /** Стиль по умолчанию для Иконок */
     public static final int[] style_icon                  = {
             ATTR_SSH_PRESSED_OFFS, R.dimen.pressedOffs,
-            ATTR_SSH_SCALE, TILE_SCALE_MIN,
+            ATTR_SSH_SCALE, R.integer.scaleIconType,
             ATTR_CLICKABLE, 0,
             ATTR_FOCUSABLE, 0,
             ATTR_SSH_GRAVITY, TILE_GRAVITY_CENTER | TILE_GRAVITY_BACKGROUND,
             ATTR_SSH_BITMAP_NAME, ATTR_SSH_BM_ICONS | THEME,
-            ATTR_SSH_SCALE_ICON, 40000,
-            ATTR_SSH_VERT, 3,
-            ATTR_SSH_HORZ, 10
+            ATTR_SSH_SCALE_ICON, R.integer.scaleIcon,
+            ATTR_SSH_VERT, ATTR_SSH_ICON_VERT | THEME,
+            ATTR_SSH_HORZ, ATTR_SSH_ICON_HORZ | THEME
     };
 
     /** Стиль по умолчанию для Радио кнопки */
