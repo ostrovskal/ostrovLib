@@ -46,7 +46,7 @@ inline fun ViewManager.edit(id: Int, hint: Int, style: IntArray = style_edit, in
 inline fun ViewManager.editEx(id: Int, hint: Int, style: IntArray = style_edit, styleEx: IntArray = style_editEx) = editEx(id, hint, style, styleEx) {}
 
 /** Реализация поля ввода с кастомным стилем [style], подсказкой [hint] и инициализатором [init] */
-inline fun ViewManager.editEx(id: Int, hint: Int, style: IntArray = style_edit, styleEx: IntArray = style_editEx, init: Edit.() -> Unit) =
+inline fun ViewManager.editEx(id: Int, hint: Int, style: IntArray = style_edit, styleEx: IntArray = style_editEx, init: EditEx.() -> Unit) =
 	uiView( { EditEx(it, id, hint, style, styleEx) }, init)
 
 /** Реализация текста с кастомным стилем [style] и текстом [text] */

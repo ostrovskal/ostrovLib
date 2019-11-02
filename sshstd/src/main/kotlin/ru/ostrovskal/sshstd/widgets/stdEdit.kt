@@ -112,24 +112,29 @@ open class EditEx(context: Context, id: Int, hint: Int, style: IntArray, styleEx
 	private val action	= Tile(context, styleEx).apply { setOnClickListener { clickEditExButton.invoke(it, this@EditEx) }}
 
 	// Абсолютная разметка. Накладывается поверх поля ввода
-	private val lyt		= AbsoluteLayout(context)
+	private val lyt		= AbsoluteLayout(context).apply { addView(action) }
 
 	override fun onAttachedToWindow() {
 		super.onAttachedToWindow()
 		(parent as? ViewGroup)?.addView(lyt, layoutParams)
-		lyt.addView(action)
 	}
 
 	/** Позиционирование кнопки на поле ввода */
 	open fun onLayoutButton(changed: Boolean, t: Tile) {
 		val h = measuredHeight
-		t.apply {
-			val x = this@EditEx.left - ((parent as? AbsoluteLayout)?.left ?: 0)
-			val y = this@EditEx.top - ((parent as? AbsoluteLayout)?.top ?: 0)
-			layoutParams = AbsoluteLayout.LayoutParams(h - horizontalPadding, h - verticalPadding, x + leftPadding, y + topPadding)
-			parent.requestLayout()
+		if(h > 0) {
+			var x = left
+			var y = top
+			leftPadding = h
+			t.apply {
+				(parent as? AbsoluteLayout)?.apply { x -= left; y -= top }
+				x += leftPadding; y += topPadding
+				val ww = h - horizontalPadding
+				val hh = h - verticalPadding
+				layoutParams = AbsoluteLayout.LayoutParams(ww, hh, x, y)
+				invalidate()
+			}
 		}
-		leftPadding = h
 	}
 
 	override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {

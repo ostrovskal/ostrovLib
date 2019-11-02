@@ -16,7 +16,7 @@ import ru.ostrovskal.sshstd.widgets.Text
  */
 
 /** Класс, реализующий разметку с полем ввода, имеющим всплывающую текстовую подсказку */
-open class EditLayout(context: Context, styleHint: IntArray = style_text_hint) : AbsoluteLayout(context) {
+open class EditLayout(context: Context, styleHint: IntArray) : AbsoluteLayout(context) {
 
 	private var isInit					= false
 

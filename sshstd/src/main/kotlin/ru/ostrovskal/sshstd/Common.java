@@ -94,7 +94,7 @@ public final class Common
             new ColorMatrixColorFilter(new ColorMatrix(new float[]{1.00f, 1.00f, 1.00f, 0.00f, 0.00f, 0.00f, 0.00f, 0.00f, 0.00f, 0.00f,
                                                                    0.00f, 0.00f, 0.00f, 0.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f}));
     /** Цветовые фильтры. Зеленый */
-    public static final ColorMatrixColorFilter fltGreem =
+    public static final ColorMatrixColorFilter fltGreen =
             new ColorMatrixColorFilter(new ColorMatrix(new float[]{0.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 1.00f, 1.00f, 0.00f, 0.00f,
                                                                    0.00f, 0.00f, 0.00f, 0.00f, 0.00f, 0.00f, 0.00f, 0.00f, 1.00f, 0.00f}));
     /** Цветовые фильтры. Синий */

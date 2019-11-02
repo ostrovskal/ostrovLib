@@ -270,15 +270,35 @@ class ExampleSurface(context: Context) : Surface(context) {
 
 class Abs(val wnd: MainWnd): UiComponent() {
 	override fun createView(ui: UiCtx) = with(ui) {
-		cellLayout(10, 10) {
-			tabLayout {
+//		cellLayout(10, 10) {
+			tabLayout(sizeCaption = 10) {
 				page(R.id.page1, R.string.check1) {
 					cellLayout(20, 15, 0, true) {
-						editLayout(style_edit) {
-							editEx(0, R.string.hint, style_edit, style_editEx) {
+						editLayout {
+							editEx(1, R.string.hint, style_edit, style_editEx) {
+								clickEditExButton = { _, e ->
+									e.setText("")
+									"clickButton $e".info()
+								}
 							}
 						}.lps(0, 0, 20, 3)
-						editEx(0, R.string.hint, style_edit, style_editEx).lps(0, 3, 20, 2)
+						editEx(2, R.string.hint, style_edit, style_editEx) {
+						}.lps(0, 3, 20, 2)
+						ribbon(0, true) {
+							backgroundSet {
+								solid = 0x80000000.toInt()
+								shape = TILE_SHAPE_ROUND
+								selectorColor = Color.WHITE
+								selectorWidth = 3f
+							}
+						}.lps(0, 5, 10, 9)
+						button {
+							id = 3
+							text = "Загрузить"
+							setOnClickListener {
+								"click".info()
+							}
+						}.lps(11, 8, 7, 2)
 					}
 				}
 				page(R.id.page2, R.string.check2) {
@@ -423,7 +443,7 @@ class Abs(val wnd: MainWnd): UiComponent() {
 				}
 			}.lps(0, if(config.portrait) 200.dp else 150.dp, MATCH, 300.dp)
 */
-		}
+//		}
 	}
 }
 

@@ -47,7 +47,7 @@ open class Tile(context: Context, style: IntArray) : Text(context, style) {
 	/** Выравнивание */
 	var align
 		get()                       = drawable.align
-		set(v)						{ drawable.align = v }
+		set(v)						{ drawable.align = v; setDrawables() }
 	
 	/** Выравнивание иконки */
 	var alignIcon
@@ -160,6 +160,7 @@ open class Tile(context: Context, style: IntArray) : Text(context, style) {
 		super.drawableStateChanged()
 		drawable.state = drawableState
 		paint.colorFilter = drawable.filter
+		invalidate()
 	}
 	
 	/** Определение позиции тайла */
@@ -181,6 +182,7 @@ open class Tile(context: Context, style: IntArray) : Text(context, style) {
         var right: TileDrawable? = null
         var top: TileDrawable? = null
         var bottom: TileDrawable? = null
+		background = null
         val pos = align
         if(pos test TILE_GRAVITY_BACKGROUND) background = drawable
         if(pos test TILE_GRAVITY_LEFT)      left = drawable
