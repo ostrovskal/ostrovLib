@@ -47,10 +47,13 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 	
 	/** Событие клика на элементе списка */
 	@JvmField var itemClickListener: ((ribbon: BaseRibbon, view: View, position: Int, id: Long) -> Unit)? = null
-	
+
 	/** Событие долгого клика на элементе */
 	@JvmField var itemLongClickListener: ((ribbon: BaseRibbon, view: View, position: Int, id: Long) -> Unit)? = null
-	
+
+	/** Событие завершения свайпа */
+	@JvmField var flingFinishedListener: ((ribbon: BaseRibbon) -> Unit)? = null
+
 	/** Установка выбранной позиции */
 	open var selection
 		get()                   = selectedItemPosition
@@ -179,10 +182,10 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 	// Признак, определяющий позицию эффекта оверскролла
 	private var mIsStartGlow                    = false
 	
-	// Минимальная скорость прокрутки
+	/** Минимальная скорость прокрутки */
     @JvmField var mMinVelocity                  = 0
 	
-	// Максимальная скорость прокрутки
+	/** Максимальная скорость прокрутки */
     @JvmField var mMaxVelocity                  = 0f
 	
 	// Идентификатор касания
@@ -375,7 +378,6 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 			// Не равны -> значит адаптер создал новое представление
 			if(child != view) addCacheView(view, pos) else mIsAttachedChild = true
 		}
-//		"obtainView newPos: $pos new: ${(child as? Text)?.text} cache: $cache posCache: $posCache".info()
 		return child
 	}
 	
@@ -810,125 +812,6 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 		/** При отсутствии данных */
 		override fun onInvalidated() {
 			onChanged()
-		}
-	}
-	
-	// Класс реализации жеста прокрутки списка с инерцией
-	private inner class Fling : Runnable {
-		// Скроллер
-		private val mScroller = OverScroller(context)
-		
-		// Последняя позиция
-		private var mLastFling = 0
-		
-		// Режим
-		private var mTouchMode = 0
-		
-		// Проверка на то, что все элементы помещаются в область списка
-		private fun contentFits(): Boolean {
-			val count = childCount
-			if(count == 0) return true
-			return if(count != mCount) false
-			else getChildAt(0).edge(mIsVert, false) >= mEdgeStart && getChildAt(count - 1).edge(mIsVert, true) <= mEdgeEnd
-			
-		}
-		
-		// Запуск
-		fun start(initialVelocity: Int) {
-			mLastFling = if(initialVelocity < 0) Int.MAX_VALUE else 0
-			if(mIsVert) {
-				mScroller.fling(0, mLastFling, 0, initialVelocity, 0, Int.MAX_VALUE, 0, Int.MAX_VALUE)
-			}
-			else {
-				mScroller.fling(mLastFling, 0, initialVelocity, 0, 0, Int.MAX_VALUE, 0, Int.MAX_VALUE)
-			}
-			mTouchMode = FLING_FLING
-			postOnAnimation(this)
-		}
-		
-		// Отскок
-		fun startSpringback() {
-			mTouchMode = if(mScroller.springBack(if(mIsVert) 0 else scrollX, if(mIsVert) scrollY else 0, 0, 0, 0, 0)) {
-				invalidate()
-				postOnAnimation(this)
-				FLING_OVERFLING
-			}
-			else FLING_FINISH
-		}
-		
-		// Завершение
-		fun finish() {
-			mTouchMode = FLING_FINISH
-			removeCallbacks(this)
-			mScroller.abortAnimation()
-		}
-		
-		// Непосредственно реализация жеста
-		private fun fling() {
-			if(mCount == 0 || childCount == 0) {
-				finish()
-				return
-			}
-			val more = mScroller.computeScrollOffset()
-			val coord = if(mIsVert) mScroller.currY else mScroller.currX
-			var delta = mLastFling - coord
-			val limit = (if(mIsVert) mRectList.height() else mRectList.width()) - 1
-			delta = if(delta > 0) limit.coerceAtMost(delta) else (-limit).coerceAtLeast(delta)
-			val atEdge = scrolling(delta)
-			val atEnd = atEdge && delta != 0
-			if(atEnd) {
-				if(more) {
-					if(mIsVert) mScroller.notifyVerticalEdgeReached(scrollY, 0, mOverflingDistance)
-					else mScroller.notifyHorizontalEdgeReached(scrollX, 0, mOverflingDistance)
-					val mode = overScrollMode
-					mTouchMode = if(mode == View.OVER_SCROLL_ALWAYS || mode == View.OVER_SCROLL_IF_CONTENT_SCROLLS && !contentFits()) {
-						mIsStartGlow = delta < 0
-						mGlow.onAbsorb(mScroller.currVelocity.toInt())
-						FLING_OVERFLING
-					} else FLING_FINISH
-					invalidate()
-					postOnAnimation(this)
-				}
-			}
-			else {
-				if(more) {
-					if(atEdge) invalidate()
-					mLastFling = coord
-					postOnAnimation(this)
-				}
-				else finish()
-			}
-		}
-		
-		override fun run() {
-			when(mTouchMode) {
-				FLING_SCROLL    -> if(!mScroller.isFinished) fling()
-				FLING_FLING     -> fling()
-				FLING_OVERFLING -> {
-					if(mScroller.computeScrollOffset()) {
-						val curr = if(mIsVert) mScroller.currY else mScroller.currX
-						val scroll = if(mIsVert) scrollY else scrollX
-						val delta = curr - scroll
-						if(overScroll(delta)) {
-							val crossDown = scroll <= 0 && curr > 0
-							val crossUp = scroll >= 0 && curr < 0
-							if(crossDown || crossUp) {
-								var velocity = mScroller.currVelocity.toInt()
-								if(crossUp) velocity = -velocity
-								mScroller.abortAnimation()
-								start(velocity)
-							}
-							else startSpringback()
-						}
-						else {
-							invalidate()
-							postOnAnimation(this)
-						}
-					}
-					else finish()
-				}
-				else            -> finish()
-			}
 		}
 	}
 }
