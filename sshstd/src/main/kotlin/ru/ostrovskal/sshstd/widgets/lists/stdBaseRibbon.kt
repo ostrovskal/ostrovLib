@@ -832,6 +832,7 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 		}
 	}
 
+	/** Класс, реализующий свайп */
 	inner class Fling : Runnable {
 		// Скроллер
 		private val mScroller = OverScroller(context)
@@ -842,7 +843,7 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 		/** Режим */
 		@JvmField var mTouchMode = FLING_FINISH
 
-		// Проверка на то, что все элементы помещаются в область списка
+		/** Проверка на то, что все элементы помещаются в область списка */
 		private fun contentFits(): Boolean {
 			val count = childCount
 			if(count == 0) return true
@@ -850,7 +851,7 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 			return getChildAt(0).edge(mIsVert, false) >= mEdgeStart && getChildAt(count - 1).edge(mIsVert, true) <= mEdgeEnd
 		}
 
-		// Запуск
+		/** Запуск */
 		fun start(initialVelocity: Int) {
 			mLastFling = if(initialVelocity < 0) Int.MAX_VALUE else 0
 			if(mIsVert) {
@@ -863,7 +864,7 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 			postOnAnimation(this)
 		}
 
-		// Отскок
+		/** Отскок */
 		fun startSpringback() {
 			mTouchMode = if(mScroller.springBack(if(mIsVert) 0 else scrollX, if(mIsVert) scrollY else 0, 0, 0, 0, 0)) {
 				invalidate()
@@ -873,7 +874,7 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 			else FLING_FINISH
 		}
 
-		// Завершение
+		/** Завершение */
 		fun finish() {
 			mTouchMode = FLING_FINISH
 			removeCallbacks(this)
@@ -881,7 +882,7 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 			flingFinishedListener?.invoke(this@BaseRibbon)
 		}
 
-		// Непосредственно реализация жеста
+		/** Непосредственно реализация жеста */
 		private fun fling() {
 			if(mCount == 0 || childCount == 0) {
 				finish()
@@ -918,6 +919,7 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 			}
 		}
 
+		/** Обработка */
 		override fun run() {
 			when(mTouchMode) {
 				FLING_SCROLL 	-> if(!mScroller.isFinished) fling()

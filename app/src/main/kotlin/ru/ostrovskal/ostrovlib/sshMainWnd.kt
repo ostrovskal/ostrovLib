@@ -26,6 +26,7 @@ import ru.ostrovskal.sshstd.utils.*
 import ru.ostrovskal.sshstd.widgets.Controller
 import ru.ostrovskal.sshstd.widgets.html.Html
 import ru.ostrovskal.sshstd.widgets.lists.Ribbon
+import kotlin.concurrent.thread
 
 
 object Serg: Table() {
@@ -165,10 +166,19 @@ enum class MsgEx {
 
 class MainWnd : Wnd() {
 	var typeTheme = 1
-
+	// ДПО4 ПОЛУЧЕНО
+	// 89857707575
 	override fun onCreate(savedInstanceState: Bundle?) {
 		startLog(this, "LIB", true, BuildConfig.VERSION_CODE, BuildConfig.VERSION_NAME, BuildConfig.DEBUG, enumNames(MsgEx.values()))
 		super.onCreate(savedInstanceState)
+		thread {
+			val dbx = DropBox("dbxSerg", "8iL3GSZ-JygAAAAAAAAHlIMEO_3cUJi2zLr1pR5tI8NCshh6KZ225aSqcNKLK-Wt\n")
+			val dlst = dbx.list("/ZX")?.apply {
+				forEach {
+					"${it.name} ${it.path} ${it.rev}".info()
+				}
+			}
+		}
 		/*
 		val j = Json(STORAGE::class.java)
 		val ret = j.serialize(Example)
@@ -504,4 +514,3 @@ class Abs(val wnd: MainWnd): UiComponent() {
 //		}
 	}
 }
-

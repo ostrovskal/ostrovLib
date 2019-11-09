@@ -1,6 +1,11 @@
 import com.jfrog.bintray.gradle.BintrayExtension
 import org.jetbrains.dokka.gradle.DokkaTask
 
+dependencies {
+    implementation("com.dropbox.core:dropbox-core-sdk:3.1.1")
+    //smokeTest("org.apache.httpcomponents:httpclient:4.5.5")
+}
+
 plugins {
     id("com.android.library")
     id("kotlin-android")
@@ -13,7 +18,7 @@ apply {
 }
 
 // версия библиотеки
-val libVersion = "0.9.8"
+val libVersion = "1.0.0"
 
 // ссылка на сайт размещения проекта
 val siteUrl = "https://github.com/ostrovskal/sshSTD"
@@ -27,7 +32,7 @@ android {
     defaultConfig {
         minSdkVersion(19)
         targetSdkVersion(28)
-        versionCode = 27
+        versionCode = 28
         versionName = libVersion
         resValue("string", "app_name", "sshSTD")
     }

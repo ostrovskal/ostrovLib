@@ -115,6 +115,34 @@ public final class Common
             new ColorMatrixColorFilter(new ColorMatrix(new float[]{255.0f, 0.00f, 0.00f, 0.00f, -128.00f * 255.00f, 0.00f, 255.00f, 0.00f, 0.00f,
                                                                    -128.00f * 255.00f, 0.00f, 0.00f, 255.00f, 0.00f, -128.00f * 255.00f, 0.00f,
                                                                    0.00f, 0.00f, 1.00f, 0.00f}));
+
+    /** */
+    public static final int DBX_FIO         = 0;
+
+    /** */
+    public static final int DBX_LINK        = 1;
+
+    /** */
+    public static final int DBX_EMAIL       = 2;
+
+    /** */
+    public static final int DBX_COUNTRY     = 3;
+
+    /** */
+    public static final int DBX_PHOTO       = 4;
+
+/*
+    */
+/** *//*
+
+    public static final int DBX_           = 0;
+
+    */
+/** *//*
+
+    public static final int DBX_           = 0;
+
+*/
     /** Идентификатор загрузчика */
     public static final int CONNECTOR           = 1;
 

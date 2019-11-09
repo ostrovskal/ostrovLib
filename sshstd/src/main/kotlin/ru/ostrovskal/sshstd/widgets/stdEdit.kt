@@ -138,7 +138,7 @@ open class EditEx(context: Context, id: Int, hint: Int, style: IntArray, styleEx
 		}
 	}
 
-	/* Вычисление габаритов и позиции кнопки очистки */
+	/** Вычисление габаритов и позиции кнопки очистки */
 	override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
 		super.onLayout(changed, left, top, right, bottom)
 		onLayoutButton(changed, action)

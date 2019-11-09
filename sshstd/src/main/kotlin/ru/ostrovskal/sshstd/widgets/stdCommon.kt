@@ -78,7 +78,7 @@ open class Radio(context: Context, id: Int, text: Int, style: IntArray) : Check(
  * */
 open class Text(context: Context, @JvmField val style: IntArray) : TextView(context, null, 0) {
 
-	// Объект касания
+	/** Объект касания */
 	@JvmField val touch			= Touch()
 
 	/** Событие изменения темы */
