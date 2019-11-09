@@ -16,10 +16,16 @@ data class Size(@JvmField var w: Int, @JvmField var h:Int) {
 	
 	/** Проверка на пустой размер */
 	fun isEmpty() = w == 0 || h == 0
-	
+
+	/** Проверка на недействительный размер */
+	fun isDirty() = w == Int.MIN_VALUE || h == Int.MIN_VALUE
+
 	/** Установка пустого размера */
 	fun empty() { w = 0; h = 0 }
-	
+
+	/** Установка недействительного размера */
+	fun dirty() { w = Int.MIN_VALUE; w = Int.MIN_VALUE}
+
 	/** Преобразование в строковое представление */
 	//override fun toString() = "Size($w - $h)"
 

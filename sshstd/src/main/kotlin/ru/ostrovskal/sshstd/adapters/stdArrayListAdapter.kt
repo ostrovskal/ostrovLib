@@ -14,8 +14,11 @@ import ru.ostrovskal.sshstd.widgets.lists.Spinner
  * @since  0.5.0
  */
 
- /** Класс адаптера спиннера */
-open class ArrayListAdapter(context: Context, private val title: UiComponent, private val dropdown: UiComponent,
+ /** Класс адаптера спиннера
+  * @property title	 	Представление для заголовка(Spinner)
+  * @property dropdown	Представление для элемента списка
+  * */
+open class ArrayListAdapter(context: Context, protected val title: UiComponent, protected val dropdown: UiComponent,
                                mObjects: List<String>): ArrayAdapter<String>(context, 0, mObjects) {
 	// Цвет подсветки
 	private var highColor  = 0

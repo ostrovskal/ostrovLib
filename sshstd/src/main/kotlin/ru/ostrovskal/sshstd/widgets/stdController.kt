@@ -9,8 +9,10 @@ import android.os.Parcelable
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import ru.ostrovskal.sshstd.*
 import ru.ostrovskal.sshstd.Common.*
+import ru.ostrovskal.sshstd.Size
+import ru.ostrovskal.sshstd.SizeF
+import ru.ostrovskal.sshstd.Touch
 import ru.ostrovskal.sshstd.layouts.AbsoluteLayout
 import ru.ostrovskal.sshstd.objects.Theme
 import ru.ostrovskal.sshstd.utils.*
@@ -149,7 +151,7 @@ open class Controller(context: Context, ID: Int, grid: Boolean, style: IntArray 
 	
 	/** Обработка событий касания кнопок контроллера */
 	override fun onTouchEvent(event: MotionEvent): Boolean {
-		onButtons(onTouch(event))
+		onButtons(touch.event(event))
 		return true
 	}
 	

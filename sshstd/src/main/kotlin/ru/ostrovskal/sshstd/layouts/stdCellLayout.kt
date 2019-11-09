@@ -94,20 +94,18 @@ open class CellLayout(context: Context, @JvmField protected var cols: Int, @JvmF
 		val ww = MeasureSpec.getSize(widthMeasureSpec)
 		val hh = MeasureSpec.getSize(heightMeasureSpec)
 		val spc = spacing * 2
-		
-		if(cellW == 0f && cellH == 0f) {
-			val w = ww - horizontalPadding
-			val h = hh - verticalPadding
-			cellW = w / cols.toFloat()
-			cellH = h / rows.toFloat()
-			if(cols == CELL_LAYOUT_AUTO_FIT) {
-				cellW = cellH
-				cols = (w / cellW).roundToInt()
-			}
-			if(rows == CELL_LAYOUT_AUTO_FIT) {
-				cellH = cellW
-				rows = (h / cellH).roundToInt()
-			}
+
+		val width = ww - horizontalPadding
+		val height = hh - verticalPadding
+		cellW = width / cols.toFloat()
+		cellH = height / rows.toFloat()
+		if(cols == CELL_LAYOUT_AUTO_FIT) {
+			cellW = cellH
+			cols = (width / cellW).roundToInt()
+		}
+		if(rows == CELL_LAYOUT_AUTO_FIT) {
+			cellH = cellW
+			rows = (height / cellH).roundToInt()
 		}
 		loopChildren {
 			if(it.visibility == View.GONE) return@loopChildren

@@ -114,6 +114,7 @@ open class EditEx(context: Context, id: Int, hint: Int, style: IntArray, styleEx
 	// Абсолютная разметка. Накладывается поверх поля ввода
 	private val lyt		= AbsoluteLayout(context).apply { addView(action) }
 
+	/** Привязка абсолютного макета к полю ввода */
 	override fun onAttachedToWindow() {
 		super.onAttachedToWindow()
 		(parent as? ViewGroup)?.addView(lyt, layoutParams)
@@ -137,6 +138,7 @@ open class EditEx(context: Context, id: Int, hint: Int, style: IntArray, styleEx
 		}
 	}
 
+	/* Вычисление габаритов и позиции кнопки очистки */
 	override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
 		super.onLayout(changed, left, top, right, bottom)
 		onLayoutButton(changed, action)

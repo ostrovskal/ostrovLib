@@ -5,9 +5,8 @@ import android.graphics.Canvas
 import android.os.Parcelable
 import android.view.MotionEvent
 import android.widget.TextView
+import ru.ostrovskal.sshstd.Touch
 import ru.ostrovskal.sshstd.objects.Theme
-import ru.ostrovskal.sshstd.onTouch
-import ru.ostrovskal.sshstd.touchClick
 import ru.ostrovskal.sshstd.utils.makeFont
 import ru.ostrovskal.sshstd.utils.noGetter
 import ru.ostrovskal.sshstd.utils.withSave
@@ -23,7 +22,7 @@ import ru.ostrovskal.sshstd.utils.withSave
 
 /** Класс Флажка со стилем по умолчанию style_сheck */
 open class Check(context: Context, id: Int, text: Int, style: IntArray) : Tile(context, style) {
-	
+
 	override var isChecked
 		get()               = super.isChecked
 		set(v)              { super.isChecked = v; tile = data.toInt(); performClick(); invalidate() }
@@ -32,16 +31,16 @@ open class Check(context: Context, id: Int, text: Int, style: IntArray) : Tile(c
 		this.id = id
 		setText(text)
 	}
+
 	/** Обработка события клика */
-	override fun onTouchEvent(event: MotionEvent): Boolean {
-		onTouch(event)
-		touchClick(0, rectScreen) {
+	override fun onTouchEvent(ev: MotionEvent): Boolean {
+		touch.event(ev).click(rectScreen) {
 			if(this@Check is Radio) radioClickNotify?.invoke(this@Check)
 			else isChecked = !isChecked
 		}
 		return true
 	}
-	
+
 	override fun onRestoreInstanceState(state: Parcelable?) {
 		super.onRestoreInstanceState(state)
 		isChecked = data.toInt() != 0
@@ -78,7 +77,10 @@ open class Radio(context: Context, id: Int, text: Int, style: IntArray) : Check(
  *  @param style Стиль текста
  * */
 open class Text(context: Context, @JvmField val style: IntArray) : TextView(context, null, 0) {
-	
+
+	// Объект касания
+	@JvmField val touch			= Touch()
+
 	/** Событие изменения темы */
 	open fun onChangeTheme() {
 		Theme.updateTheme(context, this, style)

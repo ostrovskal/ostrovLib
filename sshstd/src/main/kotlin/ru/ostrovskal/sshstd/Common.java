@@ -317,16 +317,16 @@ public final class Common
     public static final int TILE_SCALE_WIDTH	    = 4;
 
     /** Режим растягивания. Без растягивания */
-    public static final int GRID_STRETCH_NO         = 0;
+    public static final int TABLE_STRETCH_NO         = 0;
 
     /** Режим растягивания. Пространство между ячейками */
-    public static final int GRID_STRETCH_SPACING    = 1;
+    public static final int TABLE_STRETCH_SPACING    = 1;
 
     /** Режим растягивания. Растягивать ячейки */
-    public static final int GRID_STRETCH_CELL       = 2;
+    public static final int TABLE_STRETCH_CELL       = 2;
 
     /** Режим растягивания. Пространство между ячейками. Расстояние одинаковое */
-    public static final int GRID_STRETCH_UNIFORM    = 3;
+    public static final int TABLE_STRETCH_UNIFORM    = 3;
 
     /** Прокрутка. Горизонтальная */
     public static final int SCROLLBARS_HORZ         = 0x00000100;
@@ -487,6 +487,9 @@ public final class Common
     /** JSON лексема. Эскейп последовательность*/
     public static final int JSON_ESCAPE             = 12;
 
+    /** Флаги касания. */
+    public static final int TOUCH_PRESSED           = 0x00000001;
+
     /** Относительные размеры HTML подзаголовков */
     public static final float[] htmlHeaderSize      = {1.7f, 1.6f, 1.5f, 1.4f, 1.3f, 1.2f};
 
@@ -642,15 +645,15 @@ public final class Common
     public static final int ATTR_SCROLLBARS           = 66 | ATTR_INT;
     /** Вид отбрасывания тени у представления */
     public static final int ATTR_FADING_EDGE          = 67 | ATTR_INT;
-    /** Расстояние между ячейками в Grid */
+    /** Расстояние между ячейками в Table */
     public static final int ATTR_SPACING_CELL         = 68 | ATTR_DMN;
-    /** Расстояние между строками в Grid */
+    /** Расстояние между строками в Table */
     public static final int ATTR_SPACING_LINE         = 69 | ATTR_DMN;
     /** Размер ячейки */
     public static final int ATTR_CELL_SIZE            = 70 | ATTR_DMN;
-    /**  Количество ячеек в Grid */
+    /**  Количество ячеек в Table */
     public static final int ATTR_CELL_NUM             = 71 | ATTR_INT;
-    /** Режим отображения ячеек в Grid */
+    /** Режим отображения ячеек в Table */
     public static final int ATTR_STRETCH_MODE         = 72 | ATTR_INT;
     /** Фон представления */
     public static final int ATTR_BACKGROUND           = 73 | ATTR_DRW;
@@ -1186,7 +1189,7 @@ public final class Common
             ATTR_SPACING_CELL, 1,
             ATTR_CELL_SIZE, 130,
             ATTR_PADDING, 2,
-            ATTR_STRETCH_MODE, GRID_STRETCH_UNIFORM
+            ATTR_STRETCH_MODE, TABLE_STRETCH_UNIFORM
     };
 
     /** Стиль по умолчанию для вкладки TabLayout */

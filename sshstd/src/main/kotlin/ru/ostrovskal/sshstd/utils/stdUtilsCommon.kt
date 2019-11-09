@@ -11,6 +11,7 @@ import android.os.*
 import android.text.format.Time
 import android.util.Log
 import android.view.Gravity
+import android.view.MotionEvent
 import ru.ostrovskal.sshstd.*
 import ru.ostrovskal.sshstd.Common.*
 import ru.ostrovskal.sshstd.sql.SQL
@@ -82,6 +83,9 @@ fun Bundle.put(key: String, value: Any?) {
 		else            -> error("Неизвестный тип для установки в Bundle($key, $value)")
 	}
 }
+
+/** Идентификатор касания */
+inline val MotionEvent.touchtId		get()	= getPointerId(actionIndex)
 
 /** Преобразование числа в представление Килобайт/Мегабайт */
 val Int.mb: String                   get() {

@@ -4,23 +4,17 @@ package ru.ostrovskal.sshstd.objects
 
 import android.content.Context
 import android.content.res.Resources
-import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.text.InputFilter
-import android.text.InputType
-import android.view.Gravity
 import android.view.View
-import android.view.View.GONE
-import android.view.View.TEXT_ALIGNMENT_GRAVITY
-import android.view.inputmethod.EditorInfo.IME_FLAG_NO_EXTRACT_UI
 import android.widget.TextView
 import com.github.ostrovskal.sshstd.R
 import ru.ostrovskal.sshstd.Common.*
 import ru.ostrovskal.sshstd.utils.*
 import ru.ostrovskal.sshstd.widgets.Tile
 import ru.ostrovskal.sshstd.widgets.lists.BaseRibbon
-import ru.ostrovskal.sshstd.widgets.lists.Grid
+import ru.ostrovskal.sshstd.widgets.lists.Table
 import ru.ostrovskal.sshstd.widgets.lists.Ribbon
 import ru.ostrovskal.sshstd.widgets.lists.Spinner
 
@@ -239,7 +233,7 @@ object Theme {
 					ATTR_MAX_WIDTH       -> maxWidth = int
 				}
 			}
-			(obj as? Grid)?.apply {
+			(obj as? Table)?.apply {
 				when(attr) {
 					ATTR_SPACING_LINE   -> lineSpacing = int
 					ATTR_CELL_SIZE      -> cellSize = int

@@ -7,8 +7,6 @@ import android.os.Parcelable
 import android.view.MotionEvent
 import ru.ostrovskal.sshstd.Common.*
 import ru.ostrovskal.sshstd.objects.Theme
-import ru.ostrovskal.sshstd.onTouch
-import ru.ostrovskal.sshstd.touchClick
 import ru.ostrovskal.sshstd.utils.offset
 import ru.ostrovskal.sshstd.utils.themeAttrValue
 
@@ -58,8 +56,7 @@ open class Switch(context: Context, id: Int, text: Int, style: IntArray) : Tile(
 	/** Обработка события касания */
 	override fun onTouchEvent(event: MotionEvent): Boolean {
 		if(isEnabled && (posThumb == 0 || posThumb == animator.frames)) {
-			onTouch(event)
-			touchClick(0, rectScreen) { isChecked = !isChecked }
+			touch.event(event).click(rectScreen) { isChecked = !isChecked }
 		}
 		return true
 	}

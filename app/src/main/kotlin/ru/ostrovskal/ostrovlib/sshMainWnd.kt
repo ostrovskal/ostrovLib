@@ -9,19 +9,23 @@ import android.os.Handler
 import android.os.Looper
 import android.os.Message
 import android.view.SurfaceHolder
+import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import ru.ostrovskal.sshstd.*
 import ru.ostrovskal.sshstd.Common.*
 import ru.ostrovskal.sshstd.adapters.ArrayListAdapter
 import ru.ostrovskal.sshstd.json.JAdapter
 import ru.ostrovskal.sshstd.layouts.AbsoluteLayout
-import ru.ostrovskal.sshstd.objects.*
+import ru.ostrovskal.sshstd.layouts.CellLayout
+import ru.ostrovskal.sshstd.objects.Theme
 import ru.ostrovskal.sshstd.sql.SQL
 import ru.ostrovskal.sshstd.sql.Table
 import ru.ostrovskal.sshstd.ui.*
 import ru.ostrovskal.sshstd.utils.*
 import ru.ostrovskal.sshstd.widgets.Controller
 import ru.ostrovskal.sshstd.widgets.html.Html
+import ru.ostrovskal.sshstd.widgets.lists.Ribbon
 
 
 object Serg: Table() {
@@ -268,9 +272,62 @@ class ExampleSurface(context: Context) : Surface(context) {
 	}
 }
 
+private val ribbonList = listOf("sergey", "vlad", "max", "viktor", "nik", "alex", "olga", "svetlana", "oleg", "12345", "dkdkdk", "0987665", "qwerty", "poiuiyyt")
+
+class WndAdapter(context: Context, val item: UiComponent) : ArrayAdapter<Ribbon>(context, 0, listOf()) {
+
+	/** Возвращает представление заголовка */
+	override fun getView(position: Int, convertView: View?, parent: ViewGroup) = createView(position, convertView)
+
+	override fun getCount(): Int {
+		return 3
+	}
+	/** Возвращает представление из выпадающего списка */
+	override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup) = createView(position, convertView)
+
+	/** Создает представление */
+	private fun createView(position: Int, convertView: View?): View? {
+		return ((convertView ?: item.createView(UiCtx(context))) as? Ribbon)?.apply {
+			var lst = listOf("nothing")
+			when(position) {
+				0		-> lst = listOf("1", "2", "3", "4", "5", "6", "7")
+				1		-> lst = listOf("11", "21", "31", "41")
+				2		-> lst = listOf("121", "122", "123", "124", "125", "126", "127")
+			}
+			adapter = ArrayListAdapter(context, ItemIO(), ItemIO(), lst)
+		}
+	}
+}
+
+class ItemRibbon : UiComponent() {
+	override fun createView(ui: UiCtx) = ui.run {
+		ribbon(0, true) {
+			padding = 16.dp
+			layoutParams = CellLayout.LayoutParams(1, 1, 4, 4)
+			backgroundSet {
+				solid = 0x80202020.toInt()
+			}
+		}
+	}
+
+}
+
+/** Класс, реализующий элемент списка файлов для загрузки */
+private class ItemIO : UiComponent() {
+	override fun createView(ui: UiCtx) = ui.run { check(0, R.string.null_text) }
+}
+
 class Abs(val wnd: MainWnd): UiComponent() {
 	override fun createView(ui: UiCtx) = with(ui) {
-//		cellLayout(10, 10) {
+		cellLayout(12, 10) {
+			ribbon(0, false) {
+				adapter = WndAdapter(context, ItemRibbon())
+				backgroundSet {
+					solid = 0x4000ff00.toInt()
+				}
+			}.lps(0, 0, 6, 5)
+		}
+/*
 			tabLayout(sizeCaption = 10) {
 				page(R.id.page1, R.string.check1) {
 					cellLayout(20, 15, 0, true) {
@@ -316,7 +373,7 @@ class Abs(val wnd: MainWnd): UiComponent() {
 						backgroundSet {
 							setBitmap("menu_common")
 						}
-						grid(R.id.ribbon, false) {
+						table(R.id.ribbon, false) {
 							adapter = ArrayListAdapter(ctx, GridItem(), GridItem(),
 							                           listOf("1", "2", "3", "Сергей", "Влад", "Макс", "Виктор", "Мирослав", "Ольга", "Раиса", "4", "5", "6", "Варвара"))
 							itemClickListener = { _, _, position, id ->
@@ -328,12 +385,13 @@ class Abs(val wnd: MainWnd): UiComponent() {
 								gradientDir = DIRL
 							}
 							cellSize = 30.dp
-							stretchMode = GRID_STRETCH_CELL
+							stretchMode = TABLE_STRETCH_CELL
 							numCells = 3
 						}.lps(2, 2, 6, 6)
 					}
 				}
 			}//.lps(0, 0, 10, 10)
+*/
 /*
 			tabLayout {
 				content.apply {
@@ -409,7 +467,7 @@ class Abs(val wnd: MainWnd): UiComponent() {
 *//*
 
 							cellSize = 30.dp
-							stretchMode = GRID_STRETCH_CELL
+							stretchMode = TABLE_STRETCH_CELL
 							numCells = 3
 						}.lps(MATCH, 120.dp)
 						spinner(R.id.spinner) {

@@ -7,6 +7,8 @@ import android.graphics.Rect
 import android.view.MotionEvent
 import ru.ostrovskal.sshstd.Common.*
 import ru.ostrovskal.sshstd.utils.contains
+import ru.ostrovskal.sshstd.utils.test
+import ru.ostrovskal.sshstd.utils.touchtId
 import kotlin.math.*
 
 /**
@@ -16,8 +18,15 @@ import kotlin.math.*
 
 /** Менеджер обработки касания */
 class Touch {
+
+	/** Флаги операций */
+	@JvmField var flags			= 0
+
+	/** Тип касания */
+	@JvmField var act			= MotionEvent.ACTION_CANCEL
+
 	/** Количество точек касания */
-	@JvmField var count           = 0
+	@JvmField var count         = 0
 
 	/** Начальная координата касания */
 	@JvmField var ptBegin       = PointF()
@@ -36,7 +45,19 @@ class Touch {
 	
 	/** Текущее время касания */
 	@JvmField var tmCurrent     = 0L
-	
+
+	// Временное значение
+	private var idxClick		= -1
+
+	// Временное значение
+	private var len				= 0f
+
+	// Временный размер 1
+	private val tempSize1		= Size(0, 0)
+
+	// Временный размер 2
+	private val tempSize2		= Size(0, 0)
+
 	/** Сброс в начальную позицию */
 	inline fun resetPosition() { ptBegin.x = ptCurrent.x; ptBegin.y = ptCurrent.y }
 	
@@ -44,13 +65,13 @@ class Touch {
 	inline fun resetTime() { tmBegin = tmCurrent }
 	
 	/** Величина смещения [ret] относительно начальной точки с учетом размера ячейки [cell] */
-	fun delta(cell: Size, ret: Size): Boolean {
+	private fun delta(cell: Size, ret: Size): Boolean {
 		ret.set(((ptCurrent.x - ptBegin.x) / cell.w).roundToInt(), ((ptCurrent.y - ptBegin.y) / cell.h).roundToInt())
 		return (abs(ret.w) > 0 || abs(ret.h) > 0)
 	}
 	
 	/** Длина "линии" между начальной [p] и текущей точкой с учетом размера ячейки [cell] */
-	fun length(cell: Size, p: PointF): Float {
+	private fun length(cell: Size, p: PointF): Float {
 		val x = ((ptCurrent.x - p.x) / cell.w.toDouble()).pow(2.0)
 		val y = ((ptCurrent.y - p.y) / cell.h.toDouble()).pow(2.0)
 		return sqrt(x + y).toFloat()
@@ -78,7 +99,7 @@ class Touch {
 	 * Вернуть направление относительно точки [pt] с учетом гранулярности [cell]
 	 * [is4] Признак, определяющий вычисление по четырем или восьми направлениям вычислять направление
 	 */
-	fun direction(cell: Size, pt: PointF, is4: Boolean): Int {
+	private fun direction(cell: Size, pt: PointF, is4: Boolean): Int {
 		var dir = DIR0
 		val dx = ptCurrent.x - pt.x
 		val dy = ptCurrent.y - pt.y
@@ -99,174 +120,134 @@ class Touch {
 		}
 		return dir
 	}
-	
-	companion object {
-		/** Массив объектов касания */
-		@JvmField var touch = Array(10) { Touch() }
-		
-		/** Индекс области клика */
-		@JvmField var clk             = -1
-		
-		/** Временный размер1 */
-		@JvmField var tmpSz1          = Size(0, 0)
-		
-		/** Временный размер2 */
-		@JvmField var tmpSz2          = Size(0, 0)
-		
-		/** Захваченный объект нажатия1 */
-		@JvmField var tmpTh1: Touch?  = null
-		
-		/** Захваченный объект нажатия2 */
-		@JvmField var tmpTh2: Touch?  = null
-		
-		/** Длина вектора */
-		@JvmField var len             = 0f
-		
-		/** Первое касание */
-		@JvmField var pt              = PointF(-1f, -1f)
-		
-	}
-}
 
-/** Клик с идентификатором [id] для области [rc] */
-inline fun touchClick(id: Int, rc: Rect, crossinline action: (time: Long) -> Unit) {
-	findTouch(id)?.apply { if(rc.contains(ptBegin)) Touch.tmpTh1 = this } ?: Touch.tmpTh1?.apply { Touch.tmpTh1 = null; if(rc.contains(ptCurrent))
-		action(tmCurrent - tmBegin) }
-}
-
-/** Клик с идентификатором [id] для массива областей [rects] */
-inline fun touchClick(id: Int, rects: Array<Rect>, crossinline action: (idx: Int, time: Long) -> Unit) {
-	findTouch(id)?.apply { Touch.clk = contains(rects, ptBegin).also { if(it != -1) Touch.tmpTh1 = this } }
-	?: Touch.tmpTh1?.apply { Touch.tmpTh1 = null; if(contains(rects, ptCurrent) == Touch.clk) action(Touch.clk, tmCurrent - tmBegin) }
-}
-
-/**
- * Определение направления
- *
- * @param id     Идентификатор касания
- * @param cell   Гранулярность
- * @param center Точка относительно которой определять направление
- * @param is4    Признак, определяющий количество направлений - 4 или 8
- */
-inline fun touchDirection(id: Int, cell: Size, center: PointF, is4: Boolean, crossinline action: (dir: Int, t: Touch) -> Unit) {
-	findTouch(id)?.apply { action(direction(cell, center, is4), this) }
-}
-
-/** Перетаскивание для касания с идентификатором [id] и гранулярностью [cell] */
-inline fun touchDrag(id: Int, cell: Size, crossinline action: (offset: Size, time: Long, t: Touch, event: Boolean) -> Unit) {
-	Touch.tmpTh1 = findTouch(id)?.apply {
-		delta(cell, Touch.tmpSz1)
-		if(Touch.tmpSz2 != Touch.tmpSz1) {
-			Touch.tmpSz2.w = Touch.tmpSz1.w
-			Touch.tmpSz2.h = Touch.tmpSz1.h
-			Touch.tmpSz1.w *= cell.w
-			Touch.tmpSz1.h *= cell.h
-			action(Touch.tmpSz1, tmCurrent - tmBegin, this, true)
-			resetTime()
-		}
-	} ?: Touch.tmpTh1?.apply {
-		action(Touch.tmpSz1, tmCurrent - tmBegin, this, false)
-		Touch.tmpSz2.empty()
-	}
-}
-
-/** Ротация вокруг центральной точки [center] для касания с идентификатором [id] и гранулярностью [cell] */
-inline fun touchRotate(id: Int, cell: Size, center: PointF, crossinline action: (angle: Float, time: Long, t: Touch, event: Boolean) -> Unit) {
-	Touch.tmpTh1 = findTouch(id)?.apply {
-		if(delta(cell, Touch.tmpSz1)) {
-			action(this.rotate(center, ptCurrent), tmCurrent - tmBegin, this, true)
-			resetPosition()
-			resetTime()
-		}
-	} ?: Touch.tmpTh1?.apply {action(0f, tmCurrent - tmBegin, this, false) }
-}
-
-/** Масштабирование для касаний с идентификаторами [id1] и [id2] и гранулярностью [cell] */
-inline fun touchScale(id1: Int, id2: Int, cell: Size, crossinline action: (offs: Float, t1: Touch, t2: Touch, event: Boolean) -> Unit) {
-	val t1 = findTouch(id1)
-	val t2 = findTouch(id2)
-	if(t1 != null && t2 != null) {
-		if(t1.delta(cell, Touch.tmpSz1) || t2.delta(cell, Touch.tmpSz1)) {
-			if(Touch.tmpTh1 == null) {
-				Touch.tmpTh1 = t1; Touch.tmpTh2 = t2
-				Touch.len = t1.length(cell, t2.ptCurrent)
+	/** Клик для области [rc] */
+	fun click(rc: Rect, action: (time: Long) -> Unit) {
+		if(press) {
+			if(rc.contains(ptBegin)) flags = TOUCH_PRESSED
+		} else {
+			if(flags test TOUCH_PRESSED) {
+				if(rc.contains(ptCurrent)) action(tmCurrent - tmBegin)
+				flags = 0
 			}
-			action((t1.length(cell, t2.ptCurrent) / Touch.len) - 1f, t1, t2, true)
-			t1.resetPosition()
-			t2.resetPosition()
-		}
-	} else Touch.tmpTh1?.apply { action(0f, this, Touch.tmpTh2 ?: this, false);  Touch.tmpTh1 = null; Touch.tmpTh2 = null }
-}
-
-/**
- * Симуляция мультитач
- *
- * @param id    Идентификатор касания
- * @param x     Горизонтальная позиция
- * @param y     Вертикальная позиция
- * @param pr    Признак нажатия
- * @param tm    Признак времени, true = начальное, false = текущее
- */
-fun emulatorMultitouch(id: Int, x: Float, y: Float, pr: Boolean, tm: Boolean) {
-	Touch.touch[id].apply {
-		tmBegin = System.currentTimeMillis()
-		ptBegin = PointF(x, y)
-		this.id = id
-		press = pr
-		if(!tm) {
-			tmCurrent = tmBegin
-			ptCurrent = ptBegin
 		}
 	}
-}
 
-/** Уничтожение всех объектов касания */
-fun touchReset() {
-	Touch.touch.forEach {
-		it.apply {
-			tmBegin = 0L; tmCurrent = 0L
-			ptBegin.x = 0f; ptBegin.y = 0f
-			ptCurrent.x = 0f; ptCurrent.y = 0f
-			count = 0
-			press = false
+	/** Клик для массива областей [rects] */
+	fun click(rects: Array<Rect>, action: (idx: Int, time: Long) -> Unit) {
+		if(press) {
+			idxClick = contains(rects, ptBegin).also { if(it != -1) flags = TOUCH_PRESSED }
+		} else if(flags test TOUCH_PRESSED) {
+			if (contains(rects, ptCurrent) == idxClick) action(idxClick, tmCurrent - tmBegin)
+			flags = 0
+			idxClick = -1
 		}
 	}
-}
 
-/** Найти объект касания по определенному индексу [idx] с учетом признака нажатия [pressed] */
-fun findTouch(idx: Int, pressed: Boolean = true): Touch? = Touch.touch[idx].run {
-	if(!pressed) this
-	else if(press) this else null
-}
+	/**
+	 * Определение направления
+	 *
+	 * @param cell   Гранулярность
+	 * @param center Точка относительно которой определять направление
+	 * @param is4    Признак, определяющий количество направлений - 4 или 8
+	 */
+	fun direction(cell: Size, center: PointF, is4: Boolean, action: (dir: Int, t: Touch) -> Unit) {
+		if(press) action(direction(cell, center, is4), this)
+	}
 
-/** Обработка события касания */
-fun onTouch(event: MotionEvent): Touch {
-	// время
-	val tm = System.currentTimeMillis()
-	// событие
-	val act = event.actionMasked
-	// индекс
-	val idx = event.actionIndex
-	// координаты
-	val x = event.getX(idx)
-	val y = event.getY(idx)
-	// ИД
-	val id = event.getPointerId(idx)
-	return Touch.touch[id].apply {
-		this.id = id
+	/** Перетаскивание для касания с гранулярностью [cell] */
+	fun drag(cell: Size, action: (offset: Size, time: Long, t: Touch, event: Boolean) -> Unit) {
+		if(press) {
+			flags = TOUCH_PRESSED
+			delta(cell, tempSize1)
+			if(tempSize2 != tempSize1) {
+				tempSize2.w = tempSize1.w
+				tempSize2.h = tempSize1.h
+				tempSize1.w *= cell.w
+				tempSize1.h *= cell.h
+				action(tempSize1, tmCurrent - tmBegin, this, true)
+				resetTime()
+			}
+		} else if(flags test TOUCH_PRESSED) {
+			action(tempSize1, tmCurrent - tmBegin, this, false)
+			tempSize2.dirty()
+			flags = 0
+		}
+	}
+
+	/** Ротация вокруг центральной точки [center] для касания и гранулярностью [cell] */
+	fun rotate(cell: Size, center: PointF, action: (angle: Float, time: Long, t: Touch, event: Boolean) -> Unit) {
+		if(press) {
+			flags = TOUCH_PRESSED
+			if(delta(cell, tempSize1)) {
+				action(rotate(center, ptCurrent), tmCurrent - tmBegin, this, true)
+				resetPosition()
+				resetTime()
+			}
+		} else if(flags test TOUCH_PRESSED) {
+			action(0f, tmCurrent - tmBegin, this, false)
+			flags = 0
+		}
+	}
+
+	/** Масштабирование для касаний с гранулярностью [cell] */
+	fun scale(other: Touch, cell: Size, action: (offs: Float, t1: Touch, t2: Touch, event: Boolean) -> Unit) {
+		if(press && other.press) {
+			if(delta(cell, tempSize1) || other.delta(cell, other.tempSize1)) {
+				if(flags == 0) {
+					flags = TOUCH_PRESSED
+					other.flags = TOUCH_PRESSED
+					len = length(cell, other.ptCurrent)
+				}
+				action((length(cell, other.ptCurrent) / len) - 1f, this, other, true)
+				resetPosition()
+				other.resetPosition()
+			}
+		} else if((flags test TOUCH_PRESSED) && (other.flags test TOUCH_PRESSED)) {
+			action(0f, this, other, false)
+			flags = 0
+			other.flags = 0
+		}
+	}
+
+	/** Уничтожение всех объектов касания */
+	fun reset() {
+		tmBegin = 0L; tmCurrent = 0L
+		ptBegin.x = 0f; ptBegin.y = 0f
+		ptCurrent.x = 0f; ptCurrent.y = 0f
+		flags = 0; count = 0; act = MotionEvent.ACTION_CANCEL
+		tempSize1.w = 0; tempSize1.h = 0
+		tempSize2.w = 0; tempSize2.h = 0
+		idxClick = -1; len = 0f
+		press = false
+	}
+
+	/** Обработка события касания */
+	fun event(event: MotionEvent): Touch {
+		// время
+		val tm = System.currentTimeMillis()
+		// индекс
+		val idx = event.actionIndex
+		// координаты
+		val x = event.getX(idx)
+		val y = event.getY(idx)
+		// событие
+		act = event.actionMasked
+
+		id = event.touchtId
 		count = event.pointerCount
+
 		when(act) {
 			MotionEvent.ACTION_DOWN								-> {
 				press = true
 				ptBegin.x = x; ptBegin.y = y
-				Touch.pt.x = x; Touch.pt.y = y
 				tmBegin = tm
 			}
-			MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL	-> {
-				press = false
-			}
+			MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL	-> press = false
 		}
 		tmCurrent = tm
 		ptCurrent.x = x; ptCurrent.y = y
+		return this
 	}
 }
+

@@ -9,7 +9,10 @@ import android.os.HandlerThread
 import android.os.Message
 import android.view.SurfaceHolder
 import android.view.SurfaceView
-import ru.ostrovskal.sshstd.utils.*
+import ru.ostrovskal.sshstd.utils.marshall
+import ru.ostrovskal.sshstd.utils.put
+import ru.ostrovskal.sshstd.utils.send
+import ru.ostrovskal.sshstd.utils.unmarshall
 import java.lang.ref.WeakReference
 
 /**
@@ -72,7 +75,6 @@ abstract class Surface(context: Context, private val tagMarshalling: String = "m
 	 * @param height Высота поверхности
 	 */
 	override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
-		touchReset()
 		if(thread?.isAlive == false)
 			thread?.start()
 		running = true

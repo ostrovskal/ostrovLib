@@ -4,6 +4,8 @@ package ru.ostrovskal.sshstd.ui
 
 import android.view.View
 import android.view.ViewManager
+import android.widget.GridView
+import android.widget.ListView
 import ru.ostrovskal.sshstd.Common.*
 import ru.ostrovskal.sshstd.TileDrawable
 import ru.ostrovskal.sshstd.utils.getUiContext
@@ -13,9 +15,9 @@ import ru.ostrovskal.sshstd.widgets.*
 import ru.ostrovskal.sshstd.widgets.charts.ChartCircular
 import ru.ostrovskal.sshstd.widgets.charts.ChartDiagram
 import ru.ostrovskal.sshstd.widgets.html.Html
-import ru.ostrovskal.sshstd.widgets.lists.Grid
 import ru.ostrovskal.sshstd.widgets.lists.Ribbon
 import ru.ostrovskal.sshstd.widgets.lists.Spinner
+import ru.ostrovskal.sshstd.widgets.lists.Table
 
 /** Установка фона с кастомным стилем [style] */
 inline fun View.backgroundSet(style: IntArray = style_drawable_tile) {
@@ -115,13 +117,21 @@ inline fun ViewManager.html(style: IntArray = style_text_html, init: Html.() -> 
 inline fun ViewManager.spinner(id: Int, style: IntArray = style_spinner, style_dropdown: IntArray = style_spinner_dropdown, init: Spinner.() -> Unit) =
 		uiView( { Spinner(it, id, style, style_dropdown) }, init)
 
-/** Реализация списка с кастомным стилем [style], ориентацией [vert] и инициализатором [init] */
+/** Реализация ленты с кастомным стилем [style], ориентацией [vert] и инициализатором [init] */
 inline fun ViewManager.ribbon(id: Int, vert: Boolean = true, style: IntArray = style_ribbon, init: Ribbon.() -> Unit) =
 		uiView( { Ribbon(it, id, vert, style) }, init)
 
-/** Реализация Сетки с кастомным стилем [style], ориентацией [vert] и инициализатором [init] */
-inline fun ViewManager.grid(id: Int, vert: Boolean = true, style: IntArray = style_grid, init: Grid.() -> Unit) =
-		uiView( { Grid(it, id, vert, style) }, init)
+/** Реализация списка с инициализатором [init] */
+inline fun ViewManager.list(id: Int, init: ListView.() -> Unit) =
+		uiView( { ListView(it).apply { this.id = id } }, init)
+
+/** Реализация таблицы с кастомным стилем [style], ориентацией [vert] и инициализатором [init] */
+inline fun ViewManager.table(id: Int, vert: Boolean = true, style: IntArray = style_grid, init: Table.() -> Unit) =
+		uiView( { Table(it, id, vert, style) }, init)
+
+/** Реализация сетки с инициализатором [init] */
+inline fun ViewManager.grid(id: Int, init: GridView.() -> Unit) =
+		uiView( { GridView(it).apply { this.id = id } }, init)
 
 /** Подключение компонента [ui] пользовательского интерфейса в основную разметку с инициализитором [init] */
 inline fun ViewManager.include(ui: UiComponent, init: UiComponent.(View) -> Unit) =

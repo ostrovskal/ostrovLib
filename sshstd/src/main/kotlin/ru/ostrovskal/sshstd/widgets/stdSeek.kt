@@ -6,7 +6,6 @@ import android.graphics.Rect
 import android.view.MotionEvent
 import ru.ostrovskal.sshstd.Common.*
 import ru.ostrovskal.sshstd.objects.Theme
-import ru.ostrovskal.sshstd.onTouch
 import ru.ostrovskal.sshstd.utils.*
 
 /**
@@ -89,7 +88,7 @@ open class Seek(context: Context, id: Int, range: IntRange, enabled: Boolean, st
 	/** Обработка события касания */
 	override fun onTouchEvent(event: MotionEvent): Boolean {
 		if(isEnabled) {
-			onTouch(event).apply {
+			touch.event(event).apply {
 				val resolvePosition = (0..1000).clamp(((ptCurrent.x - leftPadding - scrollX) / deltaThumb).toInt())
 				val oldProgress = progress
 				data = resolvePosition.toFloat()

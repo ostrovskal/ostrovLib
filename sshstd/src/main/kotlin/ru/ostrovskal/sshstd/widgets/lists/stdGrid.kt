@@ -15,7 +15,7 @@ import ru.ostrovskal.sshstd.utils.verticalPadding
  */
 
 /** Класс, реализующий сетку элементов */
-open class Grid(context: Context, id: Int, vert: Boolean, style: IntArray): BaseRibbon(context, id, vert, style) {
+open class Table(context: Context, id: Int, vert: Boolean, style: IntArray): BaseRibbon(context, id, vert, style) {
 	
 	// Временное представление выделения
 	private var mTmpSel: View?      = null
@@ -40,7 +40,7 @@ open class Grid(context: Context, id: Int, vert: Boolean, style: IntArray): Base
 	override var dividerHeight      = 0
 	
 	/** Режим растягивания */
-	var stretchMode: Int            = GRID_STRETCH_UNIFORM
+	var stretchMode: Int            = TABLE_STRETCH_UNIFORM
 		set(v)                      { if(field != v) { field = v; requestLayout() } }
 	
 	/** Размер ячейки */
@@ -67,14 +67,16 @@ open class Grid(context: Context, id: Int, vert: Boolean, style: IntArray): Base
 		val wh = if(mIsVert) mRectList.width() else mRectList.height()
 		var spacing = mReqCellSpacing
 		var size = mReqCellSize
-		val num = Math.max(1, if(mReqNumCells > 0) mReqNumCells else { if(size <= 0) 2  else (wh + spacing) / (size + spacing) })
+		val num = 1.coerceAtLeast(if (mReqNumCells > 0) mReqNumCells else {
+			if (size <= 0) 2 else (wh + spacing) / (size + spacing)
+		})
 		
 		val spaceOver = (wh - num * size - (num - 1) * spacing)
 		
 		when(stretchMode) {
-			GRID_STRETCH_CELL   -> size += spaceOver / num
-			GRID_STRETCH_SPACING-> spacing += spaceOver / (if(num > 1) num - 1 else 1)
-			GRID_STRETCH_UNIFORM-> spacing += spaceOver / (num + 1)
+			TABLE_STRETCH_CELL   -> size += spaceOver / num
+			TABLE_STRETCH_SPACING-> spacing += spaceOver / (if(num > 1) num - 1 else 1)
+			TABLE_STRETCH_UNIFORM-> spacing += spaceOver / (num + 1)
 		}
 		mCellSize = size
 		mCellSpacing = spacing
@@ -111,8 +113,8 @@ open class Grid(context: Context, id: Int, vert: Boolean, style: IntArray): Base
 	// Создание линии
 	private fun makeLine(position: Int, coord1: Int, flow: Boolean): View {
 		lateinit var child: View
-		var coord2 = (if(mIsVert) mRectList.left else mRectList.top) + if(stretchMode == GRID_STRETCH_UNIFORM) cellSpacing else 0
-		val last = Math.min(position + lines, mCount)
+		var coord2 = (if(mIsVert) mRectList.left else mRectList.top) + if(stretchMode == TABLE_STRETCH_UNIFORM) cellSpacing else 0
+		val last = (position + lines).coerceAtMost(mCount)
 		
 		for(pos in position until last) {
 			val where = if(flow) -1 else pos - position
