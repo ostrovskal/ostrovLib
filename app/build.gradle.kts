@@ -47,6 +47,7 @@ android {
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("'*.jar"))))
     implementation(kotlin("stdlib-jdk8", rootProject.properties["kotlinVers"].toString()))
+    //implementation("com.github.ostrovskal:sshstd:1.0.0")
     implementation(project(":sshstd"))
 }
 repositories {

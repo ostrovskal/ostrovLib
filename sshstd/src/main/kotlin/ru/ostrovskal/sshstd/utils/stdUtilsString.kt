@@ -199,6 +199,12 @@ fun StringBuilder.trim(ch: Char): String {
 	return substring(idxS, idxE + 1)
 }
 
+/** Проверка на допустимые расширения файла */
+fun String.validFileExtensions(fileValidExt: List<String>): Boolean {
+	val idx = lastIndexOf('.')
+	return if(idx == -1) false else fileValidExt.contains(substring(idx).toLowerCase(Locale.ROOT))
+}
+
 /** Безопасное преобразование строки в integer, в системе счисления [radix] и со значением по умолчанию [def] */
 fun String?.ival(def: Int, radix: Int) = lval(def.toLong(), radix).toInt()
 

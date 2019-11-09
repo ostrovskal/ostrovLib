@@ -20,8 +20,7 @@ import static android.view.View.TEXT_ALIGNMENT_GRAVITY;
 import static android.view.inputmethod.EditorInfo.IME_FLAG_NO_EXTRACT_UI;
 
 /** Java класс, являющийся контейнером для глобальных переменных и констант */
-public final class Common
-{
+public final class Common {
     private Common() { }
 
     /** Временный вещественный массив координат */
@@ -131,18 +130,6 @@ public final class Common
     /** */
     public static final int DBX_PHOTO       = 4;
 
-/*
-    */
-/** *//*
-
-    public static final int DBX_           = 0;
-
-    */
-/** *//*
-
-    public static final int DBX_           = 0;
-
-*/
     /** Идентификатор загрузчика */
     public static final int CONNECTOR           = 1;
 

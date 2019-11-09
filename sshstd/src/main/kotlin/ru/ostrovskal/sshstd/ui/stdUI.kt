@@ -12,7 +12,7 @@ import com.github.ostrovskal.sshstd.R
 import ru.ostrovskal.sshstd.Common.*
 import ru.ostrovskal.sshstd.layouts.CELL_LAYOUT_INSERT_BEGIN
 import ru.ostrovskal.sshstd.layouts.CellLayout
-import ru.ostrovskal.sshstd.objects.*
+import ru.ostrovskal.sshstd.objects.Theme
 import ru.ostrovskal.sshstd.utils.*
 
 /**
@@ -105,12 +105,12 @@ fun ViewManager.formFooter(vararg btn: Int) {
 
 /** Класс, реализующий элемент выпадающего списка спиннера */
 class SpinnerItem : UiComponent() {
-	override fun createView(ui: UiCtx) = ui.run { text(R.string.null_text, style_spinner_item) { backgroundSet(style_spinner_item) } }
+	override fun createView(ui: UiCtx) = with(ui) { text(R.string.null_text, style_spinner_item) { backgroundSet(style_spinner_item) } }
 }
 
 /** Класс, реализующий заголовок спиннера */
 class SpinnerPopup : UiComponent() {
-	override fun createView(ui: UiCtx) = ui.run { text(R.string.null_text, style_spinner_title) }
+	override fun createView(ui: UiCtx) = with(ui) { text(R.string.null_text, style_spinner_title) }
 }
 
 /** Заголовок формы */

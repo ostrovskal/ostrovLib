@@ -1,4 +1,3 @@
-@file:Suppress("NOTHING_TO_INLINE")
 
 package ru.ostrovskal.sshstd
 
@@ -12,7 +11,6 @@ import ru.ostrovskal.sshstd.Common.*
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.IOException
 import java.util.*
 
 /**
@@ -81,27 +79,25 @@ open class DropBox(name: String, token: String) {
 
     /** Скачать файл [file] */
     fun download(file: FileInfo): ByteArray {
-        var downloader: DbxDownloader<FileMetadata>? = null
+        var downloader: DbxDownloader<FileMetadata>?
         val ret = ByteArrayOutputStream()
         try {
             downloader = client.files()?.download(file.path.toLowerCase(Locale.ROOT), file.rev)
             downloader?.download(ret)
         } catch (dbxd: DownloadErrorException) { downloader = null
-        } catch (dbxe: DbxException) { downloader = null
-        } catch (io: IOException) { downloader = null
-        } finally { downloader?.close() }
+        } catch (dbxe: DbxException) { downloader = null }
+        downloader?.close()
         return ret.toByteArray()
     }
 
     /** Закачать файл [path] в облако в папку [pathTo] */
-    inline fun upload(path: String, pathTo: String) = upload(File(path).readBytes(), pathTo)
+    fun upload(path: String, pathTo: String) = upload(File(path).readBytes(), pathTo)
 
     /** Закачать массив байт [file] в облако в папку [path] */
     fun upload(file: ByteArray, path: String): Boolean {
         var result = true
         try { client.files()?.uploadBuilder(path)?.uploadAndFinish(ByteArrayInputStream(file))
-        } catch (dbxe: DbxException) { result = false
-        } catch (io: IOException) { result = false }
+        } catch (dbxe: DbxException) { result = false }
         return result
     }
 

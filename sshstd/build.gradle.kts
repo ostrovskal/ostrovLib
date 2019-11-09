@@ -2,8 +2,8 @@ import com.jfrog.bintray.gradle.BintrayExtension
 import org.jetbrains.dokka.gradle.DokkaTask
 
 dependencies {
+//    implementation(files("libs/dropbox-core-sdk-3.1.1.jar"))
     implementation("com.dropbox.core:dropbox-core-sdk:3.1.1")
-    //smokeTest("org.apache.httpcomponents:httpclient:4.5.5")
 }
 
 plugins {
@@ -42,15 +42,14 @@ android {
 	        isDebuggable = false
 	        isJniDebuggable = false
 	        isZipAlignEnabled = false
+            isShrinkResources = false
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
     }
-/*
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
-*/
 }
 
 dependencies {
