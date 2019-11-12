@@ -56,7 +56,9 @@ open class Switch(context: Context, id: Int, text: Int, style: IntArray) : Tile(
 	/** Обработка события касания */
 	override fun onTouchEvent(event: MotionEvent): Boolean {
 		if(isEnabled && (posThumb == 0 || posThumb == animator.frames)) {
-			touch.event(event).click(rectScreen) { isChecked = !isChecked }
+			touch.event(event).click(rectScreen) {
+				isChecked = !isChecked
+			}
 		}
 		return true
 	}

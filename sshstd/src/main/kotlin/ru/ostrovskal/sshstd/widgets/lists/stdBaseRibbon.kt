@@ -234,7 +234,10 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 	/** Определение факта касения для дочерних элементов */
 	override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
 		var delta = 0
-		touch.event(ev).drag(mDragSensitive) { offs, _, _, _ -> delta = if(mIsVert) offs.h else offs.w }
+		touch.event(ev).drag(mDragSensitive) { offs, _ ->
+			delta = if(mIsVert) offs.h else offs.w
+			if(touch.isUnpressed) touch.flags = 0
+		}
 		return delta != 0
 	}
 	/** Обработка события касания */
@@ -250,7 +253,15 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 		mTracker.addMovement(ev)
 		val selected = mItemSelected
 		touch.apply {
-			if(press) {
+			if(isUnpressed) {
+				mItemSelected?.apply {
+					mItemSelected = null
+					selectedItemPosition = mClickPosition
+					adapter?.let { itemClickListener?.invoke(this@BaseRibbon, this, mClickPosition, it.getItemId(mClickPosition)) }
+				}
+				mClickPosition = -1
+				flags = 0
+			} else {
 				val pos = itemFromPoint(ptCurrent)
 				if(mClickPosition != pos) {
 					mFling.finish()
@@ -259,14 +270,6 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 						postDelayed(mClick, ViewConfiguration.getTapTimeout().toLong())
 					} else mItemSelected = null
 				}
-			}
-			else {
-				mItemSelected?.apply {
-					mItemSelected = null
-					selectedItemPosition = mClickPosition
-					adapter?.let { itemClickListener?.invoke(this@BaseRibbon, this, mClickPosition, it.getItemId(mClickPosition)) }
-				}
-				mClickPosition = -1
 			}
 		}
 		onFling()
@@ -277,17 +280,16 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 	/** Обработка механизма прокрутки списка посредством свайпа */
 	open fun onFling(): Int {
 		var delta = 0
-		touch.drag(mDragSensitive) { offs, _, t, event ->
+		touch.drag(mDragSensitive) { offs, event ->
 			if(!event) {
 				// проверить продолжать прокрутку?
-				mTouchId = t.id
+				mTouchId = touch.id
 				mTracker.computeCurrentVelocity(1000, mMaxVelocity)
 				delta = (if(mIsVert) mTracker.getYVelocity(mTouchId) else mTracker.getXVelocity(mTouchId)).toInt()
 				if(abs(delta) > mMinVelocity) mFling.start(-delta)
 			} else {
 				delta = if(mIsVert) offs.h else offs.w
 				scrolling(delta)
-				t.resetPosition()
 			}
 		}
 		return delta

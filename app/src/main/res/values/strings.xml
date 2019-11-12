@@ -11,4 +11,10 @@
     <string name="header" translatable="false">Справка</string>
     <string name="std_theme_d" translatable="false">_dark</string>
     <string name="std_theme_l" translatable="false">_light</string>
+    <string name="radio_click">CLICK</string>
+    <string name="radio_direct">DIRECT</string>
+    <string name="radio_drag">DRAG</string>
+    <string name="radio_rotate">ROTATE</string>
+    <string name="radio_scale">SCALE</string>
+    <string name="radio_dclick">DBL CLICK</string>
 </resources>

@@ -6,17 +6,28 @@ import android.os.Handler
 import android.os.Looper
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewManager
 import android.widget.ArrayAdapter
 import ru.ostrovskal.sshstd.Common.*
-import ru.ostrovskal.sshstd.DropBox
 import ru.ostrovskal.sshstd.Wnd
 import ru.ostrovskal.sshstd.adapters.ArrayListAdapter
 import ru.ostrovskal.sshstd.layouts.CellLayout
+import ru.ostrovskal.sshstd.layouts.RadioLayout
 import ru.ostrovskal.sshstd.objects.Theme
 import ru.ostrovskal.sshstd.ui.*
 import ru.ostrovskal.sshstd.utils.*
 import ru.ostrovskal.sshstd.widgets.lists.Ribbon
-import kotlin.concurrent.thread
+
+const val actDblClick	= 0
+const val actClick		= 1
+const val actDirect		= 2
+const val actRotate		= 3
+const val actScale		= 4
+const val actDrag		= 5
+
+lateinit var touchGrp: RadioLayout
+
+inline fun ViewManager.touchSurface(init: SurfaceTouch.() -> Unit) = uiView( { SurfaceTouch(it) }, init)
 
 val std_theme_d = intArrayOf(ATTR_SSH_THEME_NAME, R.string.std_theme_d,
                            ATTR_SSH_SEEK_ANIM, SEEK_ANIM_ROTATE,
@@ -85,6 +96,7 @@ class MainWnd : Wnd() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		startLog(this, "LIB", true, BuildConfig.VERSION_CODE, BuildConfig.VERSION_NAME, BuildConfig.DEBUG, null)
 		super.onCreate(savedInstanceState)
+/*
 		thread {
 			val dbx = DropBox("dbxSerg", "8iL3GSZ-JygAAAAAAAAHlIMEO_3cUJi2zLr1pR5tI8NCshh6KZ225aSqcNKLK-Wt")
 			dbx.list("/ZX")?.apply {
@@ -93,7 +105,8 @@ class MainWnd : Wnd() {
 				}
 			}
 		}
-		Abs(this).setContent(this, SSH_APP_MODE_GAME)
+*/
+		TestTouch(this).setContent(this, SSH_APP_MODE_GAME)
 	}
 	
 	override fun applyTheme() {
@@ -106,6 +119,24 @@ class MainWnd : Wnd() {
 		if(hand == null) {
 			hand = Handler(Looper.getMainLooper(), this)
 			applyTheme()
+		}
+	}
+}
+
+class TestTouch(val wnd: MainWnd): UiComponent() {
+	override fun createView(ui: UiCtx) = with(ui) {
+		linearLayout(false) {
+			containerLayout(70, 100, true) {
+				touchSurface { id = R.id.check }
+			}
+			touchGrp = radioGroup {
+				radio(actDblClick, R.string.radio_dclick)
+				radio(actClick, R.string.radio_click)
+				radio(actDirect, R.string.radio_direct)
+				radio(actDrag, R.string.radio_drag)
+				radio(actRotate, R.string.radio_rotate)
+				radio(actScale, R.string.radio_scale)
+			}
 		}
 	}
 }

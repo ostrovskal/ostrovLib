@@ -41,6 +41,9 @@ public final class Common {
     /** Целая временная точка */
     final public static Point iPt       = new Point();
 
+    // Временный размер
+    final public static Size tempSize	= new Size(0, 0);
+
     /** Признак активности отладки */
     public static boolean isDebug       = false;
 
@@ -502,8 +505,17 @@ public final class Common {
     /** JSON лексема. Эскейп последовательность*/
     public static final int JSON_ESCAPE             = 12;
 
-    /** Флаги касания. */
+    /** Флаги касания. Фиксация нажатия */
     public static final int TOUCH_PRESSED           = 0x00000001;
+
+    /** Флаги касания. Двойной клик */
+    public static final int TOUCH_DOUBLE_CLICKED    = 0x00000002;
+
+    /** Флаги касания. Отпуск нажатия */
+    public static final int TOUCH_UNPRESSED         = 0x00000004;
+
+    /** Флаги касания. Инит двойного клика */
+    public static final int TOUCH_INIT_DOUBLE_PRESSED= 0x00000008;
 
     /** Относительные размеры HTML подзаголовков */
     public static final float[] htmlHeaderSize      = {1.7f, 1.6f, 1.5f, 1.4f, 1.3f, 1.2f};

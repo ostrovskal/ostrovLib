@@ -21,8 +21,8 @@ android {
         applicationId = "com.github.ostrovskal.ostrovlib"
         minSdkVersion(19)
         targetSdkVersion(28)
-        versionCode = 27
-        versionName = "1.0.0"
+        versionCode = 29
+        versionName = "1.0.1"
         resValue("string", "app_name", "ostrovLib")
     }
     buildTypes {

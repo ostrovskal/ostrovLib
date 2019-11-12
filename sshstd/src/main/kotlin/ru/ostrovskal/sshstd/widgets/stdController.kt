@@ -161,12 +161,12 @@ open class Controller(context: Context, ID: Int, grid: Boolean, style: IntArray 
 		val old = pressedButtons
 		// определить куда нажали, тип нажатия, вызвать уведомитель и обновить представление
 		touch.apply {
-			if (press) {
+			if (!isUnpressed) {
 				val xx = (relativeSizeMap.w * ptCurrent.x).roundToInt()
 				val yy = (relativeSizeMap.h * ptCurrent.y).roundToInt()
 				if (xx >= 0 && xx < controllerMap[0] && yy >= 0 && yy < controllerMap[1])
 					ret = controllerMap[xx, yy]
-			}
+			} else flags = 0
 		}
 		pressedButtons = ret
 		controllerButtonNotify?.invoke(ret)
@@ -174,7 +174,7 @@ open class Controller(context: Context, ID: Int, grid: Boolean, style: IntArray 
 	}
 	
 	/** Сброс */
-	open fun reset() { pressedButtons = DIRN }
+	open fun reset() { pressedButtons = DIRN; touch.reset() }
 	
 	/** Опрос состояний кнопок */
 	open fun buttonStates() = pressedButtons
