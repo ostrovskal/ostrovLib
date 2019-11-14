@@ -4,7 +4,6 @@ import android.content.Context
 import android.view.View
 import ru.ostrovskal.sshstd.objects.Theme
 import ru.ostrovskal.sshstd.utils.edge
-import ru.ostrovskal.sshstd.utils.info
 
 /**
  * @author Шаталов С.В.

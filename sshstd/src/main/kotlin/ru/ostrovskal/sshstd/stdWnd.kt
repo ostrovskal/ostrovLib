@@ -113,23 +113,44 @@ abstract class Wnd : Activity(), Handler.Callback {
 		// начальная инициализация
 		initialize(false)
 	}
-	
+
+	/** Запуск формы, используя непосредственное создание, с аргументами [args] */
+	fun instanceForm(form: Form, tag: String, container: Int, stack: Int, vararg args: Any?) {
+		val params 		= Bundle()
+		// основные/переданные аргументы
+		params.put("IDX", -1)
+		for(index in args.indices step 2) { params.put(args[index].toString(), args[index + 1]) }
+		form.arguments = params
+		// отображаем форму
+		showForm(form, container, tag, stack)
+	}
+
 	/** Запуск формы, используя информацию из массива структур. По индексу [idx] и с аргументами [args] */
 	fun instanceForm(idx: Int, vararg args: Any?) {
-		val formName = getString(forms[idx * 4 + 0])
-		val form      = Class.forName(formName).newInstance() as Form
-		val params 		    = Bundle()
+		val formName	= getString(forms[idx * 4 + 0])
+		val form 	    = Class.forName(formName).newInstance() as Form
+		val params 		= Bundle()
 		// идентификатор контейнера, куда помещать форму
 		val container	= forms[idx * 4 + 1]
 		// тэг для поиска формы
 		val tag 		= getString(forms[idx * 4 + 2])
 		// признак добавления в стэк
-		val stack	= forms[idx * 4 + 3]// == 1
+		val stack		= forms[idx * 4 + 3]// == 1
 		// основные/переданные аргументы
 		params.put("IDX", idx)
 		for(index in args.indices step 2) { params.put(args[index].toString(), args[index + 1]) }
 		form.arguments = params
-		// отображаем фрагмент
+		// отображаем форму
+		showForm(form, container, tag, stack)
+	}
+
+	/** Отображение формы
+	 * @param form		Объект формы
+	 * @param container	ИД контейнера
+	 * @param tag		Имя формы
+	 * @param stack		Тип добавление в стэк фрагментов(2 - добавить, 1 - заменить)
+	 * */
+	fun showForm(form: Form, container: Int, tag: String, stack: Int) {
 		val trans = fragmentManager.beginTransaction()
 		form.setAnimation(trans)
 		// выбираем как создать
@@ -147,14 +168,14 @@ abstract class Wnd : Activity(), Handler.Callback {
 		}
 		trans.commit()
 	}
-	
+
 	/** Начальная инициализация при создании, либо рестарте */
 	abstract fun initialize(restart: Boolean)
 	
 	/** Рестарт */
 	override fun onRestart() {
 		super.onRestart()
-		"onRestart".info()
+		"onRestart".debug()
 		isRestart = true
 	}
 	

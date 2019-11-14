@@ -15,6 +15,8 @@
     <dimen name="edit">20sp</dimen>
     <!-- размер маленького текста -->
     <dimen name="small">14sp</dimen>
+    <!-- размер текста в прогрессе-->
+    <dimen name="progress">22sp</dimen>
     <!-- размер текста рейтинга -->
     <dimen name="chart">11sp</dimen>
     <!-- размер обычного текста -->
@@ -38,8 +40,8 @@
     <dimen name="heightRadio">32dp</dimen>
     <dimen name="heightSelectItem">37dp</dimen>
     <dimen name="heightSelectCaption">42dp</dimen>
-    <dimen name="heightProgress">48dp</dimen>
-    <dimen name="widthProgress">48dp</dimen>
+    <dimen name="heightProgress">96dp</dimen>
+    <dimen name="widthProgress">96dp</dimen>
     <dimen name="widthSelector">3dp</dimen>
     <dimen name="widthSeek">80dp</dimen>
     <!-- отступы элементов-->

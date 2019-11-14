@@ -3,4 +3,5 @@
     <item type="id" name="main"/>
     <item name="tabHost" type="id"/>
     <item name="tabContent" type="id"/>
+    <item name="progressForm" type="id" />
 </resources>

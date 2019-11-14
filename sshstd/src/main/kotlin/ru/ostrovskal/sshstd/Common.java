@@ -142,6 +142,9 @@ public final class Common {
     /** Сообщение для текущей формы */
     public static final int RECEPIENT_FORM      = 1;
 
+    /** Действие. Сообщение о результате формы сообщений */
+    public static final int ACT_MESSAGE_RESULT  = -5;
+
     /** Действие. Пропуск */
     public static final int ACT_EMPTY           = -4;
 
@@ -361,7 +364,7 @@ public final class Common {
     /** Тип анимации ползунка. Масштабирование */
     public static final int SEEK_ANIM_SCALE         = 2;
 
-    /** Тип диаграммы/прогресса. Диарграмма */
+    /** Тип диаграммы/прогресса. Диаграмма */
     public static final int SSH_MODE_DIAGRAM	    = 0;
 
     /** Тип диаграммы/прогресса. Круговая */
@@ -1102,7 +1105,7 @@ public final class Common {
     public static final int[] style_progress              = {
             ATTR_COLOR_DEFAULT, 0xffffff | COLOR,
             ATTR_SSH_SHOW, 1,
-            ATTR_SIZE, R.dimen.heightProgress,
+            ATTR_SIZE, R.dimen.progress,
             ATTR_SSH_STATES, TILE_STATE_HOVER,
             ATTR_FONT, R.string.font_small
     };

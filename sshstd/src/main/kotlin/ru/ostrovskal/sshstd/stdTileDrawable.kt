@@ -8,7 +8,7 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import ru.ostrovskal.sshstd.Common.*
-import ru.ostrovskal.sshstd.objects.*
+import ru.ostrovskal.sshstd.objects.Theme
 import ru.ostrovskal.sshstd.utils.*
 import kotlin.math.cos
 import kotlin.math.sin
@@ -61,9 +61,6 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 	var horz                        		= 1
 		set(v)                              { field = if(v <= 0) 1 else v }
 
-	// Область для восстановления клиппинга
-	private val clipRect                    = Rect()
-	
 	// Иконка
 	private var drawableIcon: TileDrawable? = null
 	
@@ -359,33 +356,30 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 	/** Отрисовка */
 	override fun draw(canvas: Canvas) {
 		val rect = bounds
-		// ограничительная фигура
-		if(shape != TILE_SHAPE_EMPTY) {
-			// обводка
-			if(selectorWidth > 0f) canvas.drawPath(path, paintSelector)
-			canvas.getClipBounds(clipRect)
-			canvas.clipPath(path)
-		}
-		// фон
-		if(isShowBackground) background?.draw(canvas)
-		// картинка
-		if(keyBitmap.isNotEmpty() && !tileRect.isEmpty) {
-			// битмап или патч9
-			context.bitmapGetCache(keyBitmap)?.apply {
-				if(patch9.isZero) drawShadow(this, canvas, rect)
-				else drawPatch9(this, canvas, rect)
+		canvas.withSave {
+			// ограничительная фигура
+			if(shape != TILE_SHAPE_EMPTY) {
+				// обводка
+				if(selectorWidth > 0f) drawPath(path, paintSelector)
+				clipPath(path)
 			}
-		}
-		// иконка
-		drawableIcon?.also {
-			canvas.withSave {
+			// фон
+			if(isShowBackground) background?.draw(this)
+			// картинка
+			if(keyBitmap.isNotEmpty() && !tileRect.isEmpty) {
+				// битмап или патч9
+				context.bitmapGetCache(keyBitmap)?.apply {
+					if(patch9.isZero) drawShadow(this@apply, this@withSave, rect)
+					else drawPatch9(this@apply, this@withSave, rect)
+				}
+			}
+			// иконка
+			drawableIcon?.also {
 				val r = it.bounds
-				canvas.scale(scaleIcon, scaleIcon, r.centerX().toFloat(), r.centerY().toFloat())
-				it.draw(canvas)
+				scale(scaleIcon, scaleIcon, r.centerX().toFloat(), r.centerY().toFloat())
+				it.draw(this)
 			}
 		}
-		// восстановление ограничительной фигуры
-		if(shape != TILE_SHAPE_EMPTY) canvas.clipRect(clipRect, Region.Op.REPLACE)
 	}
 	
 	private fun drawPatch9(bitmap: Bitmap, canvas: Canvas, rect: Rect) {

@@ -88,12 +88,12 @@ class HtmlParser {
 		attrs.clear()
 		isEmpty = false
 		next = read()
-		var isSlash = readWord(true, false, out)
+		var isSlash = readWord(true, isVal = false, out = out)
 		if(out.isEmpty()) error("Ошибка. Недопустимое имя тега в строке ($line)!")
 		if(!isSlash) {
 			// attributes
 			while(next != -1) {
-				isSlash = readWord(false, false, sb)
+				isSlash = readWord(false, isVal = false, out = sb)
 				if(ch == '>') break
 				if(sb.isEmpty()) error("Ошибка. Недопустимое имя атрибута тега <$out> в строке ($line)!")
 				skipSpace()
@@ -101,7 +101,7 @@ class HtmlParser {
 				if(ch != '=') error("Ошибка. Ожидается знак \"=\" для значения атрибута <$nameAttr> тега <$out> в строке ($line)!")
 				next = read()
 				skipSpace()
-				readWord(false, true, sb)
+				readWord(false, isVal = true, out = sb)
 				if(sb.isEmpty()) error("Ошибка. Недопустимое значение атрибута <$nameAttr> тега<$out> в строке ($line)!")
 				attrs[nameAttr] = sb.toString()
 			}

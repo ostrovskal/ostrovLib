@@ -121,8 +121,8 @@ private var messageNames    = arrayOf<String>()
 
 /** Формирование информации об сообщении хэндлера */
 val Message.info: String get() {
-	val a = action + 4
-	val act = if(a >= messageNames.size) "???<${a - 4}>" else messageNames[a]
+	val a = action + 5
+	val act = if(a >= messageNames.size) "???<${a - 5}>" else messageNames[a]
 	return "${if(recepient == RECEPIENT_FORM) "FORM" else "WND"} -> $act($arg1, $arg2, $obj)"
 }
 
@@ -147,7 +147,7 @@ fun startLog(context: Context, tag: String, sqlLog: Boolean, version: Int, appVe
 	isSqlLog    = sqlLog
 	isDebug     = buildConfig
 	dbVersion   = version
-	messageNames= arrayOf("ACT_EMPTY", "ACT_INIT_SURFACE_THREAD", "ACT_BACKPRESSED", "ACT_EXIT") + (msgInfos ?: arrayOf(""))
+	messageNames= arrayOf(	"ACT_MESSAGE_RESULT", "ACT_EMPTY", "ACT_INIT_SURFACE_THREAD", "ACT_BACKPRESSED", "ACT_EXIT") + (msgInfos ?: arrayOf(""))
 	
 	"--------------------------------------------------------".info()
 	"Executed $logTag $appVersion - ${System.currentTimeMillis().datetime}".info()
@@ -308,6 +308,12 @@ inline var Message.recepient
 inline var Message.action
 	get()                   = what shr 1
 	set(v)                  { what = (what and 1) or (v shl 1) }
+
+/** Преобразование логического в целое */
+inline val Boolean.toInt	get() = if(this) 1 else 0
+
+/** Преобразование логического в байтовое */
+inline val Boolean.toByte	get() = toInt.toByte()
 
 /** Проверка на бит [bit] */
 inline infix fun Int.bits(bit: Int) = (this and ( 1 shl bit ) ) != 0

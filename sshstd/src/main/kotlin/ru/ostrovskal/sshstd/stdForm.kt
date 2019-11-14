@@ -74,12 +74,6 @@ open class Form : DialogFragment(), LoaderManager.LoaderCallbacks<RecordSet>, Vi
 	val index
 		get()                          = arguments.getInt("IDX")
 
-	/*
-	fun showToast(msg: CharSequence, islong: Boolean = false, parent: View? = null, ui: UiComponent? = null, offsX: Int = 0, offsY: Int = 0) {
-		toast = toast(msg, islong, parent, ui, offsX, offsY)
-	}
-*/
-
 	/** Обработка нажатия на кнопку BACK */
 	open fun backPressed() {
 		val tm = if(twicePressed()) tmBACK + 2000 else System.currentTimeMillis() + 10000

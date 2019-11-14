@@ -18,7 +18,7 @@ apply {
 }
 
 // версия библиотеки
-val libVersion = "1.0.1"
+val libVersion = "1.0.2"
 
 // ссылка на сайт размещения проекта
 val siteUrl = "https://github.com/ostrovskal/sshSTD"
@@ -32,7 +32,7 @@ android {
     defaultConfig {
         minSdkVersion(19)
         targetSdkVersion(28)
-        versionCode = 29
+        versionCode = 31
         versionName = libVersion
         resValue("string", "app_name", "sshSTD")
     }

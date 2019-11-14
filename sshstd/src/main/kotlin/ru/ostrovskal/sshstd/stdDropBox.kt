@@ -57,7 +57,7 @@ open class DropBox(name: String, token: String) {
     }
 
     /** Вернуть список файлов из папки [folder] */
-    fun list(folder: String): List<FileInfo>? {
+    fun folders(folder: String): List<FileInfo>? {
         val list: ListFolderResult? = try { client.files().listFolder(folder)
         } catch (dbxf: ListFolderErrorException) { null
         } catch (dbxe: DbxException) { null }
@@ -75,6 +75,14 @@ open class DropBox(name: String, token: String) {
                 FileInfo(name, path, rev)
             }
         }
+    }
+
+    /** Скачать файл [file] и записать его в [path] */
+    fun download(file: FileInfo, path: String): Boolean {
+        val ba = download(file)
+        if(ba.isEmpty()) return false
+        File(path).writeBytes(ba)
+        return true
     }
 
     /** Скачать файл [file] */

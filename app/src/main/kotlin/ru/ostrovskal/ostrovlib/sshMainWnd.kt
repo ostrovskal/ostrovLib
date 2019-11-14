@@ -1,14 +1,19 @@
+@file:Suppress("DEPRECATION")
+
 package ru.ostrovskal.ostrovlib
 
 import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.Message
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewManager
 import android.widget.ArrayAdapter
 import ru.ostrovskal.sshstd.Common.*
+import ru.ostrovskal.sshstd.FormMessage
+import ru.ostrovskal.sshstd.FormProgress
 import ru.ostrovskal.sshstd.Wnd
 import ru.ostrovskal.sshstd.adapters.ArrayListAdapter
 import ru.ostrovskal.sshstd.layouts.CellLayout
@@ -17,6 +22,7 @@ import ru.ostrovskal.sshstd.objects.Theme
 import ru.ostrovskal.sshstd.ui.*
 import ru.ostrovskal.sshstd.utils.*
 import ru.ostrovskal.sshstd.widgets.lists.Ribbon
+import java.lang.Thread.sleep
 
 const val actDblClick	= 0
 const val actClick		= 1
@@ -56,7 +62,9 @@ val std_theme_d = intArrayOf(ATTR_SSH_THEME_NAME, R.string.std_theme_d,
                            ATTR_SSH_BM_RADIO, R.drawable.theme_radio_dark,
                            ATTR_SSH_BM_CHECK, R.drawable.theme_check_dark,
                            ATTR_SSH_BM_SEEK, R.drawable.theme_seek_dark,
-                           ATTR_SSH_BM_SWITCH, R.drawable.theme_switch_dark)
+                           ATTR_SSH_BM_SWITCH, R.drawable.theme_switch_dark,
+							ATTR_SSH_ICON_HORZ, 10, ATTR_SSH_ICON_VERT, 3
+)
 
 val std_theme_l = intArrayOf(ATTR_SSH_THEME_NAME, R.string.std_theme_l,
                              ATTR_SSH_SEEK_ANIM, SEEK_ANIM_SCALE,
@@ -85,7 +93,8 @@ val std_theme_l = intArrayOf(ATTR_SSH_THEME_NAME, R.string.std_theme_l,
                            ATTR_SSH_BM_RADIO, R.drawable.theme_radio_light,
                            ATTR_SSH_BM_CHECK, R.drawable.theme_check_light,
                            ATTR_SSH_BM_SEEK, R.drawable.theme_seek_light,
-                           ATTR_SSH_BM_SWITCH, R.drawable.theme_switch_light
+                           ATTR_SSH_BM_SWITCH, R.drawable.theme_switch_light,
+		ATTR_SSH_ICON_HORZ, 10, ATTR_SSH_ICON_VERT, 3
 )
 
 class MainWnd : Wnd() {
@@ -93,28 +102,33 @@ class MainWnd : Wnd() {
 	var typeTheme = 1
 	// ДПО4 ПОЛУЧЕНО
 	// 89857707575
-	override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
+
 		startLog(this, "LIB", true, BuildConfig.VERSION_CODE, BuildConfig.VERSION_NAME, BuildConfig.DEBUG, null)
 		super.onCreate(savedInstanceState)
-/*
-		thread {
-			val dbx = DropBox("dbxSerg", "8iL3GSZ-JygAAAAAAAAHlIMEO_3cUJi2zLr1pR5tI8NCshh6KZ225aSqcNKLK-Wt")
-			dbx.list("/ZX")?.apply {
-				forEach {
-					"${it.name} ${it.path} ${it.rev}".info()
-				}
+
+        TestTouch(this).setContent(this, SSH_APP_MODE_GAME)
+        FormProgress().show(this, R.string.loading, false).inBackground(1) { fp ->
+			repeat(101) {
+				fp.primary = it
+				sleep(100)
 			}
+			true
 		}
-*/
-		TestTouch(this).setContent(this, SSH_APP_MODE_GAME)
 	}
-	
+
+	override fun handleMessage(msg: Message): Boolean {
+		if(msg.action == 1) {
+			FormMessage().show(this, intArrayOf(R.string.app_name, R.string.success, R.integer.I_YES, 0, 0, 0, 0))
+		}
+		return super.handleMessage(msg)
+	}
 	override fun applyTheme() {
 		Theme.setTheme(this, if(typeTheme == 0) std_theme_l else std_theme_d)
 	}
 	
 	override fun initialize(restart: Boolean) {
-		"initialize restart: $restart hand: $hand".info()
+		"initialize restart: $restart hand: $hand".debug()
 		isRestart = false
 		if(hand == null) {
 			hand = Handler(Looper.getMainLooper(), this)

@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Path
 import android.graphics.RectF
-import ru.ostrovskal.sshstd.Common
 import ru.ostrovskal.sshstd.Common.*
 import ru.ostrovskal.sshstd.objects.Theme
 import ru.ostrovskal.sshstd.utils.*
@@ -70,7 +69,7 @@ open class ChartCircular(context: Context, style: IntArray) : Chart(context, sty
 			val cx = rectScreen.centerX().toFloat()
 			val cy = rectScreen.centerY().toFloat()
 			rect.set(cx - radius, cy - radius, cx + radius, cy + radius)
-			drawableSegments.path.makeFigure(Common.TILE_SHAPE_CIRCLE, rect, null)
+			drawableSegments.path.makeFigure(TILE_SHAPE_CIRCLE, rect, null)
 			rect.inset(cr, cr)
 			drawableSegments.path.op(Path().apply { addCircle(cx, cy, ((radius - cr) * innerRadius) / 100f, Path.Direction.CCW) }, Path.Op.DIFFERENCE)
 			invalidate()

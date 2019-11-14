@@ -33,7 +33,10 @@ abstract class Surface(context: Context, private val tagMarshalling: String = "m
 
 	/** Максимальное время кадра в миллисекундах */
 	@JvmField var frameTime		            = 50L
-	
+
+	/** Пропускать кадры? */
+	@JvmField var isSkippedFrames           = true
+
 	/** Хэндлер */
 	@JvmField var hand: Handler? 		    = null
 
@@ -129,46 +132,43 @@ abstract class Surface(context: Context, private val tagMarshalling: String = "m
 
 		init {
 			runner = Runnable {
-				while (true) {
-					if (isInterrupted) break
-					val surface = weak.get() ?: break
-					surface.apply {
-						var canvas: Canvas? = null
-						try {
-							val beginTime = System.currentTimeMillis()
-							// пытаемся заблокировать canvas для изменение картинки на поверхности
-							canvas = holder.lockCanvas()
-							// обнуляем счетчик пропущенных кадров
-							var framesSkipped = 0
-							// обновляем состояние игры
-							updateState()
-							// формируем новый кадр
-							if (canvas != null) draw(canvas)
-							// вычисляем время, которое прошло с момента запуска цикла
-							val timeDiff = System.currentTimeMillis() - beginTime
-							// вычисляем время, которое можно спать
-							var sleepTime = frameTime - timeDiff
-							if (sleepTime > 0) {
-								// если sleepTime > 0 все хорошо, мы идем с опережением
-								try {
-									Thread.sleep(sleepTime)
-								} catch (e: InterruptedException) {
+				var delay: Long
+				if(isInterrupted) return@Runnable
+				val surface = weak.get() ?: return@Runnable
+				surface.apply {
+					var canvas: Canvas? = null
+					try {
+						val beginTime = System.currentTimeMillis()
+						// пытаемся заблокировать canvas для изменение картинки на поверхности
+						canvas = holder.lockCanvas()
+						// обновляем состояние
+						updateState()
+						// формируем новый кадр
+						if (canvas != null) draw(canvas)
+						// вычисляем время, которое прошло с момента запуска цикла
+						val timeDiff = System.currentTimeMillis() - beginTime
+						// вычисляем время, которое можно спать
+						delay = frameTime - timeDiff
+						if(delay < 0L) {
+							if(isSkippedFrames) {
+								while (delay < 0L) {
+									val tm = System.currentTimeMillis()
+									// обновляем состояние без отрисовки
+									updateState()
+									delay += (System.currentTimeMillis() - tm)
 								}
 							}
-							while (sleepTime < -(frameTime / 2) && framesSkipped++ < 5) {
-								// обновляем состояние без отрисовки
-								updateState()
-								sleepTime += frameTime
-							}
-							// вычисляем fps
-							val diff = System.currentTimeMillis() - beginTime
-							fps = (1000 / if (diff > 0) diff else 1).toInt()
-						} finally {
-							// в случае ошибки, плоскость не перешла в
-							// требуемое состояние
-							if (canvas != null) holder.unlockCanvasAndPost(canvas)
+							delay = 0
 						}
+						// вычисляем fps
+						val diff = (System.currentTimeMillis() - beginTime) + delay
+						fps = (1000 / diff).toInt()
+					} finally {
+						// в случае ошибки, плоскость не перешла в
+						// требуемое состояние
+						if (canvas != null) holder.unlockCanvasAndPost(canvas)
 					}
+					hand?.postDelayed(runner, delay)
 				}
 			}
 		}

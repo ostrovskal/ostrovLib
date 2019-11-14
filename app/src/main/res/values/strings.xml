@@ -17,4 +17,6 @@
     <string name="radio_rotate">ROTATE</string>
     <string name="radio_scale">SCALE</string>
     <string name="radio_dclick">DBL CLICK</string>
+    <string name="loading">Загрузка…</string>
+    <string name="success">Загрузка списка файлов из облака выполнена успешно!</string>
 </resources>

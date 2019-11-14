@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.View
 import ru.ostrovskal.sshstd.Animator
-import ru.ostrovskal.sshstd.Common.style_text_hint
 import ru.ostrovskal.sshstd.utils.padding
 import ru.ostrovskal.sshstd.utils.textColor
 import ru.ostrovskal.sshstd.widgets.Edit
