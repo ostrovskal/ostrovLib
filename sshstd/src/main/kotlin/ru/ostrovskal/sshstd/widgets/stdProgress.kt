@@ -7,7 +7,7 @@ import android.graphics.Rect
 import android.os.Parcelable
 import android.view.View
 import ru.ostrovskal.sshstd.Common.*
-import ru.ostrovskal.sshstd.objects.*
+import ru.ostrovskal.sshstd.objects.Theme
 import ru.ostrovskal.sshstd.utils.*
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -111,10 +111,12 @@ open class Progress(context: Context, id: Int, max: Int, mode: Int, style: IntAr
 			val pr = paddingEnd
 			val pt = paddingTop
 			val pb = paddingBottom
+			drawable.bounds.setEmpty()
 			if (mode == SSH_MODE_DIAGRAM) {
 				fun measureProgress(v: Int, r: Rect) {
 					if (v >= 0) {
-						val mx = max.toFloat()
+						var mx = max.toFloat()
+						if(mx < Float.MIN_VALUE) mx = Float.MIN_VALUE
 						val vw = (((w - pr - pl) / mx) * v).roundToInt()
 						val vh = (((h - pb - pt) / mx) * v).roundToInt()
 

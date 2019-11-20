@@ -153,7 +153,7 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 	@JvmField var mIsGlow                       = true
 	
 	// Чувствительность прокрутки
-	private val mDragSensitive                  = Size(8, 8)
+	@JvmField var mDragSensitive                = Size(8, 8)
 	
 	// Обсервер принимающий данные от адаптера
 	private var observer                        = RibbonObserver()
@@ -231,7 +231,7 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 		invalidate()
 	}
 
-	/** Определение факта касения для дочерних элементов */
+	/** Определение факта касания для дочерних элементов */
 	override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
 		var delta = 0
 		touch.event(ev).drag(mDragSensitive) { offs, _ ->
@@ -240,6 +240,7 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 		}
 		return delta != 0
 	}
+
 	/** Обработка события касания */
 	override fun onTouchEvent(ev: MotionEvent): Boolean {
 		if(!isEnabled) return isClickable || isLongClickable
@@ -260,7 +261,6 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 					adapter?.let { itemClickListener?.invoke(this@BaseRibbon, this, mClickPosition, it.getItemId(mClickPosition)) }
 				}
 				mClickPosition = -1
-				flags = 0
 			} else {
 				val pos = itemFromPoint(ptCurrent)
 				if(mClickPosition != pos) {

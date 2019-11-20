@@ -4,6 +4,8 @@ import org.jetbrains.dokka.gradle.DokkaTask
 dependencies {
 //    implementation(files("libs/dropbox-core-sdk-3.1.1.jar"))
     implementation("com.dropbox.core:dropbox-core-sdk:3.1.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.2.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.2.1")
 }
 
 plugins {
@@ -18,7 +20,7 @@ apply {
 }
 
 // версия библиотеки
-val libVersion = "1.0.2"
+val libVersion = "1.0.3"
 
 // ссылка на сайт размещения проекта
 val siteUrl = "https://github.com/ostrovskal/sshSTD"
@@ -32,7 +34,7 @@ android {
     defaultConfig {
         minSdkVersion(19)
         targetSdkVersion(28)
-        versionCode = 31
+        versionCode = 33
         versionName = libVersion
         resValue("string", "app_name", "sshSTD")
     }

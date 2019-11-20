@@ -142,6 +142,12 @@ public final class Common {
     /** Сообщение для текущей формы */
     public static final int RECEPIENT_FORM      = 1;
 
+    /** Сообщение для поверхности UI треда текущей формы */
+    public static final int RECEPIENT_SURFACE_UI= 2;
+
+    /** Сообщение для поверхности фонового треда текущей формы */
+    public static final int RECEPIENT_SURFACE_BG= 3;
+
     /** Действие. Сообщение о результате формы сообщений */
     public static final int ACT_MESSAGE_RESULT  = -5;
 

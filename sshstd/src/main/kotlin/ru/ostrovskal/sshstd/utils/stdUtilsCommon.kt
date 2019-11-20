@@ -301,13 +301,13 @@ inline val Long.date        get() = fmtTime(this, "%d.%m.%Y")
 
 /** Установка/Получение адресата из сообщения хэндлера */
 inline var Message.recepient
-	get()                   = what and 1
-	set(v)                  { what = (what and -1) or (v and 1) }
+	get()                   = what and 3
+	set(v)                  { what = (what and -4) or (v and 3) }
 
 /** Установка/Получение действия из сообщения хэндлера */
 inline var Message.action
-	get()                   = what shr 1
-	set(v)                  { what = (what and 1) or (v shl 1) }
+	get()                   = what shr 2
+	set(v)                  { what = (what and 3) or (v shl 2) }
 
 /** Преобразование логического в целое */
 inline val Boolean.toInt	get() = if(this) 1 else 0

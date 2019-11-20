@@ -43,7 +43,9 @@ open class FormMessage : Form() {
     }
 
     override fun footer(btn: Int, param: Int) {
-        wnd.hand?.send(RECEPIENT_FORM, ACT_MESSAGE_RESULT, a1 = btn)
-        super.footer(btn, param)
+        wnd.apply {
+            super.footer(btn, param)
+            hand?.send(RECEPIENT_FORM, ACT_MESSAGE_RESULT, a1 = btn)
+        }
     }
 }

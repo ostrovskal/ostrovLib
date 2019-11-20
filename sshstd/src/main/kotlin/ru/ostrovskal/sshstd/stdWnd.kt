@@ -11,12 +11,17 @@ import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
 import android.widget.Toast
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import ru.ostrovskal.sshstd.Common.*
 import ru.ostrovskal.sshstd.objects.Settings
 import ru.ostrovskal.sshstd.objects.Sound
 import ru.ostrovskal.sshstd.sql.SQL
 import ru.ostrovskal.sshstd.ui.UiComponent
 import ru.ostrovskal.sshstd.utils.*
+import kotlin.coroutines.CoroutineContext
 
 /**
  * @author Шаталов С. В.
@@ -24,10 +29,17 @@ import ru.ostrovskal.sshstd.utils.*
 */
 
 /** Базовый класс, реализующий активити и интерфейс хэндлера */
-abstract class Wnd : Activity(), Handler.Callback {
-	
+abstract class Wnd : Activity(), Handler.Callback, CoroutineScope {
+
+	/** Задача для корутин */
+	@JvmField protected val job = SupervisorJob()
+
 	/** Контент */
 	lateinit var content: ViewGroup
+
+	/** Контекст корутин */
+	override val coroutineContext: CoroutineContext
+		get() = Dispatchers.Main + job
 
 	/** Массив структур форм */
 	@JvmField protected var forms 			= intArrayOf()
@@ -62,11 +74,21 @@ abstract class Wnd : Activity(), Handler.Callback {
 	/** Обработка нажатия кнопки BACK */
 	override fun onBackPressed() { findForm<Form>(tagForm)?.backPressed() ?: hand?.send(RECEPIENT_WND, ACT_EXIT) }
 	
-	/** Обработка хэндлера. True, если обработка завершена, false в противном случае */
+	/** Обработка хэндлера. True, если обработка завершена */
 	override fun handleMessage(msg: Message): Boolean {
 		msg.info.debug()
-		return if(msg.recepient == RECEPIENT_FORM) findForm<Form>(tagForm)?.handleMessage(msg) ?: false
-		else { if(msg.action == ACT_EXIT) finish(); true }
+		return if(msg.recepient == RECEPIENT_WND) {
+			if(msg.action == ACT_EXIT) { finish(); true } else false
+		} else {
+			findForm<Form>(tagForm)?.run {
+				when(msg.recepient) {
+					RECEPIENT_FORM 		-> handleMessage(msg)
+					RECEPIENT_SURFACE_UI-> surface?.handleMessage(msg)
+					RECEPIENT_SURFACE_BG-> surface?.hand?.sendMessage(msg)
+					else				-> false
+				}
+			} ?: false
+		}
 	}
 	
 	/**
@@ -193,5 +215,11 @@ abstract class Wnd : Activity(), Handler.Callback {
 		hand?.removeCallbacksAndMessages(null)
 		hand = null
 		super.onStop()
+	}
+
+	/** Уничтожение активити */
+	override fun onDestroy() {
+		super.onDestroy()
+		coroutineContext.cancel()
 	}
 }

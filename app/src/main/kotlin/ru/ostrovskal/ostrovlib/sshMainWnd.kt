@@ -11,10 +11,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewManager
 import android.widget.ArrayAdapter
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import ru.ostrovskal.sshstd.*
 import ru.ostrovskal.sshstd.Common.*
-import ru.ostrovskal.sshstd.FormMessage
-import ru.ostrovskal.sshstd.FormProgress
-import ru.ostrovskal.sshstd.Wnd
 import ru.ostrovskal.sshstd.adapters.ArrayListAdapter
 import ru.ostrovskal.sshstd.layouts.CellLayout
 import ru.ostrovskal.sshstd.layouts.RadioLayout
@@ -22,7 +24,6 @@ import ru.ostrovskal.sshstd.objects.Theme
 import ru.ostrovskal.sshstd.ui.*
 import ru.ostrovskal.sshstd.utils.*
 import ru.ostrovskal.sshstd.widgets.lists.Ribbon
-import java.lang.Thread.sleep
 
 const val actDblClick	= 0
 const val actClick		= 1
@@ -108,18 +109,28 @@ class MainWnd : Wnd() {
 		super.onCreate(savedInstanceState)
 
         TestTouch(this).setContent(this, SSH_APP_MODE_GAME)
-        FormProgress().show(this, R.string.loading, false).inBackground(1) { fp ->
-			repeat(101) {
-				fp.primary = it
-				sleep(100)
+
+		val dbx = DropBox("zx", "8iL3GSZ-JygAAAAAAAAHlIMEO_3cUJi2zLr1pR5tI8NCshh6KZ225aSqcNKLK-Wt")
+
+		launch {
+			FormProgress().show(this@MainWnd, R.string.loading, true).doInBackground(10) { fp ->
+				val result = withContext(Dispatchers.IO) { dbx.folders("/ZX") }
+				result?.run {
+					fp.maximum = this.size
+					forEachIndexed { idx, f ->
+						f.name.info()
+						delay(10L)
+						fp.primary = idx
+					}
+					BTN_OK
+				} ?: BTN_NO
 			}
-			true
 		}
 	}
 
 	override fun handleMessage(msg: Message): Boolean {
-		if(msg.action == 1) {
-			FormMessage().show(this, intArrayOf(R.string.app_name, R.string.success, R.integer.I_YES, 0, 0, 0, 0))
+		if(msg.action == 10) {
+			FormMessage().show(this, intArrayOf(R.string.app_name, if(msg.arg1 == BTN_OK) R.string.success else R.string.failed, R.integer.I_YES, 0, 0, 0, 0))
 		}
 		return super.handleMessage(msg)
 	}
@@ -141,7 +152,9 @@ class TestTouch(val wnd: MainWnd): UiComponent() {
 	override fun createView(ui: UiCtx) = with(ui) {
 		linearLayout(false) {
 			containerLayout(70, 100, true) {
-				touchSurface { id = R.id.check }
+				touchSurface {
+					id = R.id.check
+				}
 			}
 			touchGrp = radioGroup {
 				radio(actDblClick, R.string.radio_dclick)
@@ -160,6 +173,7 @@ class Abs(val wnd: MainWnd): UiComponent() {
 		cellLayout(12, 10) {
 			ribbon(0, false) {
 				adapter = WndAdapter(context, ItemRibbon())
+				this.mDragSensitive = Size(64, 64)
 				backgroundSet {
 					solid = 0x4000ff00
 				}
@@ -167,6 +181,9 @@ class Abs(val wnd: MainWnd): UiComponent() {
 		}
 	}
 	private class WndAdapter(context: Context, val item: UiComponent) : ArrayAdapter<Ribbon>(context, 0, listOf()) {
+
+		val list1 = List(100) { it.toString() }
+		val list2 = List(50) { "${it + 100}" }
 
 		/** Возвращает представление заголовка */
 		override fun getView(position: Int, convertView: View?, parent: ViewGroup) = createView(position, convertView)
@@ -182,8 +199,8 @@ class Abs(val wnd: MainWnd): UiComponent() {
 				var lst = listOf("nothing")
 				when(position) {
 					0		-> lst = listOf("1", "2", "3", "4", "5", "6", "7")
-					1		-> lst = listOf("11", "21", "31", "41")
-					2		-> lst = listOf("121", "122", "123", "124", "125", "126", "127")
+					1		-> lst = list1
+					2		-> lst = list2
 				}
 				adapter = ArrayListAdapter(context, ItemIO(), ItemIO(), lst)
 			}

@@ -6,6 +6,7 @@ import android.graphics.*
 import android.view.MotionEvent
 import ru.ostrovskal.sshstd.Common.*
 import ru.ostrovskal.sshstd.Size
+import ru.ostrovskal.sshstd.Surface
 import ru.ostrovskal.sshstd.Touch
 import ru.ostrovskal.sshstd.utils.dp2px
 import ru.ostrovskal.sshstd.utils.info
@@ -15,7 +16,8 @@ import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
-class SurfaceTouch(context: Context) : ru.ostrovskal.sshstd.Surface(context) {
+
+class SurfaceTouch(context: Context) : Surface(context) {
 
 	var idxRadio			= -1
 
@@ -48,6 +50,7 @@ class SurfaceTouch(context: Context) : ru.ostrovskal.sshstd.Surface(context) {
 	}
 
 	private val paintBase = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+		textSize = 40f
 		color = 0xff00ffff.toInt()
 		strokeWidth = 3f
 		style = Paint.Style.FILL_AND_STROKE
@@ -70,7 +73,7 @@ class SurfaceTouch(context: Context) : ru.ostrovskal.sshstd.Surface(context) {
 	override fun onTouchEvent(event: MotionEvent): Boolean {
 		idxRadio = touchGrp.isChecked()?.id ?: -1
 		if(oldIdxRadio != idxRadio) { temp = -1; angle = 0f; oldLen = 1f; oldIdxRadio = idxRadio }
-        if(event.actionMasked != MotionEvent.ACTION_MOVE) "a: ${event.actionMasked} i: ${event.actionIndex} c: ${event.pointerCount}".info()
+        //if(event.actionMasked != MotionEvent.ACTION_MOVE) "a: ${event.actionMasked} i: ${event.actionIndex} c: ${event.pointerCount}".info()
 		touch.event(event, touch2).apply {
 			when(idxRadio) {
 				actClick       -> click(rects) { idx -> temp = idx; }
@@ -161,7 +164,7 @@ class SurfaceTouch(context: Context) : ru.ostrovskal.sshstd.Surface(context) {
 			Rect(x, y, x + ww - 5, y + hh - 5)
 		}
 	}
-	
+
 	override fun draw(canvas: Canvas) {
 		super.draw(canvas)
 		rects.forEach { canvas.drawRect(it, paintStroke) }
@@ -206,5 +209,6 @@ class SurfaceTouch(context: Context) : ru.ostrovskal.sshstd.Surface(context) {
 		}
 		canvas.drawCircle(c0.x, c0.y, 10f, paintC)
 		canvas.drawCircle(c1.x, c1.y, 10f, paintB)
+		canvas.drawText(fps.toString(), 100f, 100f, paintBase)
 	}
 }

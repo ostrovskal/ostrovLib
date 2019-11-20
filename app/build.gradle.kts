@@ -21,8 +21,8 @@ android {
         applicationId = "com.github.ostrovskal.ostrovlib"
         minSdkVersion(19)
         targetSdkVersion(28)
-        versionCode = 31
-        versionName = "1.0.2"
+        versionCode = 32
+        versionName = "1.0.3"
         resValue("string", "app_name", "ostrovLib")
     }
     buildTypes {
@@ -45,10 +45,12 @@ android {
 }
 
 dependencies {
-    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("'*.jar"))))
+    //implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("'*.jar"))))
     implementation(kotlin("stdlib-jdk8", rootProject.properties["kotlinVers"].toString()))
     //implementation("com.github.ostrovskal:sshstd:1.0.0")
     implementation(project(":sshstd"))
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.2.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.2.1")
 }
 repositories {
     mavenCentral()

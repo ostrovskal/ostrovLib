@@ -17,6 +17,7 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import com.github.ostrovskal.sshstd.R
+import kotlinx.coroutines.cancelChildren
 import ru.ostrovskal.sshstd.Common.*
 import ru.ostrovskal.sshstd.adapters.RecordAdapter
 import ru.ostrovskal.sshstd.sql.RecordSet
@@ -35,10 +36,10 @@ import ru.ostrovskal.sshstd.widgets.Tile
  * Реализация класса фрагмента на базе диалога.
  * Является базовым классом для всех фрагментов(форм) в системе, обеспечивая взаимодействие
  * с активити и передачу сообщений посредством хэндлера.
- * Рреализует интерфейсы для взаимодействия со spinner, loader, view
+ * Рреализует интерфейсы для взаимодействия со spinner, loader, view и корутинами
  */
 open class Form : DialogFragment(), LoaderManager.LoaderCallbacks<RecordSet>, View.OnClickListener {
-	
+
 	// Предыдущий тег формы
 	private var prevTag                         = ""
 	
@@ -53,23 +54,26 @@ open class Form : DialogFragment(), LoaderManager.LoaderCallbacks<RecordSet>, Vi
 	
 	/** Анимация дрожания */
 	protected lateinit var shake: Animation
-	
+
 	/** Передача результата */
-	@JvmField protected var result     = Result
-	
+	@JvmField protected var result     	= Result
+
 	/** Доступ к коннектору */
 	protected val connector
-		get() 	                       = loaderManager.getLoader<Cursor>(CONNECTOR) as Connector
+		get() 	                       	= loaderManager.getLoader<Cursor>(CONNECTOR) as Connector
 	
 	/**
 	 * Используется для обработки нажатия кнопки BACK и события onBackPress
 	 */
-	@JvmField protected var tmBACK     = 0L
+	@JvmField protected var tmBACK     	= 0L
 	
 	/** Доступ к активити */
 	val wnd
-		get()                          = activity as Wnd
-	
+		get()                          	= activity as Wnd
+
+	/** Обработчик поверхности фонового треда */
+	open val surface: Surface? get()	= null
+
 	/** Доступ к индексу структуры, описывающей данную форму */
 	val index
 		get()                          = arguments.getInt("IDX")
@@ -108,7 +112,13 @@ open class Form : DialogFragment(), LoaderManager.LoaderCallbacks<RecordSet>, Vi
 		wnd.tagForm = tag
 		super.onResume()
 	}
-	
+
+	/** Уничтожение формы */
+	override fun onDestroy() {
+		super.onDestroy()
+		wnd.coroutineContext.cancelChildren()
+	}
+
 	/** Создание представления формы */
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		shake = AnimationUtils.loadAnimation(wnd, R.anim.shake)
