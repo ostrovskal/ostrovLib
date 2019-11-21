@@ -2,7 +2,7 @@ package ru.ostrovskal.sshstd
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Rect
+import android.graphics.RectF
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
@@ -29,7 +29,7 @@ abstract class Surface(context: Context, private val tagMarshalling: String = "m
 	private var thread: SurfaceThread? 		= null
 
 	/** Область канвы */
-	@JvmField val surfaceRect          		= Rect()
+	@JvmField val surfaceRect          		= RectF()
 
 	/** Максимальное время кадра в миллисекундах */
 	@JvmField var frameTime		            = 50L
@@ -81,7 +81,7 @@ abstract class Surface(context: Context, private val tagMarshalling: String = "m
 		if(thread?.isAlive == false)
 			thread?.start()
 		running = true
-		surfaceRect.set(0, 0, width, height)
+		surfaceRect.set(0f, 0f, width.toFloat(), height.toFloat())
 	}
 	
 	/** Создание поверхности и фонового треда */
@@ -124,7 +124,7 @@ abstract class Surface(context: Context, private val tagMarshalling: String = "m
 		override fun onLooperPrepared() {
 			weak.get()?.let {
 				it.hand = Handler(looper, it).apply {
-					send(act = Common.ACT_INIT_SURFACE)
+					send(Common.RECEPIENT_SURFACE_BG, act = Common.ACT_INIT_SURFACE)
 					post(runner)
 				}
 			}

@@ -123,7 +123,13 @@ private var messageNames    = arrayOf<String>()
 val Message.info: String get() {
 	val a = action + 5
 	val act = if(a >= messageNames.size) "???<${a - 5}>" else messageNames[a]
-	return "${if(recepient == RECEPIENT_FORM) "FORM" else "WND"} -> $act($arg1, $arg2, $obj)"
+	val rec = when(recepient) {
+		RECEPIENT_SURFACE_UI	-> "SURFACE_UI"
+		RECEPIENT_SURFACE_BG	-> "SURFACE_BG"
+		RECEPIENT_WND			-> "WND"
+		else					-> "FORM"
+	}
+	return "$rec -> $act($arg1, $arg2, $obj)"
 }
 
 /**
@@ -314,6 +320,9 @@ inline val Boolean.toInt	get() = if(this) 1 else 0
 
 /** Преобразование логического в байтовое */
 inline val Boolean.toByte	get() = toInt.toByte()
+
+/** Преобразование байтового в логическое */
+inline val Byte.toBoolean   get() = this != 0.toByte()
 
 /** Проверка на бит [bit] */
 inline infix fun Int.bits(bit: Int) = (this and ( 1 shl bit ) ) != 0

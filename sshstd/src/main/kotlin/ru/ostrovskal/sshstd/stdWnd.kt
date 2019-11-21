@@ -84,7 +84,7 @@ abstract class Wnd : Activity(), Handler.Callback, CoroutineScope {
 				when(msg.recepient) {
 					RECEPIENT_FORM 		-> handleMessage(msg)
 					RECEPIENT_SURFACE_UI-> surface?.handleMessage(msg)
-					RECEPIENT_SURFACE_BG-> surface?.hand?.sendMessage(msg)
+					RECEPIENT_SURFACE_BG-> surface?.hand?.sendMessage(Message.obtain(msg))
 					else				-> false
 				}
 			} ?: false
