@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.konan.properties.Properties
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -5,6 +7,9 @@ plugins {
 apply {
     plugin("kotlin-android")
 }
+
+// локальные свойства
+val lprops = Properties().apply { load(project.rootProject.file("local.properties").inputStream()) }
 
 android {
     signingConfigs {
@@ -16,14 +21,16 @@ android {
         }
     }
     sourceSets.getByName("main").java.srcDirs("src/main/kotlin")
-    compileSdkVersion(28)
+    compileSdkVersion(29)
     defaultConfig {
+
         applicationId = "com.github.ostrovskal.ostrovlib"
         minSdkVersion(19)
-        targetSdkVersion(28)
+        targetSdkVersion(29)
         versionCode = 32
         versionName = "1.0.3"
         resValue("string", "app_name", "ostrovLib")
+        resValue("string", "dropbox_token", lprops["dropbox.token"].toString())
     }
     buildTypes {
         getByName("release") {

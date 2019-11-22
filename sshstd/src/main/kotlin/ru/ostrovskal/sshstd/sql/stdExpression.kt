@@ -9,7 +9,7 @@ import ru.ostrovskal.sshstd.utils.toBlob
  */
 
 /** Реализация функции LENGTH( поле ) */
-fun <T: String?> Field<T>.length() = StdFunc(this, "LENGTH", FIELD_TYPE_INTEGER)
+fun <T: String?> Field<T>.length() = StdFunc(this, "LENGTH", SQL_FIELD_TYPE_INTEGER)
 
 /** Реализация функции LOWER( поле ) */
 fun<T: String?> Field<T>.lowerCase() = StdFunc(this, "LOWER")
@@ -18,7 +18,7 @@ fun<T: String?> Field<T>.lowerCase() = StdFunc(this, "LOWER")
 fun<T: String?> Field<T>.upperCase() = StdFunc(this, "UPPER")
 
 /** Реализация функции COUNT( поле ) */
-fun<T: Any?> Field<T>.count() = StdFunc(this, "COUNT", FIELD_TYPE_INTEGER)
+fun<T: Any?> Field<T>.count() = StdFunc(this, "COUNT", SQL_FIELD_TYPE_INTEGER)
 
 /** Реализация функции SUM( поле ) */
 fun<T: Number?> Field<T>.sum() = StdFunc(this, "SUM", type)
@@ -83,10 +83,10 @@ object SqlBuilder {
 	@JvmStatic infix fun <T, S: T> Expression<S>.ls(other: Expression<S>) = CompareOp(this, other, "<")
 	
 	/** Реализация операции <= ( параметр ) */
-	@JvmStatic infix fun <T, S: T> Expression<S>.lsEq(t: T) : Op<Boolean> = CompareOp(this, ExpressionParameter(t, type), "<=")
+	@JvmStatic infix fun <T, S: T> Expression<S>.lseq(t: T) : Op<Boolean> = CompareOp(this, ExpressionParameter(t, type), "<=")
 	
 	/** Реализация операции <= ( выражение ) */
-	@JvmStatic infix fun <T, S: T> Expression<S>.lsEq(other: Expression<S>) : Op<Boolean> = CompareOp(this, other, "<=")
+	@JvmStatic infix fun <T, S: T> Expression<S>.lseq(other: Expression<S>) : Op<Boolean> = CompareOp(this, other, "<=")
 	
 	/** Реализация операции > ( параметр ) */
 	@JvmStatic infix fun <T, S: T> Expression<S>.gt(t: T) : Op<Boolean> = CompareOp(this, ExpressionParameter(t, type), ">")
@@ -95,18 +95,18 @@ object SqlBuilder {
 	@JvmStatic infix fun <T, S: T> Expression<S>.gt(other: Expression<S>) : Op<Boolean> = CompareOp(this, other, ">")
 	
 	/** Реализация операции >= ( параметр ) */
-	@JvmStatic infix fun <T, S: T> Expression<S>.gtEq(t: T) : Op<Boolean> = CompareOp(this, ExpressionParameter(t, type), ">=")
+	@JvmStatic infix fun <T, S: T> Expression<S>.gteq(t: T) : Op<Boolean> = CompareOp(this, ExpressionParameter(t, type), ">=")
 	
 	/** Реализация операции >= ( выражение ) */
-	@JvmStatic infix fun <T, S: T> Expression<S>.gtEq(other: Expression<T>) : Op<Boolean> = CompareOp(this, other, ">=")
+	@JvmStatic infix fun <T, S: T> Expression<S>.gteq(other: Expression<T>) : Op<Boolean> = CompareOp(this, other, ">=")
 	
 	/** Реализация операции LIKE ( выражение ) */
 	@JvmStatic infix fun <T:String?> Expression<T>.like(pattern: String): Op<Boolean> =
-			CompareOp(this, ExpressionParameter(pattern, FIELD_TYPE_TEXT), "LIKE")
+			CompareOp(this, ExpressionParameter(pattern, SQL_FIELD_TYPE_TEXT), "LIKE")
 	
 	/** Реализация операции NOT LIKE ( выражение ) */
 	@JvmStatic infix fun <T:String?> Expression<T>.notLike(pattern: String): Op<Boolean> =
-			CompareOp(this, ExpressionParameter(pattern, FIELD_TYPE_TEXT), "NOT LIKE")
+			CompareOp(this, ExpressionParameter(pattern, SQL_FIELD_TYPE_TEXT), "NOT LIKE")
 	
 	/** Реализация операции + ( выражение ) */
 	@JvmStatic infix operator fun <T, S: T> Expression<T>.plus(other: Expression<S>) : Expression<T> = ExpressionOp(this, other, "+")
@@ -137,7 +137,7 @@ object SqlBuilder {
  *
  * @property type Тип выражения
  */
-abstract class Expression<T>(@JvmField val type: Int = FIELD_TYPE_NULL) {
+abstract class Expression<T>(@JvmField val type: Int = SQL_FIELD_TYPE_NULL) {
 	
 	// Ленивое получение хэша
 	private val _hashCode by lazy { toString().hashCode() }
@@ -169,9 +169,9 @@ class ExpressionParameter<T>(@JvmField val value: T, type: Int) : Expression<T>(
 	companion object {
 		/**  Создает строку по типу выражения */
 		fun <T> argument(value: T, type: Int) = when(type) {
-			FIELD_TYPE_TEXT -> "\'$value\'"
-			FIELD_TYPE_BLOB -> (value as? ByteArray)?.toBlob() ?: "x\'00\'"
-			else            -> value.toString()
+			SQL_FIELD_TYPE_TEXT -> "\'$value\'"
+			SQL_FIELD_TYPE_BLOB -> (value as? ByteArray)?.toBlob() ?: "x\'00\'"
+			else            	-> value.toString()
 		}
 	}
 	
@@ -249,8 +249,9 @@ class InListOrNotInListOp<T>(@JvmField val expr: Expression<T>, @JvmField val li
 /** Класс, реализующий стандартные SQL функции
  *
  * @property func Имя функции
+ * @param	 tp Тип функции
  */
-class StdFunc<T>(f: Field<T>, @JvmField val func: String, tp: Int = FIELD_TYPE_TEXT): Function<T>(f, tp) {
+class StdFunc<T>(f: Field<T>, @JvmField val func: String, tp: Int = SQL_FIELD_TYPE_TEXT): Function<T>(f, tp) {
 	/** Получение текста в SQL формате из параметров объекта */
 	override fun toString() = "$func($field)"
 }

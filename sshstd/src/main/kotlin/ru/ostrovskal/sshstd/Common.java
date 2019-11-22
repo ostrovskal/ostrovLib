@@ -458,22 +458,22 @@ public final class Common {
     public static final int DDL_FIELD_UNIQUE        = 4;
 
     /** Тип поля. NULL */
-    public static final int FIELD_TYPE_NULL         = 0;
-
-    /** Тип поля. Целое INT */
-    public static final int FIELD_TYPE_INTEGER      = 1;
+    public static final int SQL_FIELD_TYPE_NULL     = 0;
 
     /** Тип поля. Вещественное DOUBLE */
-    public static final int FIELD_TYPE_REAL         = 2;
+    public static final int SQL_FIELD_TYPE_REAL     = 1;
 
     /** Тип поля. Строковое STRING */
-    public static final int FIELD_TYPE_TEXT         = 3;
+    public static final int SQL_FIELD_TYPE_TEXT     = 2;
 
     /** Тип поля. Байтовый массив BYTE[] */
-    public static final int FIELD_TYPE_BLOB         = 4;
+    public static final int SQL_FIELD_TYPE_BLOB     = 3;
+
+    /** Тип поля. Целое INT */
+    public static final int SQL_FIELD_TYPE_INTEGER  = 4;
 
     /** Тип поля. Лата/Время LONG */
-    public static final int FIELD_TYPE_TIMESTAMP    = 5;
+    public static final int SQL_FIELD_TYPE_TIMESTAMP= 5;
 
     /** JSON лексема. Запятая */
     public static final int JSON_COMMA              = 0;

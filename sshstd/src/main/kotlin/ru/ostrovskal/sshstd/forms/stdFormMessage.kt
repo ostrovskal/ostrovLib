@@ -1,7 +1,10 @@
-package ru.ostrovskal.sshstd
+@file:Suppress("DEPRECATION")
+
+package ru.ostrovskal.sshstd.forms
 
 import android.view.LayoutInflater
 import ru.ostrovskal.sshstd.Common.*
+import ru.ostrovskal.sshstd.Wnd
 import ru.ostrovskal.sshstd.ui.*
 import ru.ostrovskal.sshstd.utils.dp
 import ru.ostrovskal.sshstd.utils.send

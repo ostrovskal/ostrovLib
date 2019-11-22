@@ -1,4 +1,4 @@
-@file:Suppress("NOTHING_TO_INLINE", "UNCHECKED_CAST")
+@file:Suppress("NOTHING_TO_INLINE", "UNCHECKED_CAST", "DEPRECATION")
 
 package ru.ostrovskal.sshstd.utils
 
@@ -10,7 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewManager
 import android.widget.TextView
-import ru.ostrovskal.sshstd.Form
+import ru.ostrovskal.sshstd.forms.Form
 import ru.ostrovskal.sshstd.Wnd
 import ru.ostrovskal.sshstd.layouts.TabLayout
 import ru.ostrovskal.sshstd.ui.UiComponent

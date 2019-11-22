@@ -1,4 +1,4 @@
-@file:Suppress("DEPRECATION")
+@file:Suppress("DEPRECATION", "IMPLICIT_CAST_TO_ANY", "UNCHECKED_CAST")
 
 package ru.ostrovskal.ostrovlib
 
@@ -10,17 +10,22 @@ import android.os.Message
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewManager
-import android.widget.ArrayAdapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import ru.ostrovskal.sshstd.*
 import ru.ostrovskal.sshstd.Common.*
+import ru.ostrovskal.sshstd.DropBox
+import ru.ostrovskal.sshstd.Size
+import ru.ostrovskal.sshstd.Wnd
 import ru.ostrovskal.sshstd.adapters.ArrayListAdapter
+import ru.ostrovskal.sshstd.forms.FormMessage
+import ru.ostrovskal.sshstd.forms.FormProgress
 import ru.ostrovskal.sshstd.layouts.CellLayout
 import ru.ostrovskal.sshstd.layouts.RadioLayout
 import ru.ostrovskal.sshstd.objects.Theme
+import ru.ostrovskal.sshstd.sql.SQL
+import ru.ostrovskal.sshstd.sql.Table
 import ru.ostrovskal.sshstd.ui.*
 import ru.ostrovskal.sshstd.utils.*
 import ru.ostrovskal.sshstd.widgets.lists.Ribbon
@@ -98,9 +103,17 @@ val std_theme_l = intArrayOf(ATTR_SSH_THEME_NAME, R.string.std_theme_l,
 		ATTR_SSH_ICON_HORZ, 10, ATTR_SSH_ICON_VERT, 3
 )
 
+object Ostrov: Table() {
+	@JvmField val id  = integer("_id").primaryKey(1)
+	@JvmField val time= timestamp("time").notNull.index(true)
+	@JvmField val text= text("text").notNull.index(false)
+	@JvmField val real= real("real").default(0f).checked { it gteq 0f }.index(true)
+}
+
 class MainWnd : Wnd() {
 
 	var typeTheme = 1
+
 	// ДПО4 ПОЛУЧЕНО
 	// 89857707575
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -110,7 +123,7 @@ class MainWnd : Wnd() {
 
         TestTouch(this).setContent(this, SSH_APP_MODE_GAME)
 
-		val dbx = DropBox("zx", "8iL3GSZ-JygAAAAAAAAHlIMEO_3cUJi2zLr1pR5tI8NCshh6KZ225aSqcNKLK-Wt")
+		val dbx = DropBox("zx", getString(R.string.dropbox_token))
 
 		launch {
 			FormProgress().show(this@MainWnd, R.string.loading, true).doInBackground(10) { fp ->
@@ -145,6 +158,27 @@ class MainWnd : Wnd() {
 			hand = Handler(Looper.getMainLooper(), this)
 			applyTheme()
 		}
+		if(!SQL.connection(this, true, Ostrov)) {
+			repeat(10) {idx ->
+				Ostrov.insert {
+					values[Ostrov.time] = System.currentTimeMillis()
+					values[Ostrov.text] = idx.toString()
+					values[Ostrov.real] = idx * 2f
+				}
+			}
+		}
+		launch {
+			Ostrov.exist { Ostrov.real gt 10f }.info()
+			Ostrov.count { Ostrov.real ls 14f }.info()
+			Ostrov.listOf(Ostrov.text, Ostrov.time, false) { Ostrov.real ls 14f }.info()
+			Ostrov.select(Ostrov.text, Ostrov.real, Ostrov.time).execute {
+				forEach {
+					"${it.text(Ostrov.text)} - ${it.real(Ostrov.real)} - ${it.time(Ostrov.time)}".info()
+				}
+				true
+			}
+		}
+		"sql conn ok!".info()
 	}
 }
 
@@ -180,21 +214,15 @@ class Abs(val wnd: MainWnd): UiComponent() {
 			}.lps(0, 0, 6, 5)
 		}
 	}
-	private class WndAdapter(context: Context, val item: UiComponent) : ArrayAdapter<Ribbon>(context, 0, listOf()) {
+	private class WndAdapter(context: Context, val item: UiComponent) : ArrayListAdapter<Ribbon>(context, item, item, listOf()) {
 
 		val list1 = List(100) { it.toString() }
 		val list2 = List(50) { "${it + 100}" }
 
-		/** Возвращает представление заголовка */
-		override fun getView(position: Int, convertView: View?, parent: ViewGroup) = createView(position, convertView)
-
 		override fun getCount(): Int = 3
 
-		/** Возвращает представление из выпадающего списка */
-		override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup) = createView(position, convertView)
-
 		/** Создает представление */
-		private fun createView(position: Int, convertView: View?): View? {
+		override fun createView(position: Int, convertView: View?, resource: UiComponent, parent: ViewGroup, color: Boolean): View? {
 			return ((convertView ?: item.createView(UiCtx(context))) as? Ribbon)?.apply {
 				var lst = listOf("nothing")
 				when(position) {

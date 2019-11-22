@@ -1,5 +1,6 @@
 import com.jfrog.bintray.gradle.BintrayExtension
 import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.kotlin.konan.properties.Properties
 
 dependencies {
 //    implementation(files("libs/dropbox-core-sdk-3.1.1.jar"))
@@ -19,8 +20,11 @@ apply {
     plugin("kotlin-android")
 }
 
+// локальные свойства
+val lprops = Properties().apply { load(project.rootProject.file("local.properties").inputStream()) }
+
 // версия библиотеки
-val libVersion = "1.0.3"
+val libVersion = "1.0.4"
 
 // ссылка на сайт размещения проекта
 val siteUrl = "https://github.com/ostrovskal/sshSTD"
@@ -30,11 +34,11 @@ val gitUrl = "https://github.com/ostrovskal/sshSTD.git"
 
 android {
     sourceSets.getByName("main").java.srcDirs("src/main/kotlin")
-    compileSdkVersion(28)
+    compileSdkVersion(29)
     defaultConfig {
         minSdkVersion(19)
-        targetSdkVersion(28)
-        versionCode = 33
+        targetSdkVersion(29)
+        versionCode = 35
         versionName = libVersion
         resValue("string", "app_name", "sshSTD")
     }
@@ -120,8 +124,8 @@ publishing {
 }
 
 bintray {
-    user = project.properties["bintray.user"].toString()
-    key = project.properties["bintray.apikey"].toString()
+    user = lprops["bintray.user"].toString()
+    key = lprops["bintray.apikey"].toString()
     setPublications("sergey")
     pkg(delegateClosureOf<BintrayExtension.PackageConfig> {
         repo = "maven"
@@ -137,7 +141,7 @@ bintray {
             vcsTag = libVersion
             gpg(delegateClosureOf<BintrayExtension.GpgConfig> {
                 sign = true
-                passphrase = project.properties["bintray.password"].toString()
+                passphrase = lprops["bintray.password"].toString()
             })
         })
     })

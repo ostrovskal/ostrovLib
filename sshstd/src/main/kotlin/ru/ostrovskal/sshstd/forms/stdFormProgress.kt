@@ -1,9 +1,12 @@
-package ru.ostrovskal.sshstd
+@file:Suppress("DEPRECATION")
+
+package ru.ostrovskal.sshstd.forms
 
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import com.github.ostrovskal.sshstd.R
 import ru.ostrovskal.sshstd.Common.*
+import ru.ostrovskal.sshstd.Wnd
 import ru.ostrovskal.sshstd.layouts.CellLayout
 import ru.ostrovskal.sshstd.ui.*
 import ru.ostrovskal.sshstd.utils.dp

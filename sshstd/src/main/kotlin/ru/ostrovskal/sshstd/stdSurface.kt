@@ -119,7 +119,7 @@ abstract class Surface(context: Context, private val tagMarshalling: String = "m
 
 	private class SurfaceThread(private val weak: WeakReference<Surface>) : HandlerThread("surfaceThread") {
 
-		private var runner: Runnable? = null
+		private lateinit var runner: Runnable
 
 		override fun onLooperPrepared() {
 			weak.get()?.let {

@@ -2,8 +2,6 @@
 
 package ru.ostrovskal.sshstd.sql
 
-import android.database.Cursor.FIELD_TYPE_FLOAT
-import android.database.Cursor.FIELD_TYPE_STRING
 import ru.ostrovskal.sshstd.Common.*
 import ru.ostrovskal.sshstd.utils.test
 
@@ -62,11 +60,11 @@ open class Field<T>(@JvmField val table: Table, @JvmField val name: String, type
 	
 	/** Получение SQL типа поля */
 	@JvmField val sqlType = when(type) {
-		FIELD_TYPE_FLOAT        -> "REAL"
-		FIELD_TYPE_INTEGER,
-		FIELD_TYPE_TIMESTAMP    -> "INTEGER"
-		FIELD_TYPE_STRING       -> "TEXT"
-		FIELD_TYPE_BLOB         -> "BLOB"
+		SQL_FIELD_TYPE_REAL     -> "REAL"
+		SQL_FIELD_TYPE_TEXT		-> "TEXT"
+		SQL_FIELD_TYPE_BLOB     -> "BLOB"
+		SQL_FIELD_TYPE_INTEGER,
+		SQL_FIELD_TYPE_TIMESTAMP-> "INTEGER"
 		else                    -> "NULL"
 	}
 	

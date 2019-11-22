@@ -3,7 +3,6 @@
 package ru.ostrovskal.sshstd.sql
 
 import ru.ostrovskal.sshstd.Common.*
-import ru.ostrovskal.sshstd.utils.releaseRun
 
 /**
  * @author  Шаталов С.В.
@@ -93,19 +92,19 @@ open class Table {
 	inline fun <T> Field<T>.index(isUnique: Boolean) = apply { indices[this] = isUnique }
 	
 	/** Добавление поля [name] типа INTEGER */
-	fun integer(name: String): Field<Int> = registerField(name, FIELD_TYPE_INTEGER)
+	fun integer(name: String): Field<Int> = registerField(name, SQL_FIELD_TYPE_INTEGER)
 	
 	/** Добавление поля [name] типа FLOAT */
-	fun real(name: String): Field<Float> = registerField(name, FIELD_TYPE_REAL)
+	fun real(name: String): Field<Float> = registerField(name, SQL_FIELD_TYPE_REAL)
 	
 	/** Добавление поля [name] типа TEXT */
-	fun text(name: String): Field<String> = registerField(name, FIELD_TYPE_TEXT)
+	fun text(name: String): Field<String> = registerField(name, SQL_FIELD_TYPE_TEXT)
 	
 	/** Добавление поля [name] типа BLOB */
-	fun blob(name: String): Field<ByteArray> = registerField(name, FIELD_TYPE_BLOB)
+	fun blob(name: String): Field<ByteArray> = registerField(name, SQL_FIELD_TYPE_BLOB)
 	
 	/** Добавление поля [name] типа TIMESTAMP */
-	fun timestamp(name: String): Field<Long> = registerField(name, FIELD_TYPE_TIMESTAMP)
+	fun timestamp(name: String): Field<Long> = registerField(name, SQL_FIELD_TYPE_TIMESTAMP)
 	
 	/** Регистрация поля в списке таблицы */
 	private fun <T> registerField(name: String, type: Int) = Field<T>(this, name, type).apply { fields.add(this) }
@@ -123,13 +122,13 @@ open class Table {
 	}
 	
 	/** DML оператор DELETE FROM для удаления записей с условием */
-	inline fun delete(crossinline block: StmtDelete.() -> Unit) = StmtDelete(this).run {
+	suspend inline fun delete(crossinline block: StmtDelete.() -> Unit) = StmtDelete(this).run {
 		block()
 		execute()
 	}
 	
 	/** DML оператор DELETE FROM для удаление всех записей */
-	inline fun deleteAll() = StmtDelete(this).execute()
+	suspend inline fun deleteAll() = StmtDelete(this).execute()
 	
 	/** DML оператор SELECT для полей [fields] */
 	inline fun select(vararg fields: Expression<*>, body: (StmtSelect.() -> Unit)) = StmtSelect(this, *fields).apply { body() }
@@ -163,22 +162,22 @@ open class Table {
 	}
 	
 	/** Проверка на существование */
-	fun exist(where: SqlBuilder.() -> Op<Boolean>) = StmtSelect(this).run {
+	suspend fun exist(where: SqlBuilder.() -> Op<Boolean>) = StmtSelect(this).run {
 		where { SqlBuilder.where() }
-		execute()?.releaseRun { true } ?: false
+		execute { true } ?: false
 	}
 	
 	/** Подсчет количества записей */
-	fun count(op: (SqlBuilder.() -> Op<Boolean>)? = null) = StmtSelect(this).run {
+	suspend fun count(op: (SqlBuilder.() -> Op<Boolean>)? = null) = StmtSelect(this).run {
 		count()
 		if(op != null) where { SqlBuilder.op() }
-		execute()?.releaseRun { integer(0) } ?: 0
+		execute { integer(0) } ?: 0
 	}
 	
 	/** Формирование массива из содержимого таблицы по некоторому полю [field], с сортировкой [order] */
-	fun listOf(field: Field<String>, order: Field<*>, where: (SqlBuilder.() -> Op<Boolean>)? = null) = StmtSelect(this, field).run {
-		orderBy(order)
+	suspend fun listOf(field: Field<String>, order: Field<*>, isAsc: Boolean, where: (SqlBuilder.() -> Op<Boolean>)? = null) = StmtSelect(this, field).run {
+		orderBy(order, isAsc)
 		if(where != null) where { SqlBuilder.where() }
-		execute()?.releaseRun { List(count) { hasNext(); next()[field] } } ?: listOf()
+		execute { List(count) { hasNext(); next()[field] } } ?: listOf()
 	}
 }

@@ -16,7 +16,7 @@ import android.widget.ScrollView
 import android.widget.TableRow
 import com.github.ostrovskal.sshstd.R
 import ru.ostrovskal.sshstd.Common.*
-import ru.ostrovskal.sshstd.Form
+import ru.ostrovskal.sshstd.forms.Form
 import ru.ostrovskal.sshstd.TileDrawable
 import ru.ostrovskal.sshstd.Wnd
 import ru.ostrovskal.sshstd.layouts.CommonLayout

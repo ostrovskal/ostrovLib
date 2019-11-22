@@ -18,8 +18,8 @@ import ru.ostrovskal.sshstd.widgets.lists.Spinner
   * @property title	 	Представление для заголовка(Spinner)
   * @property dropdown	Представление для элемента списка
   * */
-open class ArrayListAdapter(context: Context, protected val title: UiComponent, protected val dropdown: UiComponent,
-                               mObjects: List<String>): ArrayAdapter<String>(context, 0, mObjects) {
+open class ArrayListAdapter<T>(context: Context, protected val title: UiComponent, protected val dropdown: UiComponent,
+                               mObjects: List<T>): ArrayAdapter<T>(context, 0, mObjects) {
 	// Цвет подсветки
 	private var highColor  = 0
 	
@@ -27,20 +27,20 @@ open class ArrayListAdapter(context: Context, protected val title: UiComponent, 
 	private var normColor  = 0
 	
 	/** Возвращает представление заголовка */
-	override fun getView(position: Int, convertView: View?, parent: ViewGroup) = createView(position, convertView, title, parent, false).apply {
+	override fun getView(position: Int, convertView: View?, parent: ViewGroup) = createView(position, convertView, title, parent, false)?.run {
 		(this as? TextView)?.apply {
 			normColor = highlightColor
 			highColor = currentTextColor
 		}
-	}
+	} ?: error("View is null!")
 	
 	/** Возвращает представление из выпадающего списка */
 	override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup) = createView(position, convertView, dropdown, parent, true)
 	
 	/** Создает представление */
-	private fun createView(position: Int, convertView: View?, resource: UiComponent, parent: ViewGroup, color: Boolean): View? {
+	open fun createView(position: Int, convertView: View?, resource: UiComponent, parent: ViewGroup, color: Boolean): View? {
 		return ((convertView ?: resource.createView(UiCtx(context))) as? TextView)?.apply {
-			text = getItem(position)
+			text = getItem(position) as CharSequence
 			val sel = (parent as? Spinner)?.selection ?: -1
 			if(color) setTextColor(if(position == sel) highColor else normColor)
 		}

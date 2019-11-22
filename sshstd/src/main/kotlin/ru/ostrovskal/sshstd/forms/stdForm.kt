@@ -1,14 +1,11 @@
 @file:Suppress("DEPRECATION")
 
-package ru.ostrovskal.sshstd
+package ru.ostrovskal.sshstd.forms
 
 import android.app.Dialog
 import android.app.DialogFragment
 import android.app.FragmentTransaction
-import android.app.LoaderManager
 import android.content.DialogInterface
-import android.content.Loader
-import android.database.Cursor
 import android.os.Bundle
 import android.os.Message
 import android.view.LayoutInflater
@@ -19,8 +16,9 @@ import android.view.animation.AnimationUtils
 import com.github.ostrovskal.sshstd.R
 import kotlinx.coroutines.cancelChildren
 import ru.ostrovskal.sshstd.Common.*
+import ru.ostrovskal.sshstd.Surface
+import ru.ostrovskal.sshstd.Wnd
 import ru.ostrovskal.sshstd.adapters.RecordAdapter
-import ru.ostrovskal.sshstd.sql.RecordSet
 import ru.ostrovskal.sshstd.sql.StmtSelect
 import ru.ostrovskal.sshstd.ui.UiCtx
 import ru.ostrovskal.sshstd.utils.put
@@ -36,9 +34,9 @@ import ru.ostrovskal.sshstd.widgets.Tile
  * Реализация класса фрагмента на базе диалога.
  * Является базовым классом для всех фрагментов(форм) в системе, обеспечивая взаимодействие
  * с активити и передачу сообщений посредством хэндлера.
- * Рреализует интерфейсы для взаимодействия со spinner, loader, view и корутинами
+ * Реализует интерфейсы для взаимодействия со spinner, view и корутинами
  */
-open class Form : DialogFragment(), LoaderManager.LoaderCallbacks<RecordSet>, View.OnClickListener {
+open class Form : DialogFragment(), View.OnClickListener {
 
 	// Предыдущий тег формы
 	private var prevTag                         = ""
@@ -49,34 +47,29 @@ open class Form : DialogFragment(), LoaderManager.LoaderCallbacks<RecordSet>, Vi
 	/** Корневой элемент */
 	lateinit var root: ViewGroup
 	
-	/** Адаптер */
-	protected lateinit var adapter: RecordAdapter
-	
 	/** Анимация дрожания */
 	protected lateinit var shake: Animation
 
-	/** Передача результата */
-	@JvmField protected var result     	= Result
+	/** Кэшируемое выражение SELECT */
+	@JvmField protected var stmt: StmtSelect?		= null
 
-	/** Доступ к коннектору */
-	protected val connector
-		get() 	                       	= loaderManager.getLoader<Cursor>(CONNECTOR) as Connector
-	
-	/**
-	 * Используется для обработки нажатия кнопки BACK и события onBackPress
-	 */
+	/** Адаптер */
+	@JvmField protected var adapter: RecordAdapter?	= null
+
+	/** Передача результата */
+	@JvmField protected var result     				= Result
+
+	/** Используется для обработки нажатия кнопки BACK и события onBackPress */
 	@JvmField protected var tmBACK     	= 0L
 	
 	/** Доступ к активити */
-	val wnd
-		get()                          	= activity as Wnd
+	val wnd get()                          			= activity as Wnd
 
-	/** Обработчик поверхности фонового треда */
-	open val surface: Surface? get()	= null
+	/** Фоновый объект */
+	open val surface: Surface? get()				= null
 
 	/** Доступ к индексу структуры, описывающей данную форму */
-	val index
-		get()                          = arguments.getInt("IDX")
+	val index get()                          		= arguments.getInt("IDX")
 
 	/** Обработка нажатия на кнопку BACK */
 	open fun backPressed() {
@@ -193,7 +186,7 @@ open class Form : DialogFragment(), LoaderManager.LoaderCallbacks<RecordSet>, Vi
 	/**
 	 * Отправка результата работы формы
 	 *
-	 * @param recepient Адресат - MSG_WND, MSG_FORM
+	 * @param recepient Адресат
 	 * @param action    Действие
 	 * @param param     Дополнительный параметр
 	 */
@@ -203,16 +196,7 @@ open class Form : DialogFragment(), LoaderManager.LoaderCallbacks<RecordSet>, Vi
 	
 	/** Загружает содержимое */
 	protected open fun inflateContent(container: LayoutInflater) = UiCtx(activity)
-	
-	/** Строка запроса для коннектора */
-	protected open fun queryConnector(): StmtSelect? = null
-	
-	/** Реализация интерфейса лоадера. Создание загрузчика с идентификатором [id] и аргументами [args] */
-	override fun onCreateLoader(id: Int, args: Bundle?): Loader<RecordSet> = Connector(wnd, queryConnector())
 
-	/** Реализация интерфейса лоадера. Обновление загрузчика [loader] данными [data] */
-	override fun onLoadFinished(loader: Loader<RecordSet>, data: RecordSet?) { adapter.changeCursor(data) }
-
-	/** Реализация интерфейса лоадера. Уничтожение загрузчика [loader] */
-	override fun onLoaderReset(loader: Loader<RecordSet>?) {}
+	/** Строка запроса базы данных */
+	protected open fun queryDatabase(): StmtSelect? = null
 }

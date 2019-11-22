@@ -219,8 +219,8 @@ private fun writeToParcel(ret: Parcel, obj: Any): Parcel {
 			is FloatArray   -> ret.writeFloatArray(o)
 			is DoubleArray  -> ret.writeDoubleArray(o)
 			is BooleanArray -> ret.writeBooleanArray(o)
-			is Array<*>     -> ret.writeStringArray(o as Array<String>?)
-			else            -> writeToParcel(ret, o)
+			is Array<*>     -> (o as? Array<String>)?.apply { ret.writeStringArray(this) }
+			else            -> o?.apply { writeToParcel(ret, this) }
 		}
 	}
 	return ret
@@ -250,9 +250,9 @@ private fun writeToFields(ret: Parcel, obj: Any): Any? {
 			is DoubleArray  -> ret.createDoubleArray()
 			is BooleanArray -> ret.createBooleanArray()
 			is Array<*>     -> ret.createStringArray()
-			else            -> writeToFields(ret, tmp)
+			else            -> tmp?.apply { writeToFields(ret, this) }
 		}
-		if(o != null) it.set(obj, o)
+		o?.apply { it.set(obj, this) }
 	}
 	return null
 }

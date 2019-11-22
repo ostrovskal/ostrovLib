@@ -43,7 +43,7 @@ object SQL: SQLiteDatabase.CursorFactory {
 	{ identity.split('.').joinToString(".") { quoteToken(it) } } else quoteToken(identity)
 	
 	@JvmStatic private fun quoteToken(token: String): String {
-		val hash = token.toLowerCase().hashCode()
+		val hash = token.toLowerCase(Locale.ROOT).hashCode()
 		return if(Common.sqlKeywords.any { it == hash }) "\'$token\'" else token
 	}
 	

@@ -382,7 +382,7 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 		//val posCache = (view?.layoutParams as? LayoutParams)?.pos ?: -1
 		lateinit var child: View
 		adapter?.let {
-			child = it.getView(pos, view, this) ?: error("Адаптер не вернул представление!!!")
+			child = it.getView(pos, view, this)
 			if(child.importantForAccessibility == View.IMPORTANT_FOR_ACCESSIBILITY_AUTO) child.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_YES
 			val vlp = child.layoutParams
 			(if(vlp == null) generateDefaultLayoutParams() as? LayoutParams

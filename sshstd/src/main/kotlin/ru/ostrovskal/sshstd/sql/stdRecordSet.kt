@@ -35,14 +35,14 @@ open class RecordSet(driver: SQLiteCursorDriver, query: SQLiteQuery, private val
 	/** Вернуть значение поля|псевдонима [f] из курсора */
 	operator fun <T> get(f: Field<T>) = run {
 		val alias = getAliasOrThrow(f)
-		val idx = fields[f] ?: -1
+		val idx = fields[f] ?: error("Поле <${f.name}> не найдено!")
 		when(alias.type) {
-			FIELD_TYPE_TEXT      -> text(idx)
-			FIELD_TYPE_REAL      -> real(idx)
-			FIELD_TYPE_BLOB      -> blob(idx)
-			FIELD_TYPE_INTEGER   -> integer(idx)
-			FIELD_TYPE_TIMESTAMP -> timestamp(idx)
-			else                -> null
+			SQL_FIELD_TYPE_TEXT     -> text(idx)
+			SQL_FIELD_TYPE_REAL     -> real(idx)
+			SQL_FIELD_TYPE_BLOB     -> blob(idx)
+			SQL_FIELD_TYPE_INTEGER  -> integer(idx)
+			SQL_FIELD_TYPE_TIMESTAMP-> timestamp(idx)
+			else                	-> null
 		}
 	} as T
 	
@@ -55,22 +55,25 @@ open class RecordSet(driver: SQLiteCursorDriver, query: SQLiteQuery, private val
 	/** Автоматическое извлечение значений объекта из полей таблицы. Поля объекта должны быть аннотированны @SqlField(nameField) */
 	fun autoValues(obj: Any) {
 		obj.javaClass.fields.filter { it.isAnnotationPresent(SqlField::class.java) }.forEach {
-			var name = it.getAnnotation(SqlField::class.java).name
-			if(name.isEmpty()) name = it.name
+			// берем имя из аннотации к полю
+			var name = it.getAnnotation(SqlField::class.java)?.name
+			// если имя пустое -> берем из поля
+			if(name.isNullOrEmpty()) name = it.name
+			// ищем имя в списке столбцов таблицы. если его нет - переходим к следуюшему
 			columnNames.firstOrNull{ column -> column == name } ?: return@forEach
 			it.isAccessible = true
-			when(val o = it.get(obj)) {
-				is Int          -> it.setInt(o, integer(name))
-				is Byte         -> it.setByte(o, integer(name).toByte())
-				is Long         -> it.setLong(o, timestamp(name))
-				is Char         -> it.setChar(o, integer(name).toChar())
-				is Short        -> it.setShort(o, integer(name).toShort())
-				is Float        -> it.setFloat(o, real(name))
-				is Double       -> it.setDouble(o, real(name).toDouble())
-				is Boolean      -> it.setBoolean(o, boolean(name))
-				is String       -> it.set(o, text(name))
-				is ByteArray    -> it.set(o, blob(name))
-				else            -> error("Unknown field type of an object $it")
+			when (val o = it.get(obj)) {
+				is Int 		-> it.setInt(o, integer(name))
+				is Byte 	-> it.setByte(o, integer(name).toByte())
+				is Long 	-> it.setLong(o, timestamp(name))
+				is Char 	-> it.setChar(o, integer(name).toChar())
+				is Short 	-> it.setShort(o, integer(name).toShort())
+				is Float 	-> it.setFloat(o, real(name))
+				is Double 	-> it.setDouble(o, real(name).toDouble())
+				is Boolean 	-> it.setBoolean(o, boolean(name))
+				is String 	-> it.set(o, text(name))
+				is ByteArray-> it.set(o, blob(name))
+				else 		-> error("Unknown field type of an object $it")
 			}
 		}
 	}
@@ -84,7 +87,7 @@ open class RecordSet(driver: SQLiteCursorDriver, query: SQLiteQuery, private val
 	/** Вернуть DATETIME значение поля [field] определенного формата [pattern] */
 	fun datetime(field: Field<*>, pattern: String = "%d.%m.%Y %H:%M:%S"): String {
 		val alias = getAliasOrThrow(field)
-		if(alias.type != FIELD_TYPE_INTEGER) error("The field type for receiving a date and time shall have integral type!")
+		if(alias.type < SQL_FIELD_TYPE_INTEGER) error("Для получения даты/времени поле <${field.name}> должно иметь интегральный тип!")
 		return fmtTime(timestamp(getColumnIndexOrThrow(alias.name)), pattern)
 	}
 	
