@@ -101,8 +101,8 @@ open class StmtInsert(table: Table) : Statement(table, SQL_DML_INSERT) {
 
 /** Класс, реализующий DML оператор UPDATE */
 open class StmtUpdate(table: Table): Statement(table, SQL_DML_UPDATE) {
-	/** Формирование оператора и исполнение запроса к БД с возвратом количества обновленных строк */
-	fun execute(): Long {
+	// Формирование оператора и исполнение запроса к БД с возвратом количества обновленных строк
+	suspend fun execute() = withContext(Dispatchers.IO) {
 		val vals = buildString {
 			values.forEach {
 				it.key.apply {
@@ -110,13 +110,13 @@ open class StmtUpdate(table: Table): Statement(table, SQL_DML_UPDATE) {
 				}
 			}
 		}
-		return SQL.exec(template(vals), dml)
+		SQL.exec(template(vals), dml)
 	}
 }
 
 /** Класс, реализующий DML оператор DELETE FROM */
 open class StmtDelete(table: Table): Statement(table, SQL_DML_DELETE) {
-	/** Формирование оператора и исполнение запроса к БД с возвратом количества удаленных строк */
+	// Формирование оператора и исполнение запроса к БД с возвратом количества удаленных строк
 	suspend fun execute() = withContext(Dispatchers.IO) { SQL.exec(template(), dml) }
 }
 
@@ -205,7 +205,7 @@ open class StmtSelect(table: Table, @JvmField vararg val fields: Expression<*>):
 		return template(flds, args)
 	}
 	
-	/** Формирование оператора и исполнение запроса к БД в фоновом потоке */
+	// Формирование оператора и исполнение запроса к БД в фоновом потоке
 	suspend fun <T> execute(block: RecordSet.() -> T) = withContext(Dispatchers.IO) {
 		SQL.exec(this@StmtSelect.toString(), arrayListOf(*fields))?.releaseRun(block)
 	}

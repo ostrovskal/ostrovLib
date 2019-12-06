@@ -132,7 +132,7 @@ abstract class Surface(context: Context, private val tagMarshalling: String = "m
 
 		init {
 			runner = Runnable {
-				var delay: Long
+				var delay = 0L
 				if(isInterrupted) return@Runnable
 				val surface = weak.get() ?: return@Runnable
 				surface.apply {
@@ -158,7 +158,7 @@ abstract class Surface(context: Context, private val tagMarshalling: String = "m
 									delay += (System.currentTimeMillis() - tm)
 								}
 							}
-							delay = 0
+							delay = 0L
 						}
 						// вычисляем fps
 						val diff = (System.currentTimeMillis() - beginTime) + delay

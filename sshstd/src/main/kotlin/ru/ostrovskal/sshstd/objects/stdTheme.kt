@@ -14,9 +14,9 @@ import ru.ostrovskal.sshstd.Common.*
 import ru.ostrovskal.sshstd.utils.*
 import ru.ostrovskal.sshstd.widgets.Tile
 import ru.ostrovskal.sshstd.widgets.lists.BaseRibbon
-import ru.ostrovskal.sshstd.widgets.lists.Table
 import ru.ostrovskal.sshstd.widgets.lists.Ribbon
 import ru.ostrovskal.sshstd.widgets.lists.Spinner
+import ru.ostrovskal.sshstd.widgets.lists.Table
 
 /**
  * @author Шаталов С.В.
@@ -97,11 +97,8 @@ object Theme {
 	@JvmStatic fun dimen(context: Context, value: Int, isFloat: Boolean = false): Int {
 		return when(value and ATTR_VPROPS_MSK) {
 			THEME   -> dimen(context, theme.themeAttrValue(value, -1, ATTR_DMN), isFloat)
-			IDRES   -> {
-				val ret = (context.resources.getDimensionPixelOffset(value) * config.multiplySW).toInt()
-				if(isFloat) ret.sp2px else ret
-			}
-			else    -> value.dp
+			IDRES   -> if(isFloat) value else (context.resources.getDimensionPixelOffset(value) * config.multiplySW).toInt()
+			else    -> if(isFloat) value else value.dp
 		}
 	}
 	
@@ -216,7 +213,7 @@ object Theme {
 			}
 			(obj as? TextView)?.apply {
 				when(attr) {
-					ATTR_SIZE            -> textSize = flt
+					ATTR_SIZE            -> textSize = int.toFloat()
 					ATTR_COLOR_DEFAULT   -> { setTextColor(int); paint.color = int }
 					ATTR_COLOR_HINT      -> setHintTextColor(int)
 					ATTR_COLOR_LINK      -> setLinkTextColor(int)

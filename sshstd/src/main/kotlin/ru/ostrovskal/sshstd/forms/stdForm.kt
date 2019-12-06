@@ -48,19 +48,19 @@ open class Form : DialogFragment(), View.OnClickListener {
 	lateinit var root: ViewGroup
 	
 	/** Анимация дрожания */
-	protected lateinit var shake: Animation
+	lateinit var shake: Animation
 
 	/** Кэшируемое выражение SELECT */
-	@JvmField protected var stmt: StmtSelect?		= null
+	lateinit var stmt: StmtSelect
 
 	/** Адаптер */
-	@JvmField protected var adapter: RecordAdapter?	= null
+	@JvmField var adapter: RecordAdapter?			= null
 
 	/** Передача результата */
-	@JvmField protected var result     				= Result
+	@JvmField var result     						= Result
 
 	/** Используется для обработки нажатия кнопки BACK и события onBackPress */
-	@JvmField protected var tmBACK     	= 0L
+	@JvmField protected var tmBACK     				= 0L
 	
 	/** Доступ к активити */
 	val wnd get()                          			= activity as Wnd
@@ -190,7 +190,7 @@ open class Form : DialogFragment(), View.OnClickListener {
 	 * @param action    Действие
 	 * @param param     Дополнительный параметр
 	 */
-	protected open fun sendResult(recepient: Int, action: Int, param: Int = 0) {
+	open fun sendResult(recepient: Int, action: Int, param: Int = 0) {
 		wnd.hand?.send(recepient, action, a1 = param, o = result)
 	}
 	
@@ -198,5 +198,5 @@ open class Form : DialogFragment(), View.OnClickListener {
 	protected open fun inflateContent(container: LayoutInflater) = UiCtx(activity)
 
 	/** Строка запроса базы данных */
-	protected open fun queryDatabase(): StmtSelect? = null
+	open fun query(block: () -> StmtSelect) { stmt = block() }
 }

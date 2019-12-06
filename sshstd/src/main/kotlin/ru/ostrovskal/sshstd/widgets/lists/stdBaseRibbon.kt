@@ -152,7 +152,7 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 	/** Признак, определяющий показывать ли эффект оверскролла */
 	@JvmField var mIsGlow                       = true
 	
-	// Чувствительность прокрутки
+	/** Чувствительность прокрутки */
 	@JvmField var mDragSensitive                = Size(8, 8)
 	
 	// Обсервер принимающий данные от адаптера

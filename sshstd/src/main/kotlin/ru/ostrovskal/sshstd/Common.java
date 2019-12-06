@@ -628,7 +628,7 @@ public final class Common {
     /** Цвет подсвеченного текста */
     public static final int ATTR_COLOR_HIGHLIGHT      = 3 | ATTR_INT;
     /** Размер шрифта */
-    public static final int ATTR_SIZE                 = 4 | ATTR_FLT;
+    public static final int ATTR_SIZE                 = 4 | ATTR_DMN;
     /** Шрифт */
     public static final int ATTR_FONT                 = 5 | ATTR_STR;
     /** Стиль начертания текста */

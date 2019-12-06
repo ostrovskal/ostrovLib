@@ -116,7 +116,7 @@ open class Progress(context: Context, id: Int, max: Int, mode: Int, style: IntAr
 				fun measureProgress(v: Int, r: Rect) {
 					if (v >= 0) {
 						var mx = max.toFloat()
-						if(mx < Float.MIN_VALUE) mx = Float.MIN_VALUE
+						if(mx < Float.MIN_VALUE) mx = 1f
 						val vw = (((w - pr - pl) / mx) * v).roundToInt()
 						val vh = (((h - pb - pt) / mx) * v).roundToInt()
 

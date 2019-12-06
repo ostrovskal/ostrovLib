@@ -9,7 +9,7 @@ import android.os.Parcelable
 import android.view.View
 import android.view.ViewGroup
 import ru.ostrovskal.sshstd.Common.*
-import ru.ostrovskal.sshstd.objects.*
+import ru.ostrovskal.sshstd.objects.Theme
 import ru.ostrovskal.sshstd.utils.*
 import ru.ostrovskal.sshstd.widgets.Tile
 
@@ -122,9 +122,7 @@ open class TabLayout(context: Context, idContent: Int, @JvmField protected val c
 		}
 		indicator.tag = caption.childCount
 		caption.addView(indicator, LayoutParams(MATCH, MATCH))
-		indicator.setOnClickListener {
-			currentTab = ((it.tag as? Int) ?: currentTab)
-		}
+		indicator.setOnClickListener { currentTab = it.tag.toString().toInt() }
 		content.init().id = id
 	}
 	

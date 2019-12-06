@@ -22,6 +22,7 @@ import ru.ostrovskal.sshstd.adapters.ArrayListAdapter
 import ru.ostrovskal.sshstd.forms.FormMessage
 import ru.ostrovskal.sshstd.forms.FormProgress
 import ru.ostrovskal.sshstd.layouts.CellLayout
+import ru.ostrovskal.sshstd.layouts.CommonLayout
 import ru.ostrovskal.sshstd.layouts.RadioLayout
 import ru.ostrovskal.sshstd.objects.Theme
 import ru.ostrovskal.sshstd.sql.SQL
@@ -108,6 +109,10 @@ object Ostrov: Table() {
 	@JvmField val time= timestamp("time").notNull.index(true)
 	@JvmField val text= text("text").notNull.index(false)
 	@JvmField val real= real("real").default(0f).checked { it gteq 0f }.index(true)
+}
+
+class TabRibbon(context: Context) : CommonLayout(context, false) {
+
 }
 
 class MainWnd : Wnd() {

@@ -2,27 +2,27 @@
 <resources>
     <!-- ************************************************************ -->
     <!-- текст на тосте -->
-    <dimen name="toast">18sp</dimen>
+    <dimen name="toast">10sp</dimen>
     <!-- текст на стандартной кнопке -->
-    <dimen name="button">22sp</dimen>
+    <dimen name="button">12sp</dimen>
     <!-- html текст -->
-    <dimen name="html">26sp</dimen>
+    <dimen name="html">14sp</dimen>
     <!-- размер текста подсказок -->
-    <dimen name="hint">16sp</dimen>
+    <dimen name="hint">10sp</dimen>
     <!-- размер текста заголовка диалога -->
-    <dimen name="header">23sp</dimen>
+    <dimen name="header">14sp</dimen>
     <!-- размер текста поля ввода -->
-    <dimen name="edit">20sp</dimen>
+    <dimen name="edit">14sp</dimen>
     <!-- размер маленького текста -->
-    <dimen name="small">14sp</dimen>
+    <dimen name="small">8sp</dimen>
     <!-- размер текста в прогрессе-->
-    <dimen name="progress">22sp</dimen>
+    <dimen name="progress">14sp</dimen>
     <!-- размер текста рейтинга -->
-    <dimen name="chart">11sp</dimen>
+    <dimen name="chart">6sp</dimen>
     <!-- размер обычного текста -->
-    <dimen name="normal">22sp</dimen>
+    <dimen name="normal">14sp</dimen>
     <!-- размер большого текста -->
-    <dimen name="large">26sp</dimen>
+    <dimen name="large">16sp</dimen>
     <!-- смещение нажатия для тайла -->
     <dimen name="pressedOffs">4dp</dimen>
     <!-- смещение тени от текста по осям -->

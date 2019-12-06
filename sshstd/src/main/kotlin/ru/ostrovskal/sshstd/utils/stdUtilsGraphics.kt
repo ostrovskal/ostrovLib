@@ -187,7 +187,10 @@ fun <T> Context.loadResource(name: String, type: String, def: T): T {
 				}
 			}
 		}
-	} catch(e: Resources.NotFoundException) { def }
+	} catch(e: Resources.NotFoundException) {
+		"loadResource($name, $type) ресурс не существует!".debug()
+		def
+	}
 	return ret as T
 }
 
