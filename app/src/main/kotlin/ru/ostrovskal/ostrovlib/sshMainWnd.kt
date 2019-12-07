@@ -133,10 +133,11 @@ class MainWnd : Wnd() {
 		launch {
 			FormProgress().show(this@MainWnd, R.string.loading, true).doInBackground(10) { fp ->
 				val result = withContext(Dispatchers.IO) { dbx.folders("/ZX") }
+				delay(500)
 				result?.run {
 					fp.maximum = this.size
 					forEachIndexed { idx, f ->
-						f.name.info()
+						f.info()
 						delay(10L)
 						fp.primary = idx
 					}

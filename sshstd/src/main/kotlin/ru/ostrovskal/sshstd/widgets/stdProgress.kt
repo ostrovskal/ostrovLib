@@ -115,17 +115,13 @@ open class Progress(context: Context, id: Int, max: Int, mode: Int, style: IntAr
 			if (mode == SSH_MODE_DIAGRAM) {
 				fun measureProgress(v: Int, r: Rect) {
 					if (v >= 0) {
-						var mx = max.toFloat()
-						if(mx < Float.MIN_VALUE) mx = 1f
-						val vw = (((w - pr - pl) / mx) * v).roundToInt()
-						val vh = (((h - pb - pt) / mx) * v).roundToInt()
-
-						var x1 = 0
-						var y1 = 0
-						var x2 = 0
-						var y2 = 0
-
-						//"$direction pl:$pl pr:$pr pt:$pt pb:$pb w:$w h:$h vw:$vw vh:$vh v: $v".info()
+						var vw = 0; var vh = 0
+						val mx = max.toFloat()
+						if(mx >= 1f) {
+							vw = (((w - pr - pl) / mx) * v).roundToInt()
+							vh = (((h - pb - pt) / mx) * v).roundToInt()
+						}
+						var x1 = 0; var y1 = 0; var x2 = 0; var y2 = 0
 						when (direction) {
 							DIRL -> { x1 = (w - vw) - pl; y1 = pt; x2 = w - pr; y2 = h - pb }
 							DIRR -> { x1 = pl; y1 = pt; x2 = vw + pr; y2 = h - pb }

@@ -105,26 +105,26 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 	
 	/** Выравнивание */
 	var align						        = 0
-		set(v)						        { field = v; updateBound(null) }
+		set(v)						        { field = v; updateBound() }
 	
 	/** Выравнивание значка */
 	var alignIcon						    = drawableIcon?.align ?: 0
-		set(value)					        { drawableIcon?.align = value; updateBound(null) }
+		set(value)					        { drawableIcon?.align = value; updateBound() }
 	
 	/** Масштаб иконки */
 	var scaleIcon                           = 0.5f
-		set(v)                              { field = v; updateBound(null) }
+		set(v)                              { field = v; updateBound() }
 	
 	/** Состояние */
 	var states                              = TILE_STATE_NONE
-		set(v)                              { field = v; updateBound(null) }
+		set(v)                              { field = v; updateBound() }
 	
 	/** Масштабирование */
 	var scale                               = TILE_SCALE_NONE
-		set(v)                              { field = v; updateBound(null) }
+		set(v)                              { field = v; updateBound() }
 	
 	/** Номер тайла */
-	var tile                                = -1
+	var tile 								= -1
 		set(v)                              { field = v; resolveTile(v, tileRect); redrawSelf(false) }
 	
 	/** Фильтр */
@@ -134,7 +134,7 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 	
 	/** Смещение тени */
 	var shadowOffset                        = 0f
-		set(v)                              { field = v; updateBound(null) }
+		set(v)                              { field = v; updateBound() }
 	
 	/** Значок */
 	var tileIcon                            = drawableIcon?.tile ?: -1
@@ -149,11 +149,11 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 	
 	/** Размеры углов скругленного прямоугольника */
 	var radii                               = floatArrayOf(10f, 10f, 10f, 10f, 10f, 10f, 10f, 10f)
-		set(v)                              { field = v; updateBound(null) }
+		set(v)                              { field = v; updateBound() }
 	
 	/** Фигура */
 	var shape                               = TILE_SHAPE_EMPTY
-		set(v)                              { field = v; updateBound(null) }
+		set(v)                              { field = v; updateBound() }
 	
 	/** Цвет рамки */
 	var selectorColor
@@ -163,7 +163,7 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 	/** Толщина рамки */
 	var selectorWidth
 		get()                               = paintSelector.strokeWidth
-		set(v)                              { paintSelector.strokeWidth = v; updateBound(null) }
+		set(v)                              { paintSelector.strokeWidth = v; updateBound() }
 	
 	/** Область обрезки картинки */
 	var patch9                              = Rect()
@@ -361,7 +361,7 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 			if(shape != TILE_SHAPE_EMPTY) {
 				// обводка
 				if(selectorWidth > 0f) drawPath(path, paintSelector)
-				clipPath(path)
+				if(!path.isEmpty) clipPath(path)
 			}
 			// фон
 			if(isShowBackground) background?.draw(this)

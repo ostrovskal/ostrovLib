@@ -1,11 +1,13 @@
 
 package ru.ostrovskal.sshstd
 
-import com.dropbox.core.DbxDownloader
 import com.dropbox.core.DbxException
 import com.dropbox.core.DbxRequestConfig
 import com.dropbox.core.v2.DbxClientV2
-import com.dropbox.core.v2.files.*
+import com.dropbox.core.v2.files.DeleteErrorException
+import com.dropbox.core.v2.files.FileMetadata
+import com.dropbox.core.v2.files.ListFolderErrorException
+import com.dropbox.core.v2.files.ListFolderResult
 import com.dropbox.core.v2.users.FullAccount
 import ru.ostrovskal.sshstd.Common.*
 import java.io.ByteArrayInputStream
@@ -58,9 +60,11 @@ open class DropBox(name: String, token: String) {
 
     /** Вернуть список файлов из папки [folder] */
     fun folders(folder: String): List<FileInfo>? {
-        val list: ListFolderResult? = try { client.files().listFolder(folder)
+        val list: ListFolderResult? = try {
+            client.files().listFolder(folder)
         } catch (dbxf: ListFolderErrorException) { null
-        } catch (dbxe: DbxException) { null }
+        } catch (dbxe: DbxException) { null
+        } catch(e: Exception) { null }
         return list?.entries?.run {
             val iter = iterator()
             MutableList(size) {
@@ -79,23 +83,23 @@ open class DropBox(name: String, token: String) {
 
     /** Скачать файл [file] и записать его в [path] */
     fun download(file: FileInfo, path: String): Boolean {
-        val ba = download(file)
+        val ba = download(file) ?: return false
         if(ba.isEmpty()) return false
         File(path).writeBytes(ba)
         return true
     }
 
     /** Скачать файл [file] */
-    fun download(file: FileInfo): ByteArray {
-        var downloader: DbxDownloader<FileMetadata>?
-        val ret = ByteArrayOutputStream()
-        try {
-            downloader = client.files()?.download(file.path.toLowerCase(Locale.ROOT), file.rev)
+    fun download(file: FileInfo): ByteArray? {
+        return try {
+            val ret = ByteArrayOutputStream()
+            val downloader = client.files()?.download(file.path.toLowerCase(Locale.ROOT), file.rev)
             downloader?.download(ret)
-        } catch (dbxd: DownloadErrorException) { downloader = null
-        } catch (dbxe: DbxException) { downloader = null }
-        downloader?.close()
-        return ret.toByteArray()
+            downloader?.close()
+            ret.toByteArray()
+        } catch (dbxf: ListFolderErrorException) { null
+        } catch (dbxe: DbxException) { null
+        } catch(e: Exception) { null }
     }
 
     /** Закачать файл [path] в облако в папку [pathTo] */
@@ -103,18 +107,19 @@ open class DropBox(name: String, token: String) {
 
     /** Закачать массив байт [file] в облако в папку [path] */
     fun upload(file: ByteArray, path: String): Boolean {
-        var result = true
-        try { client.files()?.uploadBuilder(path)?.uploadAndFinish(ByteArrayInputStream(file))
-        } catch (dbxe: DbxException) { result = false }
-        return result
+        return try {
+            client.files()?.uploadBuilder(path)?.uploadAndFinish(ByteArrayInputStream(file))
+            true
+        } catch (dbxe: DbxException) { false
+        } catch (e: Exception) { false }
     }
 
     /** Удаление файла или папки */
     fun remove(path: String): Boolean {
-        var result = true
-        try { client.files()?.deleteV2(path)
-        } catch (dbxd: DeleteErrorException) { result = false
-        } catch (dbxe: DbxException) { result = false }
-        return result
+        return try {
+            client.files()?.deleteV2(path); true
+        } catch (dbxd: DeleteErrorException) { false
+        } catch (dbxe: DbxException) { false
+        } catch (e: Exception) { false }
     }
 }

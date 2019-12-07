@@ -76,9 +76,7 @@ class Config(@JvmField val screen: ScreenSize, @JvmField val dip: Int, @JvmField
              @JvmField val night: Boolean, @JvmField val rtl: Boolean, @JvmField val sw: Int) {
 	
 	/** Отношение стандартного размера экрана к текущему */
-	@JvmField var multiplySW                          = 1f
-	
-	init { multiplySW = sw / 320f }
+	@JvmField var multiplySW                          		= sw / 320f
 	
 	/** Проверка на ориентацию устройства */
 	inline val portrait                                    get() = orien == Orientation.PORTRAIT

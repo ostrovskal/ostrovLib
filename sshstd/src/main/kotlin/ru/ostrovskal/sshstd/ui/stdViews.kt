@@ -2,6 +2,8 @@
 
 package ru.ostrovskal.sshstd.ui
 
+import android.content.Context
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewManager
 import android.widget.GridView
@@ -18,6 +20,16 @@ import ru.ostrovskal.sshstd.widgets.html.Html
 import ru.ostrovskal.sshstd.widgets.lists.Ribbon
 import ru.ostrovskal.sshstd.widgets.lists.Spinner
 import ru.ostrovskal.sshstd.widgets.lists.Table
+
+/** Установка иконки элемента меню с кастомным стилем [style] */
+inline fun Context.menuIcon(item: MenuItem, style: IntArray = style_drawable_tile) {
+	menuIcon(item, style) {}
+}
+
+/** Установка иконки элемента меню с кастомным стилем [style] и инициализатором [init] */
+inline fun Context.menuIcon(item: MenuItem, style: IntArray = style_drawable_tile, init: TileDrawable.()-> Unit) {
+	item.icon = TileDrawable(this, style).apply { init() }
+}
 
 /** Установка фона с кастомным стилем [style] */
 inline fun View.backgroundSet(style: IntArray = style_drawable_tile) {

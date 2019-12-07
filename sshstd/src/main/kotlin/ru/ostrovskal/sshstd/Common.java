@@ -598,13 +598,16 @@ public final class Common {
     public static final int ATTR_DRW              = 0x00040000;
 
     /** Типы атрибута. Значение из текущей темы  */
-    public static final int THEME                 = -0x80000000;
+    public static final int THEME                 = 0x80000000;
 
     /** Типы атрибута. Цвет  */
     public static final int COLOR                 = 0x40000000;
 
-    /** Типы атрибута. Значение из ресурсов  */
-    public static final int IDRES                 = 0x70000000;
+    /** Типы атрибута. SP для шрифта  */
+    public static final int SP_FONT               = 0x40000000;
+
+    /** Типы атрибута. DP из ресурсов  */
+    public static final int ID_RES                = 0x70000000;
 
     /** Маска значения атрибута  */
     public static final int ATTR_VALUE_MSK        = 0x0fffffff;
@@ -643,6 +646,8 @@ public final class Common {
     public static final int ATTR_MAX_LENGTH           = 10 | ATTR_INT;
     /** Параметры тени текста */
     public static final int ATTR_SHADOW_TEXT          = 11 | ATTR_STR;
+    /** Максимальное количество строк в тексте */
+    public static final int ATTR_MAX_LINES            = 12 | ATTR_INT;
 
 // Стандартные атрибуты стилей
     /** Внутренний отступ */
@@ -845,6 +850,7 @@ public final class Common {
             ATTR_SHADOW_TEXT, R.string.shadow_text,
             ATTR_GRAVITY, Gravity.CENTER_VERTICAL,
             ATTR_COLOR_DEFAULT, ATTR_SSH_COLOR_LARGE | THEME,
+            ATTR_MAX_LINES, 1,
             ATTR_SIZE, R.dimen.large,
             ATTR_FONT, R.string.font_large};
 
@@ -853,6 +859,7 @@ public final class Common {
             ATTR_SHADOW_TEXT, R.string.shadow_text,
             ATTR_GRAVITY, Gravity.CENTER_VERTICAL,
             ATTR_COLOR_DEFAULT, ATTR_SSH_COLOR_NORMAL | THEME,
+            ATTR_MAX_LINES, 1,
             ATTR_SIZE, R.dimen.normal,
             ATTR_FONT, R.string.font_normal};
 
@@ -861,6 +868,7 @@ public final class Common {
             ATTR_SHADOW_TEXT, R.string.shadow_text,
             ATTR_GRAVITY, Gravity.CENTER_VERTICAL,
             ATTR_COLOR_DEFAULT, ATTR_SSH_COLOR_SMALL | THEME,
+            ATTR_MAX_LINES, 1,
             ATTR_SIZE, R.dimen.small,
             ATTR_FONT, R.string.font_small
     };

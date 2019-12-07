@@ -129,7 +129,7 @@ class ToastLayout: UiComponent() {
 	override fun createView(ui: UiCtx): View = with(ui) {
 		text(R.string.null_text) {
 			id = android.R.id.message
-			textSize = Theme.dimen(context, 18, true).toFloat()
+			textSize = Theme.dimen(context, R.dimen.toast).toFloat()
 			gravity = Gravity.CENTER
 			textAlignment = TEXT_ALIGNMENT_GRAVITY
 			horizontalPadding = Theme.dimen(context, 16)

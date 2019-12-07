@@ -9,10 +9,7 @@ import android.os.HandlerThread
 import android.os.Message
 import android.view.SurfaceHolder
 import android.view.SurfaceView
-import ru.ostrovskal.sshstd.utils.marshall
-import ru.ostrovskal.sshstd.utils.put
-import ru.ostrovskal.sshstd.utils.send
-import ru.ostrovskal.sshstd.utils.unmarshall
+import ru.ostrovskal.sshstd.utils.*
 import java.lang.ref.WeakReference
 
 /**
@@ -35,13 +32,13 @@ abstract class Surface(context: Context, private val tagMarshalling: String = "m
 	@JvmField var frameTime		            = 50L
 
 	/** Пропускать кадры? */
-	@JvmField var isSkippedFrames           = true
+	@JvmField var isSkippedFrames           = false
 
 	/** Хэндлер */
 	@JvmField var hand: Handler? 		    = null
 
 	/** Усыпить\Возобновить тред */
-	@JvmField var running                   = true
+	@JvmField var running                   = false
 	
 	/** Запрос на Frame Per Second */
 	@JvmField var fps                       = 0
@@ -132,7 +129,7 @@ abstract class Surface(context: Context, private val tagMarshalling: String = "m
 
 		init {
 			runner = Runnable {
-				var delay = 0L
+				var delay: Long
 				if(isInterrupted) return@Runnable
 				val surface = weak.get() ?: return@Runnable
 				surface.apply {
@@ -150,13 +147,16 @@ abstract class Surface(context: Context, private val tagMarshalling: String = "m
 						// вычисляем время, которое можно спать
 						delay = frameTime - timeDiff
 						if(delay < 0L) {
+							var skipped = 0
 							if(isSkippedFrames) {
-								while (delay < 0L) {
+								while (delay < 0L && skipped < 5) {
 									val tm = System.currentTimeMillis()
 									// обновляем состояние без отрисовки
 									updateState()
 									delay += (System.currentTimeMillis() - tm)
+									skipped++
 								}
+								"skippedFrames $skipped".debug()
 							}
 							delay = 0L
 						}

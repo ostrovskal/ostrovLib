@@ -2,7 +2,7 @@
 <resources>
     <!-- ************************************************************ -->
     <!-- текст на тосте -->
-    <dimen name="toast">10sp</dimen>
+    <dimen name="toast">16sp</dimen>
     <!-- текст на стандартной кнопке -->
     <dimen name="button">12sp</dimen>
     <!-- html текст -->

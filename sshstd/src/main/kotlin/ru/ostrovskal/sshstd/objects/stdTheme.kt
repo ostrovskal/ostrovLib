@@ -60,7 +60,7 @@ object Theme {
 	@JvmStatic fun attrProps(context: Context, attr: Int, value: Int) {
 		when(attr and ATTR_APROPS_MSK) {
 			ATTR_INT        -> int = integer(context, value)
-			ATTR_FLT        -> flt = dimen(context, value, true).toFloat()
+			ATTR_FLT        -> flt = value.toFloat()
 			ATTR_DMN        -> int = dimen(context, value)
 			ATTR_STR        -> str = string(context, value)
 			ATTR_BOL        -> bol = boolean(context, value)
@@ -94,12 +94,13 @@ object Theme {
 	}
 	
 	/** Вернуть dimen значение [value] (ID в ресурсах, непосредственное значение, значение из темы) */
-	@JvmStatic fun dimen(context: Context, value: Int, isFloat: Boolean = false): Int {
-		return when(value and ATTR_VPROPS_MSK) {
-			THEME   -> dimen(context, theme.themeAttrValue(value, -1, ATTR_DMN), isFloat)
-			IDRES   -> if(isFloat) value else (context.resources.getDimensionPixelOffset(value) * config.multiplySW).toInt()
-			else    -> if(isFloat) value else value.dp
-		}
+	@JvmStatic fun dimen(context: Context, value: Int): Int {
+        return when(value and ATTR_VPROPS_MSK) {
+            THEME 	-> dimen(context, theme.themeAttrValue(value, -1, ATTR_DMN))
+			ID_RES  -> context.resources.getDimensionPixelOffset(value)
+            SP_FONT -> value.sp
+			else    -> value.dp
+        }
 	}
 	
 	/** Вернуть целое значение [value] (ID в ресурсах, непосредственное значение, значение из темы, цвет) */
@@ -107,7 +108,7 @@ object Theme {
 		return when(value and ATTR_VPROPS_MSK) {
 			COLOR   -> value.color
 			THEME   -> integer(context, theme.themeAttrValue(value, -1, ATTR_INT))
-			IDRES   -> context.resources.getInteger(value)
+			ID_RES  -> context.resources.getInteger(value)
 			else    -> value
 		}
 	}
@@ -124,7 +125,7 @@ object Theme {
 	@JvmStatic fun boolean(context: Context, value: Int): Boolean {
 		return when(value and ATTR_VPROPS_MSK) {
 			THEME   -> boolean(context, theme.themeAttrValue(value, -1, ATTR_BOL))
-			IDRES   -> context.resources.getBoolean(value)
+			ID_RES  -> context.resources.getBoolean(value)
 			else    -> value != 0
 		}
 	}
@@ -220,6 +221,7 @@ object Theme {
 					ATTR_COLOR_HIGHLIGHT -> highlightColor = int
 					ATTR_FONT            -> typeface = context.makeFont(str)
 					ATTR_STYLE           -> setTypeface(typeface, int)
+					ATTR_MAX_LINES		 -> maxLines = int
 					ATTR_TEXT_ALIGN      -> textAlignment = int
 					ATTR_IME_OPTIONS     -> imeOptions = int
 					ATTR_INPUT_TYPE      -> inputType = int

@@ -204,8 +204,9 @@ abstract class Wnd : Activity(), Handler.Callback, CoroutineScope {
 	
 	/** Возобновление */
 	override fun onResume() {
-		super.onResume()
+		"onResume".debug()
 		if(isRestart) initialize(true)
+		super.onResume()
 	}
 	
 	/** Остановка */
