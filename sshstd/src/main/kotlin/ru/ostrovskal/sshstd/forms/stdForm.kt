@@ -38,9 +38,6 @@ import ru.ostrovskal.sshstd.widgets.Tile
  */
 open class Form : DialogFragment(), View.OnClickListener {
 
-	// Предыдущий тег формы
-	private var prevTag                         = ""
-	
 	/** Разметка */
 	lateinit var content: ViewGroup
 	
@@ -53,23 +50,35 @@ open class Form : DialogFragment(), View.OnClickListener {
 	/** Кэшируемое выражение SELECT */
 	lateinit var stmt: StmtSelect
 
-	/** Адаптер */
+    // Предыдущий тег формы
+    @JvmField protected var prevTag                 = ""
+
+    /** Адаптер */
 	@JvmField var adapter: RecordAdapter?			= null
 
 	/** Передача результата */
-	@JvmField var result     						= Result
+	@JvmField var result     				= Result
 
 	/** Используется для обработки нажатия кнопки BACK и события onBackPress */
 	@JvmField protected var tmBACK     				= 0L
 	
 	/** Доступ к активити */
-	val wnd get()                          			= activity as Wnd
+	val wnd get()                             = activity as Wnd
 
 	/** Фоновый объект */
 	open val surface: Surface? get()				= null
 
 	/** Доступ к индексу структуры, описывающей данную форму */
-	val index get()                          		= arguments.getInt("IDX")
+	val index get()                          	= arguments.getInt("IDX")
+
+	/** удаление формы по ее тегу [tag] */
+	fun removeForm(tag: String) {
+		fragmentManager.apply {
+			findFragmentByTag(tag)?.let {
+				beginTransaction().remove(it).commit()
+			}
+		}
+	}
 
 	/** Обработка нажатия на кнопку BACK */
 	open fun backPressed() {
@@ -95,6 +104,7 @@ open class Form : DialogFragment(), View.OnClickListener {
 	
 	/** Сохранение состояния */
 	override fun onSaveInstanceState(outState: Bundle) {
+		outState.put("prevTag", prevTag)
 		saveState(outState)
 		super.onSaveInstanceState(outState)
 	}
@@ -116,6 +126,11 @@ open class Form : DialogFragment(), View.OnClickListener {
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		shake = AnimationUtils.loadAnimation(wnd, R.anim.shake)
 		wnd.toast = null
+		// восстановление состояния
+		savedInstanceState?.apply {
+			prevTag = getString("prevTag") ?: ""
+			restoreState(this)
+		}
 		// загружаем/создаем содержимое
 		content = (inflateContent(inflater).view as ViewGroup).apply {
 			// инициализация содержимого
@@ -125,7 +140,6 @@ open class Form : DialogFragment(), View.OnClickListener {
 			findViewById<Tile>(BTN_NO)?.setOnClickListener(this@Form)
 			findViewById<Tile>(BTN_DEF)?.setOnClickListener(this@Form)
 		}
-		if(savedInstanceState != null) restoreState(savedInstanceState)
 		return content
 	}
 	
@@ -163,20 +177,20 @@ open class Form : DialogFragment(), View.OnClickListener {
 	}
 	
 	/** Сохранение состояния */
-	open fun saveState(state: Bundle) {
-		state.put("prevTag", prevTag)
-	}
+	open fun saveState(state: Bundle) {}
 	
 	/** Восстановление состояния */
-	open fun restoreState(state: Bundle) {
-		prevTag = state.getString("prevTag") ?: ""
-	}
+	open fun restoreState(state: Bundle) {}
 	
 	/** Признак двойного нажатия кнопки BACK, при выходе */
 	open fun twicePressed() = false
 	
-	/** Обработка сообщений хэндлера */
-	open fun handleMessage(msg: Message) = true
+	/** Обработка сообщений хэндлера. По умолчанию отправляется предыдущей форме. */
+	open fun handleMessage(msg: Message): Boolean {
+		//"handleMessage default prevTag: $prevTag".debug()
+		if(prevTag.isNotEmpty()) return (fragmentManager.findFragmentByTag(prevTag) as? Form)?.handleMessage(msg) ?: true
+		return true
+	}
 	
 	/** Установка анимации */
 	open fun setAnimation(trans: FragmentTransaction) {

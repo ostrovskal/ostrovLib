@@ -7,6 +7,7 @@ import android.content.res.Resources
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.text.InputFilter
+import android.util.TypedValue
 import android.view.View
 import android.widget.TextView
 import com.github.ostrovskal.sshstd.R
@@ -97,7 +98,7 @@ object Theme {
 	@JvmStatic fun dimen(context: Context, value: Int): Int {
         return when(value and ATTR_VPROPS_MSK) {
             THEME 	-> dimen(context, theme.themeAttrValue(value, -1, ATTR_DMN))
-			ID_RES  -> context.resources.getDimensionPixelOffset(value)
+			ID_RES  -> (context.resources.getDimensionPixelOffset(value) * config.multiplySW).toInt()
             SP_FONT -> value.sp
 			else    -> value.dp
         }
@@ -214,7 +215,7 @@ object Theme {
 			}
 			(obj as? TextView)?.apply {
 				when(attr) {
-					ATTR_SIZE            -> textSize = int.toFloat()
+					ATTR_SIZE            -> setTextSize(TypedValue.COMPLEX_UNIT_PX, int.toFloat())
 					ATTR_COLOR_DEFAULT   -> { setTextColor(int); paint.color = int }
 					ATTR_COLOR_HINT      -> setHintTextColor(int)
 					ATTR_COLOR_LINK      -> setLinkTextColor(int)

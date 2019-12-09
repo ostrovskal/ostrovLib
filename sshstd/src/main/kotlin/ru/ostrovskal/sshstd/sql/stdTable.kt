@@ -115,19 +115,19 @@ open class Table {
 		execute()
 	}
 	
-	// DML оператор UPDATE
+	/** DML оператор UPDATE */
 	suspend inline fun update(crossinline body: StmtUpdate.(StmtUpdate) -> Unit) = StmtUpdate(this).run {
 		body(this)
 		execute()
 	}
 	
-	// DML оператор DELETE FROM для удаления записей с условием
+	/** DML оператор DELETE FROM для удаления записей с условием */
 	suspend inline fun delete(crossinline block: StmtDelete.() -> Unit) = StmtDelete(this).run {
 		block()
 		execute()
 	}
 	
-	// DML оператор DELETE FROM для удаление всех записей
+	/** DML оператор DELETE FROM для удаление всех записей */
 	suspend inline fun deleteAll() = StmtDelete(this).execute()
 	
 	/** DML оператор SELECT для полей [fields] */
@@ -174,7 +174,7 @@ open class Table {
 		execute { integer(0) } ?: 0
 	}
 	
-	// Формирование массива из содержимого таблицы по некоторому полю [field], с сортировкой [order] и типом сортировки [isAsc]
+	/** Формирование массива из содержимого таблицы по некоторому полю [field], с сортировкой [order] и типом сортировки [isAsc] */
 	suspend fun listOf(field: Field<String>, order: Field<*>, isAsc: Boolean, where: (SqlBuilder.() -> Op<Boolean>)? = null) = StmtSelect(this, field).run {
 		orderBy(order, isAsc)
 		if(where != null) where { SqlBuilder.where() }

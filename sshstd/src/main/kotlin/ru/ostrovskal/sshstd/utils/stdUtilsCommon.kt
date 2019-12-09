@@ -199,7 +199,7 @@ fun fmtTime(v: Long, pattern: String): String {
 // Чтение полей и упаковка их в парсел
 private fun writeToParcel(ret: Parcel, obj: Any): Parcel {
 	val clazz = obj.javaClass
-	clazz.fields.filter { it.isAnnotationPresent(STORAGE::class.java) }.forEach {
+	clazz.declaredFields.filter { it.isAnnotationPresent(STORAGE::class.java) }.forEach {
 		it.isAccessible = true
 		when(val o = it.get(obj)) {
 			is Int          -> ret.writeInt(o)
@@ -229,7 +229,7 @@ private fun writeToParcel(ret: Parcel, obj: Any): Parcel {
 // Извлечение полей из парсела и запись их в объект
 private fun writeToFields(ret: Parcel, obj: Any): Any? {
 	val clazz = obj.javaClass
-	clazz.fields.filter { it.isAnnotationPresent(STORAGE::class.java) }.forEach {
+	clazz.declaredFields.filter { it.isAnnotationPresent(STORAGE::class.java) }.forEach {
 		it.isAccessible = true
 		val o: Any? = when(val tmp = it.get(obj)) {
 			is Int          -> ret.readInt()

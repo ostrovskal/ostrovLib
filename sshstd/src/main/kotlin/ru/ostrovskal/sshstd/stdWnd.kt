@@ -133,10 +133,20 @@ abstract class Wnd : Activity(), Handler.Callback, CoroutineScope {
 		super.onCreate(savedInstanceState)
 		// формы
 		forms = loadResource("forms", "array", intArrayOf())
+		// восстановление после смены ориентации
+		savedInstanceState?.apply {
+			tagForm = getString("tagForm") ?: ""
+			restoreState(this)
+		}
 		// начальная инициализация
 		initialize(false)
 	}
 
+	override fun onSaveInstanceState(outState: Bundle) {
+		outState.put("tagForm", tagForm)
+		saveState(outState)
+		super.onSaveInstanceState(outState)
+	}
 	/** Запуск формы, используя непосредственное создание, с аргументами [args] */
 	fun instanceForm(form: Form, tag: String, container: Int, stack: Int, vararg args: Any?) {
 		val params 		= Bundle()
@@ -192,9 +202,15 @@ abstract class Wnd : Activity(), Handler.Callback, CoroutineScope {
 		trans.commit()
 	}
 
+	// сохранение состояния
+	abstract fun saveState(state: Bundle)
+
+	/** Восстановление состояния */
+	abstract fun restoreState(state: Bundle)
+
 	/** Начальная инициализация при создании, либо рестарте */
 	abstract fun initialize(restart: Boolean)
-	
+
 	/** Рестарт */
 	override fun onRestart() {
 		super.onRestart()
@@ -211,6 +227,7 @@ abstract class Wnd : Activity(), Handler.Callback, CoroutineScope {
 	
 	/** Остановка */
 	override fun onStop() {
+		"onStop".debug()
 		Sound.close()
 		SQL.disconnetion()
 		Settings.close()

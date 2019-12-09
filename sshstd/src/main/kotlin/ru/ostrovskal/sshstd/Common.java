@@ -913,7 +913,7 @@ public final class Common {
             ATTR_SHADOW_TEXT, R.string.shadow_text,
             ATTR_GRAVITY, Gravity.CENTER,
             ATTR_COLOR_DEFAULT, ATTR_SSH_COLOR_LARGE | THEME,
-            ATTR_SIZE, R.dimen.large,
+            ATTR_SIZE, R.dimen.normal,
             ATTR_FONT, R.string.font_normal
     };
 
@@ -950,6 +950,7 @@ public final class Common {
             ATTR_COLOR_DEFAULT, ATTR_SSH_COLOR_NORMAL | THEME,
             ATTR_SIZE, R.dimen.normal,
             ATTR_FONT, R.string.font_small,
+            ATTR_MAX_LINES, 1,
             ATTR_TEXT_ALIGN, TEXT_ALIGNMENT_GRAVITY,
             ATTR_MIN_HEIGHT, R.dimen.heightRadio,
             ATTR_SSH_HORZ, 2, ATTR_SSH_TILE, 0,
@@ -970,6 +971,7 @@ public final class Common {
             ATTR_MIN_HEIGHT, R.dimen.heightCheck,
             ATTR_SSH_HORZ, 2,
             ATTR_SSH_TILE, 0,
+            ATTR_MAX_LINES, 1,
             ATTR_SSH_SCALE, TILE_SCALE_MIN,
             ATTR_SSH_GRAVITY, TILE_GRAVITY_LEFT | TILE_GRAVITY_CENTER_VERT,
             ATTR_SSH_BITMAP_NAME, ATTR_SSH_BM_CHECK | THEME
@@ -979,6 +981,7 @@ public final class Common {
     public static final int[] style_switch                = {
             ATTR_SHADOW_TEXT, R.string.shadow_text,
             ATTR_STYLE, Typeface.BOLD_ITALIC,
+            ATTR_MAX_LINES, 1,
             ATTR_GRAVITY, Gravity.START | Gravity.CENTER_VERTICAL,
             ATTR_COLOR_DEFAULT, ATTR_SSH_COLOR_NORMAL | THEME,
             ATTR_SIZE, R.dimen.normal,

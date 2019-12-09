@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewManager
@@ -19,6 +20,8 @@ import ru.ostrovskal.sshstd.DropBox
 import ru.ostrovskal.sshstd.Size
 import ru.ostrovskal.sshstd.Wnd
 import ru.ostrovskal.sshstd.adapters.ArrayListAdapter
+import ru.ostrovskal.sshstd.forms.FORM_PROGRESS_DOWNLOAD
+import ru.ostrovskal.sshstd.forms.Form
 import ru.ostrovskal.sshstd.forms.FormMessage
 import ru.ostrovskal.sshstd.forms.FormProgress
 import ru.ostrovskal.sshstd.layouts.CellLayout
@@ -128,23 +131,49 @@ class MainWnd : Wnd() {
 
         TestTouch(this).setContent(this, SSH_APP_MODE_GAME)
 
+		if(savedInstanceState == null) instanceForm(MyForm(), "main", R.id.main, 1)
+
 		val dbx = DropBox("zx", getString(R.string.dropbox_token))
 
 		launch {
-			FormProgress().show(this@MainWnd, R.string.loading, true).doInBackground(10) { fp ->
+			FormProgress().show(this@MainWnd, R.string.loading, FORM_PROGRESS_DOWNLOAD).doInBackground(10) { fp ->
 				val result = withContext(Dispatchers.IO) { dbx.folders("/ZX") }
 				delay(500)
 				result?.run {
 					fp.maximum = this.size
-					forEachIndexed { idx, f ->
-						f.info()
-						delay(10L)
+					hand?.send(RECEPIENT_FORM, 1)
+					forEachIndexed { idx, _ ->
+						delay(40L)
 						fp.primary = idx
 					}
 					BTN_OK
 				} ?: BTN_NO
 			}
 		}
+	}
+
+	class MyForm : Form() {
+		override fun handleMessage(msg: Message): Boolean {
+			msg.info.info()
+			return super.handleMessage(msg)
+		}
+
+		override fun inflateContent(container: LayoutInflater): UiCtx {
+			return ui {
+				linearLayout {
+					cellLayout(10, 10, 1, true) {
+						text(R.string.text).lps(0, 0, 10, 10)
+					}
+				}
+			}
+			return super.inflateContent(container)
+		}
+	}
+
+	override fun saveState(state: Bundle) {
+	}
+
+	override fun restoreState(state: Bundle) {
 	}
 
 	override fun handleMessage(msg: Message): Boolean {
@@ -191,6 +220,7 @@ class MainWnd : Wnd() {
 class TestTouch(val wnd: MainWnd): UiComponent() {
 	override fun createView(ui: UiCtx) = with(ui) {
 		linearLayout(false) {
+			id = R.id.main
 			containerLayout(70, 100, true) {
 				touchSurface {
 					id = R.id.check

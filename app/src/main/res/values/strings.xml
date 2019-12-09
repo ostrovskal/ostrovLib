@@ -20,4 +20,5 @@
     <string name="loading">Загрузка…</string>
     <string name="success">Загрузка списка файлов из облака выполнена успешно!</string>
     <string name="failed">Загрузка списка файлов из облака завершилась с ошибкой!</string>
+    <string name="text">Hello, World!!!</string>
 </resources>

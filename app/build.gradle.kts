@@ -42,6 +42,9 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
             signingConfig = signingConfigs.getByName("default")
         }
+        getByName("debug") {
+            signingConfig = signingConfigs.getByName("default")
+        }
     }
 /*
     compileOptions {

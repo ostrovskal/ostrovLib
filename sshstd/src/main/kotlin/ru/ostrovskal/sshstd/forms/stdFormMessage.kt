@@ -31,7 +31,7 @@ open class FormMessage : Form() {
         val height = params[6].run { if(this == 0 ) 180.dp else this }
         return ui {
             linearLayout {
-                cellLayout(10, 9) {
+                root = cellLayout(10, 9) {
                     formHeader(params[0])
                     text(params[1], style_text_dlg).lps(0, 0, -1, 5)
                     val but1 = params[2]; val but2 = params[3]; val but3 = params[4]

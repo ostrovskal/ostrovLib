@@ -24,7 +24,7 @@ apply {
 val lprops = Properties().apply { load(project.rootProject.file("local.properties").inputStream()) }
 
 // версия библиотеки
-val libVersion = "1.0.6"
+val libVersion = "1.0.7"
 
 // ссылка на сайт размещения проекта
 val siteUrl = "https://github.com/ostrovskal/sshSTD"
@@ -38,7 +38,7 @@ android {
     defaultConfig {
         minSdkVersion(19)
         targetSdkVersion(29)
-        versionCode = 38
+        versionCode = 43
         versionName = libVersion
         resValue("string", "app_name", "sshSTD")
     }

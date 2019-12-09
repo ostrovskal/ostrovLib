@@ -10,7 +10,6 @@ import ru.ostrovskal.sshstd.Wnd
 import ru.ostrovskal.sshstd.layouts.CellLayout
 import ru.ostrovskal.sshstd.ui.*
 import ru.ostrovskal.sshstd.utils.dp
-import ru.ostrovskal.sshstd.utils.loopChildren
 import ru.ostrovskal.sshstd.utils.send
 import ru.ostrovskal.sshstd.utils.ui
 import ru.ostrovskal.sshstd.widgets.Progress
@@ -20,31 +19,20 @@ import ru.ostrovskal.sshstd.widgets.Progress
  * @since 1.0.2
  */
 
+/** Ожидание */
+const val FORM_PROGRESS_WAIT        = 0
+
+/** Загрузка */
+const val FORM_PROGRESS_DOWNLOAD    = 1
+
 /** Класс, реализующий стандартную форму отображения прогресса */
 open class FormProgress : Form() {
 
-    // Инициализатор макета
-    private lateinit var initLayout: CellLayout.() -> Unit
+    /** Событие инициализации контента */
+    @JvmField var initializeContent: ((root: CellLayout) -> Unit)? = null
 
     // Объект продвижения прогресса
-    private lateinit var obj: Progress
-
-    // Форма ожидания
-    private val waitingLayout: CellLayout.() -> Unit = {
-        var x = 0
-        arguments.getInt("text").apply { if(this != 0) { text(this).lps(0, 0, 5, 4); x = 5 } }
-        progress(R.id.progressForm, 100, SSH_MODE_CIRCULAR) { isShowText = false; setBitmap("progress") }.lps(x, 0, 5, 4)
-        layoutParams = LinearLayout.LayoutParams(220.dp, 80.dp)
-    }
-
-    // Форма загрузки
-    private val loadLayout: CellLayout.() -> Unit = {
-        arguments.getInt("text").apply {
-            if(this != 0) text(this).lps(0, 0, 5, 2)
-        }
-        progress(R.id.progressForm, 100, SSH_MODE_DIAGRAM).lps(0, 2, 10, 1)
-        layoutParams = LinearLayout.LayoutParams(220.dp, 80.dp)
-    }
+    lateinit var obj: Progress
 
     /** Первичное значение */
     var primary
@@ -62,9 +50,8 @@ open class FormProgress : Form() {
         set(v)          { obj.max = v }
 
     /** Создание формы */
-    fun show(wnd: Wnd, text: Int, isLoading: Boolean, init: (CellLayout.() -> Unit)? = null): FormProgress {
-        initLayout = init?.run { this } ?: if(isLoading) loadLayout else waitingLayout
-        wnd.instanceForm(this, "progress", 0, 1, "text", text)
+    fun show(wnd: Wnd, text: Int, initType: Int): FormProgress {
+        wnd.instanceForm(this, "progress", 0, 1, "text", text, "type", initType)
         return this
     }
 
@@ -87,9 +74,26 @@ open class FormProgress : Form() {
     override fun inflateContent(container: LayoutInflater): UiCtx {
         return ui {
             linearLayout {
-                root = cellLayout(10, 4, 0, false, initLayout)
-                // найти прогресс
-                root.loopChildren { if(it is Progress) obj = it }
+                root = cellLayout(10, 4, 0, false) {
+                    val text = arguments.getInt("text")
+                    when(arguments.getInt("type")) {
+                        FORM_PROGRESS_WAIT           -> {
+                            var x = 0
+                            if(text != 0) { text(text).lps(0, 0, 5, 4); x = 5 }
+                            obj = progress(R.id.progressForm, 100, SSH_MODE_CIRCULAR) {
+                                isShowText = false
+                                setBitmap("progress")
+                            }.lps(x, 0, 5, 4)
+                            layoutParams = LinearLayout.LayoutParams(220.dp, 80.dp)
+                        }
+                        FORM_PROGRESS_DOWNLOAD       -> {
+                            if (text != 0) text(text).lps(0, 0, 5, 2)
+                            obj = progress(R.id.progressForm, 100, SSH_MODE_DIAGRAM).lps(0, 2, 10, 1)
+                            layoutParams = LinearLayout.LayoutParams(220.dp, 80.dp)
+                        }
+                    }
+                    initializeContent?.invoke(this)
+                }
             }
         }
     }

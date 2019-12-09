@@ -116,11 +116,11 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 		set(v)                              { field = v; updateBound() }
 	
 	/** Состояние */
-	var states                              = TILE_STATE_NONE
+	var states                          = TILE_STATE_NONE
 		set(v)                              { field = v; updateBound() }
 	
 	/** Масштабирование */
-	var scale                               = TILE_SCALE_NONE
+	var scale                           = TILE_SCALE_NONE
 		set(v)                              { field = v; updateBound() }
 	
 	/** Номер тайла */
