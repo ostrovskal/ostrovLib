@@ -2,27 +2,27 @@
 <resources>
     <!-- ************************************************************ -->
     <!-- текст на тосте -->
-    <dimen name="toast">16sp</dimen>
+    <dimen name="toast">14sp</dimen>
     <!-- текст на стандартной кнопке -->
-    <dimen name="button">12sp</dimen>
+    <dimen name="button">18sp</dimen>
     <!-- html текст -->
-    <dimen name="html">14sp</dimen>
+    <dimen name="html">22sp</dimen>
     <!-- размер текста подсказок -->
-    <dimen name="hint">10sp</dimen>
+    <dimen name="hint">12sp</dimen>
     <!-- размер текста заголовка диалога -->
-    <dimen name="header">14sp</dimen>
+    <dimen name="header">20sp</dimen>
     <!-- размер текста поля ввода -->
-    <dimen name="edit">14sp</dimen>
+    <dimen name="edit">16sp</dimen>
     <!-- размер маленького текста -->
-    <dimen name="small">8sp</dimen>
+    <dimen name="small">12sp</dimen>
     <!-- размер текста в прогрессе-->
-    <dimen name="progress">14sp</dimen>
+    <dimen name="progress">12sp</dimen>
     <!-- размер текста рейтинга -->
-    <dimen name="chart">6sp</dimen>
+    <dimen name="chart">9sp</dimen>
     <!-- размер обычного текста -->
-    <dimen name="normal">14sp</dimen>
+    <dimen name="normal">16sp</dimen>
     <!-- размер большого текста -->
-    <dimen name="large">16sp</dimen>
+    <dimen name="large">20sp</dimen>
     <!-- смещение нажатия для тайла -->
     <dimen name="pressedOffs">4dp</dimen>
     <!-- смещение тени от текста по осям -->
@@ -40,8 +40,8 @@
     <dimen name="heightRadio">32dp</dimen>
     <dimen name="heightSelectItem">37dp</dimen>
     <dimen name="heightSelectCaption">42dp</dimen>
-    <dimen name="heightProgress">96dp</dimen>
-    <dimen name="widthProgress">96dp</dimen>
+    <dimen name="heightProgress">72dp</dimen>
+    <dimen name="widthProgress">72dp</dimen>
     <dimen name="widthSelector">3dp</dimen>
     <dimen name="widthSeek">80dp</dimen>
     <!-- отступы элементов-->

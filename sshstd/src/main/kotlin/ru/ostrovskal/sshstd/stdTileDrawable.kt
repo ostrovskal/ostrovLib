@@ -50,9 +50,6 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 	// Признак внутреннего обновления(для избегания зацикливания)
 	private var isInnerUpdate				= false
 
-	// оригинальная область
-	private val boundRect					= Rect()
-
 	/** Количество тайлов по вертикали */
 	var vert                        		= 1
 		set(v)                              { field = if(v <= 0) 1 else v }
@@ -101,27 +98,27 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 	
 	/** Внутрений отступ */
 	var padding                             = Rect()
-		set(v)                              { field = v; if(keyBitmap.isNotEmpty()) setBitmap(keyBitmap, horz, vert, tile); updateBound(null) }
+		set(v)                              { field = v; if(keyBitmap.isNotEmpty()) setBitmap(keyBitmap, horz, vert, tile); update() }
 	
 	/** Выравнивание */
 	var align						        = 0
-		set(v)						        { field = v; updateBound() }
+		set(v)						        { field = v; update() }
 	
 	/** Выравнивание значка */
-	var alignIcon						    = drawableIcon?.align ?: 0
-		set(value)					        { drawableIcon?.align = value; updateBound() }
+	var alignIcon						= drawableIcon?.align ?: 0
+		set(value)					        { drawableIcon?.align = value; update() }
 	
 	/** Масштаб иконки */
 	var scaleIcon                           = 0.5f
-		set(v)                              { field = v; updateBound() }
+		set(v)                              { field = v; update() }
 	
 	/** Состояние */
 	var states                          = TILE_STATE_NONE
-		set(v)                              { field = v; updateBound() }
+		set(v)                              { field = v; update() }
 	
 	/** Масштабирование */
 	var scale                           = TILE_SCALE_NONE
-		set(v)                              { field = v; updateBound() }
+		set(v)                              { field = v; update() }
 	
 	/** Номер тайла */
 	var tile 								= -1
@@ -134,13 +131,13 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 	
 	/** Смещение тени */
 	var shadowOffset                        = 0f
-		set(v)                              { field = v; updateBound() }
+		set(v)                              { field = v; update() }
 	
 	/** Значок */
-	var tileIcon                            = drawableIcon?.tile ?: -1
+	var tileIcon                        = drawableIcon?.tile ?: -1
 		set(v)                              {
 			drawableIcon = if(v == -1) null else { (drawableIcon ?: TileDrawable(context, style_icon)).apply { tile = v } }
-			updateBound(bounds)
+			update()
 		}
 	
 	/** Картинка с тайлами */
@@ -148,12 +145,12 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 		get()                               = context.bitmapGetCache(keyBitmap)
 	
 	/** Размеры углов скругленного прямоугольника */
-	var radii                               = floatArrayOf(10f, 10f, 10f, 10f, 10f, 10f, 10f, 10f)
-		set(v)                              { field = v; updateBound() }
+	var radii                     = floatArrayOf(10f, 10f, 10f, 10f, 10f, 10f, 10f, 10f)
+		set(v)                              { field = v; update() }
 	
 	/** Фигура */
 	var shape                               = TILE_SHAPE_EMPTY
-		set(v)                              { field = v; updateBound() }
+		set(v)                              { field = v; update() }
 	
 	/** Цвет рамки */
 	var selectorColor
@@ -163,7 +160,7 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 	/** Толщина рамки */
 	var selectorWidth
 		get()                               = paintSelector.strokeWidth
-		set(v)                              { paintSelector.strokeWidth = v; updateBound() }
+		set(v)                              { paintSelector.strokeWidth = v; update() }
 	
 	/** Область обрезки картинки */
 	var patch9                              = Rect()
@@ -185,7 +182,7 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 		set(v)                              { field = v; redrawSelf(false) }
 	
 	/** Направление градиентной заливки фона */
-	var gradientDir                         = DIRU
+	var gradientDir                     = DIRU
 		set(v)                              {
 			field = v
 			(background as? GradientDrawable)?.apply { orientation = Common.gradient[v] }
@@ -193,7 +190,7 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 		}
 	
 	/** Градиентная заливка в качестве фона */
-	var gradient                            = intArrayOf(0, 0)
+	var gradient                    = intArrayOf(0, 0)
 		set(v)                              {
 			field = v
 			val orien = Common.gradient[gradientDir]
@@ -202,7 +199,7 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 		}
 	
 	/** Сплошной цвет в качестве фона */
-	var solid                               = Color.WHITE
+	var solid                           = Color.WHITE
 		set(v)                              {
 			field = v
 			background = (background as? ColorDrawable)?.apply { color = v } ?: ColorDrawable(v)
@@ -210,6 +207,7 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 		}
 	
 	init {
+		isInnerUpdate = true
 		style.loopAttrs { attr, value ->
 			Theme.attrProps(context, attr, value)
 			when(attr) {
@@ -236,8 +234,9 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 				ATTR_SSH_GRAVITY_ICON   -> alignIcon = Theme.int
 			}
 		}
-		copyBounds(boundRect)
 		setBitmap(keyBitmap, horz, vert, tile)
+		isInnerUpdate = false
+		update()
 	}
 	
 	/** Установка прозрачности [alpha] */
@@ -292,12 +291,10 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 	/** Рассчитанная высота */
 	override fun getIntrinsicHeight() = bounds.height()
 
-	private fun updateBound() { updateBound(null) }
-
 	/** Обновление габаритов */
-	fun updateBound(rc: Rect?) {
+	fun update(rc: Rect? = null) {
 		if(isInnerUpdate) return
-		val r = rc ?: boundRect
+		val r = rc ?: bounds
 		val w: Int
 		val h: Int
 		var xx = r.left
@@ -309,22 +306,32 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 			val ht = tileSize.h
 			val rel = wt / ht.toFloat()
 			// расчитать размер в зависимости от типа масштабирования
-			when(scale) {
-				TILE_SCALE_TILE   -> { w = wt; h = ht }
-				TILE_SCALE_MIN    -> { h = if(ww < hh) ww else hh; w = (h * rel).toInt() }
-				TILE_SCALE_HEIGHT -> { h = hh; w = (h * rel).toInt() }
-				TILE_SCALE_WIDTH  -> { w = ww; h = (w * rel).toInt() }
-				else              -> { w = ww; h = hh }
+			when (scale) {
+				TILE_SCALE_TILE -> {
+					w = wt; h = ht
+				}
+				TILE_SCALE_MIN -> {
+					h = if (ww < hh) ww else hh; w = (h * rel).toInt()
+				}
+				TILE_SCALE_HEIGHT -> {
+					h = hh; w = (h * rel).toInt()
+				}
+				TILE_SCALE_WIDTH -> {
+					w = ww; h = (w * rel).toInt()
+				}
+				else -> {
+					w = ww; h = hh
+				}
 			}
-			xx += when(align and TILE_GRAVITY_MASK_HORZ) {
-				TILE_GRAVITY_END         -> ww - w
+			xx += when (align and TILE_GRAVITY_MASK_HORZ) {
+				TILE_GRAVITY_END -> ww - w
 				TILE_GRAVITY_CENTER_HORZ -> (ww - w) / 2
-				else                     -> 0
+				else -> 0
 			}
-			yy += when(align and TILE_GRAVITY_MASK_VERT) {
-				TILE_GRAVITY_BOTTOM      -> hh - h
+			yy += when (align and TILE_GRAVITY_MASK_VERT) {
+				TILE_GRAVITY_BOTTOM -> hh - h
 				TILE_GRAVITY_CENTER_VERT -> (hh - h) / 2
-				else                     -> 0
+				else -> 0
 			}
 			fRect.set(xx.toFloat(), yy.toFloat(), xx + w.toFloat(), yy + h.toFloat())
 			// уменьшаем области на половину размера границы
@@ -334,23 +341,21 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 			path.makeFigure(shape, fRect, radii)
 			background?.bounds = fRect.toInt(iRect)
 			// уменьшить на тень
-			if(states test (TILE_STATE_SHADOW or TILE_STATE_PRESS)) fRect.inset(shadowOffset, shadowOffset)
+			if (states test (TILE_STATE_SHADOW or TILE_STATE_PRESS)) fRect.inset(shadowOffset, shadowOffset)
 			fRect.toInt(iRect)
-			if(bounds != iRect) {
-				bounds.set(iRect)
-				isInnerUpdate = true
-				redrawSelf(true)
-				isInnerUpdate = false
-			}
+			val isRedraw = bounds != iRect
+			bounds.set(iRect)
 			// пересчитать иконку
-			drawableIcon?.updateBound(bounds)
+			drawableIcon?.update(bounds)
+			isInnerUpdate = true
+			redrawSelf(isRedraw)
+			isInnerUpdate = false
 		}
 	}
 	
 	/** Вызывается при изменение габаритов [r] */
 	override fun onBoundsChange(r: Rect) {
-		copyBounds(boundRect)
-		updateBound(r)
+		update()
 	}
 	
 	/** Отрисовка */

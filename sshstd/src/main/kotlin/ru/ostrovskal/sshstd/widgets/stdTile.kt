@@ -174,7 +174,7 @@ open class Tile(context: Context, style: IntArray) : Text(context, style) {
 	/** Вычисление габаритов тайла */
 	override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-		drawable.updateBound(rectWithPadding(iRect))
+		drawable.update(rectWithPadding(iRect))
 	}
 	
 	private fun setDrawables() {

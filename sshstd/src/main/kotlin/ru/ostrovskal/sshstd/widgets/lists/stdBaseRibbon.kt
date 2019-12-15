@@ -178,7 +178,6 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 		if(windowAttachCount == longClickOriginalAttachCount && !mDataChanged) {
 			mItemSelected?.apply {
 				adapter?.let { itemLongClickListener?.invoke(this@BaseRibbon, this, mClickPosition, it.getItemId(mClickPosition)) }
-				mItemSelected = null
 			}
 		}
 	}

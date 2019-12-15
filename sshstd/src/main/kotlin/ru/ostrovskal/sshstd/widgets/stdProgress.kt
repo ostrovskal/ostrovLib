@@ -146,7 +146,7 @@ open class Progress(context: Context, id: Int, max: Int, mode: Int, style: IntAr
 				}
 			} else {
 				iRect.set(pl, pt, w - pr, h - pb)
-				drawable.updateBound(iRect)
+				drawable.update(iRect)
 				drawablePosition.offset(0, 0, rectProgress)
 				val c = min(rectProgress.width(), rectProgress.height()) / 2
 				val cx = rectProgress.centerX()
