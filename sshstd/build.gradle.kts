@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.konan.properties.Properties
 
 dependencies {
 //    implementation(files("libs/dropbox-core-sdk-3.1.1.jar"))
-    implementation("com.dropbox.core:dropbox-core-sdk:3.1.1")
+    implementation("com.dropbox.core:dropbox-core-sdk:3.1.2")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.2.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.2.1")
 }
@@ -24,7 +24,7 @@ apply {
 val lprops = Properties().apply { load(project.rootProject.file("local.properties").inputStream()) }
 
 // версия библиотеки
-val libVersion = "1.0.8"
+val libVersion = "1.0.9"
 
 // ссылка на сайт размещения проекта
 val siteUrl = "https://github.com/ostrovskal/sshSTD"

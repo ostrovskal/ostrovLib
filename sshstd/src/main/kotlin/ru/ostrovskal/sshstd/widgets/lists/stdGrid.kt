@@ -64,7 +64,7 @@ open class Table(context: Context, id: Int, vert: Boolean, style: IntArray): Bas
 	override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec)
 		// Вычисление параметров ячеек
-		val wh = if(mIsVert) mRectList.width() else mRectList.height()
+		val wh = if(vert) mRectList.width() else mRectList.height()
 		var spacing = mReqCellSpacing
 		var size = mReqCellSize
 		val num = 1.coerceAtLeast(if (mReqNumCells > 0) mReqNumCells else {
@@ -89,7 +89,7 @@ open class Table(context: Context, id: Int, vert: Boolean, style: IntArray): Bas
 		val h = dividerHeight + lineSpacing
 		
 		while(next < mEdgeEnd && pos < mCount) {
-			next = makeLine(pos, next, true).edge(mIsVert, true)
+			next = makeLine(pos, next, true).edge(vert, true)
 			next += h
 			pos += numCells
 		}
@@ -102,7 +102,7 @@ open class Table(context: Context, id: Int, vert: Boolean, style: IntArray): Bas
 		val h = dividerHeight + lineSpacing
 		
 		while(next > mEdgeStart && pos >= 0) {
-			next = makeLine(pos, next, false).edge(mIsVert, false)
+			next = makeLine(pos, next, false).edge(vert, false)
 			next -= h
 			mFirstPosition = pos
 			pos -= numCells
@@ -113,12 +113,12 @@ open class Table(context: Context, id: Int, vert: Boolean, style: IntArray): Bas
 	// Создание линии
 	private fun makeLine(position: Int, coord1: Int, flow: Boolean): View {
 		lateinit var child: View
-		var coord2 = (if(mIsVert) mRectList.left else mRectList.top) + if(stretchMode == TABLE_STRETCH_UNIFORM) cellSpacing else 0
+		var coord2 = (if(vert) mRectList.left else mRectList.top) + if(stretchMode == TABLE_STRETCH_UNIFORM) cellSpacing else 0
 		val last = (position + lines).coerceAtMost(mCount)
 		
 		for(pos in position until last) {
 			val where = if(flow) -1 else pos - position
-			child = addView(if(mIsVert) coord2 else coord1, if(mIsVert) coord1 else coord2, pos, flow, where)
+			child = addView(if(vert) coord2 else coord1, if(vert) coord1 else coord2, pos, flow, where)
 			if(pos == selection) mTmpSel = child
 			coord2 += cellSize + if(pos < last - 1) cellSpacing else 0
 		}
@@ -129,22 +129,22 @@ open class Table(context: Context, id: Int, vert: Boolean, style: IntArray): Bas
 		val hd = dividerHeight + lineSpacing
 		mFirstPosition -= mFirstPosition % lines
 		getChildAt(0)?.apply {
-			fillStart(mFirstPosition - lines, edge(mIsVert, false) - hd + edgePos)
+			fillStart(mFirstPosition - lines, edge(vert, false) - hd + edgePos)
 		}
 		with(getChildAt(childCount - 1)) {
-			val start = (if(this == null) mEdgeStart else edge(mIsVert, true) + hd) + edgePos
+			val start = (if(this == null) mEdgeStart else edge(vert, true) + hd) + edgePos
 			fillEnd(mFirstPosition + childCount, start)
 		}
 	}
 	
 	override fun childMeasure(child: View) {
 		val params = child.layoutParams
-		val childHeightSpec = if(mIsVert) {
+		val childHeightSpec = if(vert) {
 			getChildMeasureSpec(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED), verticalPadding, params.height)
 		} else {
 			getChildMeasureSpec(MeasureSpec.makeMeasureSpec(cellSize, MeasureSpec.EXACTLY), verticalPadding, params.height)
 		}
-		val childWidthSpec = if(mIsVert) {
+		val childWidthSpec = if(vert) {
 			getChildMeasureSpec(MeasureSpec.makeMeasureSpec(cellSize, MeasureSpec.EXACTLY), horizontalPadding, params.width)
 		} else {
 			getChildMeasureSpec(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED), horizontalPadding, params.width)

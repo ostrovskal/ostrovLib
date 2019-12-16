@@ -44,7 +44,7 @@ open class RibbonPopupWnd(context: Context, val owner: View, style: IntArray): R
 	@JvmField var isAlwaysVisible       = false
 	
 	/** Гравитация */
-	@JvmField var gravity               = Gravity.NO_GRAVITY
+	@JvmField var align             = Gravity.NO_GRAVITY
 	
 	/** Признак модального окна */
 	var isModal                         = false
@@ -119,7 +119,7 @@ open class RibbonPopupWnd(context: Context, val owner: View, style: IntArray): R
 				else    -> contentHeight
 			}
 			mPopup.isClippingEnabled = false
-			mPopup.showAsDropDown(owner, horizontalOffset, verticalOffset, gravity)
+			mPopup.showAsDropDown(owner, horizontalOffset, verticalOffset, align)
 
 			if(!isModal || isInTouchMode) requestLayout()
 			

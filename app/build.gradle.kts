@@ -27,8 +27,8 @@ android {
         applicationId = "com.github.ostrovskal.ostrovlib"
         minSdkVersion(19)
         targetSdkVersion(29)
-        versionCode = 36
-        versionName = "1.0.6"
+        versionCode = 39
+        versionName = "1.0.8"
         resValue("string", "app_name", "ostrovLib")
         resValue("string", "dropbox_token", lprops["dropbox.token"].toString())
     }

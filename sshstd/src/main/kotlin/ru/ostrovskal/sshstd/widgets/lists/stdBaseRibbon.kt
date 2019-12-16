@@ -7,15 +7,14 @@ import android.graphics.PointF
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.os.Parcelable
-import android.view.*
-import android.widget.EdgeEffect
+import android.view.MotionEvent
+import android.view.View
+import android.view.ViewConfiguration
+import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.ListAdapter
-import android.widget.OverScroller
-import com.github.ostrovskal.sshstd.R
 import ru.ostrovskal.sshstd.Common.*
-import ru.ostrovskal.sshstd.Size
 import ru.ostrovskal.sshstd.TileDrawable
-import ru.ostrovskal.sshstd.Touch
 import ru.ostrovskal.sshstd.objects.Theme
 import ru.ostrovskal.sshstd.utils.*
 import ru.ostrovskal.sshstd.widgets.Text
@@ -26,12 +25,13 @@ import kotlin.math.abs
  * @since 0.2.6
  */
 
-/** Базовый класс, реализующий общий функционал построения списков
+/** Базовый класс, реализующий стандартный список
 *
-* @property mIsVert Ориентация
-* @property style   Стиль
+* @param vert 	Ориентация
+* @param style  Стиль
 */
-abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Boolean, @JvmField val style: IntArray) : ViewGroup(context, null, R.attr.scrollBarsStyle) {
+abstract class BaseRibbon(context: Context, id: Int, vert: Boolean, style: IntArray) :
+		CommonRibbon(context, vert, style) {
 	
 	/** Селектор */
 	open var selector: Drawable? = null
@@ -83,12 +83,6 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 			requestLayout()
 		}
 	
-	/** Количество элементов в адаптере */
-	val count                   get()           = mCount
-	
-	/** Количество элементов в линии. Используется в Table */
-	@JvmField protected var lines               = 1
-	
 	/** Ширина и состояние списка */
 	@JvmField protected var mWidthMeasureSpec   = 0
 	
@@ -113,48 +107,15 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 	/** Последний выделенный элемент */
 	@JvmField var selectedItemPosition          = -1
 	
-	/** Количество элементов */
-	@JvmField protected var mCount              = 0
-	
 	/** Признак обновления данных адаптера */
 	@JvmField protected var mDataChanged        = false
-	
-	/** Объект, создающий эффект оверскролла */
-	@JvmField protected val mGlow               = EdgeEffect(context)
-
-	/** Объект жеста прокрутки списка */
-	@JvmField protected val mFling              = Fling()
 
 	/** Признак определяющий привязано ли новое представление к окну */
 	@JvmField protected var mIsAttachedChild    = false
 
-	/** Идентификатор касания */
-	@JvmField protected var mTouchId            = 0
-
-	/** Объект касания */
-	@JvmField protected val touch				= Touch()
-
-	/** Скоростной трекер */
-	@JvmField protected val mTracker: VelocityTracker = VelocityTracker.obtain()
-
-	/** Габариты списка с учетом отступов */
-	@JvmField val mRectList                     = Rect()
-	
-	/** Начальная грань списка(верхняя/левая) */
-	@JvmField var mEdgeStart                    = 0
-	
-	/** Конечная грань списка(нижняя/правая) */
-	@JvmField var mEdgeEnd                      = 0
-	
 	/** Список кэшированных представлений по количеству типов в адаптере */
 	@JvmField val mCacheViews                   = mutableListOf< MutableList<View> >()
-	
-	/** Признак, определяющий показывать ли эффект оверскролла */
-	@JvmField var mIsGlow                       = true
-	
-	/** Чувствительность прокрутки */
-	@JvmField var mDragSensitive                = Size(8, 8)
-	
+
 	// Обсервер принимающий данные от адаптера
 	private var observer                        = RibbonObserver()
 	
@@ -182,18 +143,6 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 		}
 	}
 
-	// Для реализации жеста прокрутки
-	private var mOverflingDistance              = 0
-	
-	/** Признак, определяющий позицию эффекта оверскролла */
-	@JvmField protected var mIsStartEdgeGlow    = false
-	
-	/** Минимальная скорость прокрутки */
-    @JvmField var mMinVelocity                  = 0
-	
-	/** Максимальная скорость прокрутки */
-    @JvmField var mMaxVelocity                  = 0f
-	
 	init {
 		this.id = id
 		selector = TileDrawable(context, style_drawable_tile).apply {
@@ -202,10 +151,9 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 		ViewConfiguration.get(context).apply {
 			mMinVelocity = scaledMinimumFlingVelocity
 			mMaxVelocity = scaledMaximumFlingVelocity.toFloat()
-			mOverflingDistance = scaledOverflingDistance
 		}
-		isVerticalScrollBarEnabled = mIsVert
-		isHorizontalScrollBarEnabled = !mIsVert
+		isVerticalScrollBarEnabled = vert
+		isHorizontalScrollBarEnabled = !vert
 		isScrollbarFadingEnabled = true
 		isClickable = true
 		isFocusableInTouchMode = true
@@ -234,7 +182,7 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 	override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
 		var delta = 0
 		touch.event(ev).drag(mDragSensitive) { offs, _ ->
-			delta = if(mIsVert) offs.h else offs.w
+			delta = if(vert) offs.h else offs.w
 			if(touch.isUnpressed) touch.flags = 0
 		}
 		return delta != 0
@@ -284,10 +232,10 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 				// проверить продолжать прокрутку?
 				mTouchId = touch.id
 				mTracker.computeCurrentVelocity(1000, mMaxVelocity)
-				delta = (if(mIsVert) mTracker.getYVelocity(mTouchId) else mTracker.getXVelocity(mTouchId)).toInt()
+				delta = (if(vert) mTracker.getYVelocity(mTouchId) else mTracker.getXVelocity(mTouchId)).toInt()
 				if(abs(delta) > mMinVelocity) mFling.start(-delta)
 			} else {
-				delta = if(mIsVert) offs.h else offs.w
+				delta = if(vert) offs.h else offs.w
 				scrolling(delta)
 			}
 		}
@@ -295,7 +243,7 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 	}
 	
 	/** Прокрутка списка на [delta] */
-	open fun scrolling(delta: Int): Boolean {
+	override fun scrolling(delta: Int): Boolean {
 		val count = childCount
 		removeCallbacks(mClick)
 		removeCallbacks(mLongClick)
@@ -303,8 +251,8 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 			if(delta != 0) {
 				val isPosStart = mFirstPosition == 0
 				val isPosEnd = (mFirstPosition + count) == mCount
-				val isEdgeStart = getChildAt(0).edge(mIsVert, false) >= mEdgeStart
-				val isEdgeEnd = getChildAt(count - 1).edge(mIsVert, true) <= mEdgeEnd
+				val isEdgeStart = getChildAt(0).edge(vert, false) >= mEdgeStart
+				val isEdgeEnd = getChildAt(count - 1).edge(vert, true) <= mEdgeEnd
 				val isScrollToStart = isPosStart && isEdgeStart
 				val isScrollToEnd = isPosEnd && isEdgeEnd
 				if((delta > 0 && !isScrollToStart) || (delta < 0 && !isScrollToEnd)) {
@@ -312,8 +260,8 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 					var idxView = mFirstPosition
 					while(posView < childCount) {
 						val child = getChildAt(posView)
-						val isStart = (child.edge(mIsVert, false) + delta) >= mEdgeEnd
-						val isEnd = (child.edge(mIsVert, true) + delta) <= mEdgeStart
+						val isStart = (child.edge(vert, false) + delta) >= mEdgeEnd
+						val isEnd = (child.edge(vert, true) + delta) <= mEdgeStart
 						if(isStart || isEnd) {
 							if(isEnd) mFirstPosition++
 							detachViewFromParent(child)
@@ -327,14 +275,14 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 					fill(0)
 					awakenScrollBars()
 					mNewFirstPosition = mFirstPosition
-					mDelta = getChildAt(0)?.run { edge(mIsVert, false) - mEdgeStart } ?: 0
+					mDelta = getChildAt(0)?.run { edge(vert, false) - mEdgeStart } ?: 0
 					invalidate()
 					return false
 				}
 				// Предел прокрутки. Запуск эффекта
 				overScroll(-delta)
 				if (mIsGlow && (overScrollMode == View.OVER_SCROLL_ALWAYS || overScrollMode == View.OVER_SCROLL_IF_CONTENT_SCROLLS)) {
-					val value = delta.toFloat() / (if (mIsVert) measuredHeight else measuredWidth)
+					val value = delta.toFloat() / (if (vert) measuredHeight else measuredWidth)
 					mIsStartEdgeGlow = delta < 0
 					mGlow.onPull(value)
 					invalidate()
@@ -420,8 +368,8 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 		
 		val w = child.measuredWidth
 		val h = child.measuredHeight
-		val childTop = if(mIsVert) { if(flow) y else y - h } else y
-		val childLeft = if(mIsVert) x else { if(flow) x else x - w }
+		val childTop = if(vert) { if(flow) y else y - h } else y
+		val childLeft = if(vert) x else { if(flow) x else x - w }
 		
 		if(needToMeasure) {
 			val childRight = childLeft + w
@@ -463,15 +411,6 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 		clearCacheViews()
 	}
 
-	/**
-	 * Выполнение оверскролла в зависимости от ориентации списка
-	 *
-	 * @param delta   Относительное приращение, используется для задания величины эффекта
-	 */
-	protected fun overScroll(delta: Int) =
-			overScrollBy(if(mIsVert) 0 else delta, if(mIsVert) delta else 0, if(mIsVert) 0 else scrollX, if(mIsVert) scrollY else 0,
-			             0, 0, if(mIsVert) 0 else mOverflingDistance, if(mIsVert) mOverflingDistance else 0, false)
-	
 	/** Отключение списка от окна */
 	override fun onDetachedFromWindow() {
 		super.onDetachedFromWindow()
@@ -501,10 +440,10 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 	
 	private fun resolveDivider(canvas: Canvas, offs1: Int, offs2: Int, flow: Boolean, position: Int) {
 		val child = getChildAt(position)
-		val v1 = child.edge(mIsVert, flow) // bottom right
-		val v2 = child.edge(!mIsVert, false) // left top
-		val v3 = child.edge(!mIsVert, true) // right bottom
-		if(mIsVert) {
+		val v1 = child.edge(vert, flow) // bottom right
+		val v2 = child.edge(!vert, false) // left top
+		val v3 = child.edge(!vert, true) // right bottom
+		if(vert) {
 			iRect.set(v2, v1 + offs1, v3, v1 + offs2)
 			if(iRect.bottom <= mEdgeStart || iRect.top >= mEdgeEnd) return
 		} else {
@@ -545,7 +484,7 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 		if(!mGlow.isFinished) {
 			var degree: Float
 			canvas.withSave {
-				if(mIsVert) {
+				if(vert) {
 					degree = if(mIsStartEdgeGlow) {
 						translate(w.toFloat(), height.toFloat()); 180f
 					}
@@ -600,18 +539,18 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 		else widthSize or (childState and View.MEASURED_STATE_MASK)
 		
 		if(heightMode == MeasureSpec.UNSPECIFIED) heightSize = verticalPadding + childHeight + verticalFadingEdgeLength * 2
-		if(heightMode == MeasureSpec.AT_MOST) heightSize = measureHeightOrWidthOfChildren(0, -1, if(mIsVert) heightSize else widthSize, -1)
+		if(heightMode == MeasureSpec.AT_MOST) heightSize = measureHeightOrWidthOfChildren(0, -1, if(vert) heightSize else widthSize, -1)
 		
 		setMeasuredDimension(widthSize, heightSize)
 		
 		rectWithPadding(mRectList)
-		mEdgeStart = if(mIsVert) mRectList.top else mRectList.left
-		mEdgeEnd = if(mIsVert) mRectList.bottom else mRectList.right
+		mEdgeStart = if(vert) mRectList.top else mRectList.left
+		mEdgeEnd = if(vert) mRectList.bottom else mRectList.right
 	}
 	
 	/** Вычислить высоту|ширину всех дочерних */
 	fun measureHeightOrWidthOfChildren(startPos: Int, endPos: Int, max: Int, disallow: Int): Int {
-		var returned = if(mIsVert) verticalPadding else horizontalPadding
+		var returned = if(vert) verticalPadding else horizontalPadding
 		if(adapter == null) return returned
 		val dividerHeight = if(dividerHeight > 0 && divider != null) dividerHeight else 0
 		var prevHW = 0
@@ -624,7 +563,7 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 			measureCacheChild(child, i)
 			if(i > 0) returned += dividerHeight
 			addCacheView(child, -1)
-			returned += if(mIsVert) child.measuredHeight else child.measuredWidth
+			returned += if(vert) child.measuredHeight else child.measuredWidth
 			if(returned >= max) return if(disallow in 0 until i && prevHW > 0 && returned != max) prevHW else max
 			if(disallow in 0..i) prevHW = returned
 			++i
@@ -693,26 +632,26 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 	 * @property id		Идентификатор элемента
 	 * @property pos	Позиция элемента
 	 */
-	class LayoutParams(width: Int, height: Int, @JvmField var type: Int, @JvmField var id: Long, @JvmField var pos: Int) : ViewGroup.LayoutParams(width, height)
+	class LayoutParams(width: Int, height: Int, @JvmField var type: Int, @JvmField var id: Long, @JvmField var pos: Int) : LinearLayout.LayoutParams(width, height)
 	
 	/** Генерация параметров разметки по умолчанию */
-	override fun generateDefaultLayoutParams() : ViewGroup.LayoutParams = LayoutParams(if(mIsVert) MATCH else WRAP, if(mIsVert) WRAP else MATCH, 0, -1, -1)
+	override fun generateDefaultLayoutParams() : LinearLayout.LayoutParams = LayoutParams(if(vert) MATCH else WRAP, if(vert) WRAP else MATCH, 0, -1, -1)
 	
 	/** Генерация параметров разметки из базовой */
-	override fun generateLayoutParams(p: ViewGroup.LayoutParams) : ViewGroup.LayoutParams = LayoutParams(p.width, p.height, 0, -1, -1)
+	override fun generateLayoutParams(p: ViewGroup.LayoutParams) : LinearLayout.LayoutParams = LayoutParams(p.width, p.height, 0, -1, -1)
 	
 	/** Проверка на парамерты разметки */
 	override fun checkLayoutParams(p: ViewGroup.LayoutParams): Boolean = p is LayoutParams
 	
 	/** Сдвиг всех видимых элементов списка на [delta] */
 	fun offsetChildren(delta: Int) {
-		loopChildren { if(mIsVert) it.offsetTopAndBottom(delta) else it.offsetLeftAndRight(delta) }
+		loopChildren { if(vert) it.offsetTopAndBottom(delta) else it.offsetLeftAndRight(delta) }
 	}
 	
 	/** Ликвидация расстояния между началом списка и первым элементом, с разделителем [h] */
 	protected fun correctLow(h: Int) {
 		if(childCount > 0) {
-			var delta = getChildAt(0).edge(mIsVert, false) - mEdgeStart
+			var delta = getChildAt(0).edge(vert, false) - mEdgeStart
 			if(mFirstPosition != 0) delta -= h
 			if(delta > 0) offsetChildren(-delta)
 		}
@@ -722,79 +661,39 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 	protected fun correctHigh(h: Int) {
 		val count = childCount - 1
 		if(mFirstPosition + count == mCount - 1 && count >= 0) {
-			var offset = mEdgeEnd - getChildAt(count).edge(mIsVert, true)
+			var offset = mEdgeEnd - getChildAt(count).edge(vert, true)
 			val first = getChildAt(0)
-			val start = first.edge(mIsVert, false)
+			val start = first.edge(vert, false)
 			if(offset > 0 && (mFirstPosition > 0 || start < mEdgeStart)) {
 				if(mFirstPosition == 0) offset = offset.coerceAtMost(mEdgeStart - start)
 				offsetChildren(offset)
-				if(mFirstPosition > 0) fillStart(mFirstPosition - lines, first.edge(mIsVert, false) - h)
+				if(mFirstPosition > 0) fillStart(mFirstPosition - lines, first.edge(vert, false) - h)
 			}
 		}
-	}
-	
-	// Вычисление величины страницы горизонтальной/вертикальной прокрутки
-	private fun scrollExtent(): Int {
-		val count = childCount
-		if(count > 0) {
-			var extent = ((count + lines - 1) / lines) * 100
-			var view = getChildAt(0)
-			var s = view.edge(mIsVert, false) * 100
-			var size = if(mIsVert) view.height else view.width
-			if(size > 0) extent += s / size
-			view = getChildAt(count - 1)
-			s = view.edge(mIsVert, true)
-			size = if(mIsVert) view.height else view.width
-			if(size > 0) extent -= (s - if(mIsVert) height else width) * 100 / size
-			return extent
-		}
-		return 0
 	}
 	
 	// Вычисление смещения горизонтальной/вертикальной прокрутки
 	private fun scrollOffset(): Int {
 		if(childCount > 0) {
 			val view = getChildAt(0)
-			val s = view.edge(mIsVert, false) * 100
-			val size = if(mIsVert) view.height else view.width
-			val scroll = if(mIsVert) scrollY else scrollX
+			val s = view.edge(vert, false) * 100
+			val size = if(vert) view.height else view.width
+			val scroll = if(vert) scrollY else scrollX
 			if(size > 0) {
 				val count = ((mCount + lines - 1) / lines) * 100
 				val which = (mFirstPosition / lines) * 100
-				return (which - s / size + (scroll.toFloat() / (if (mIsVert) height else width) * count).toInt()).coerceAtLeast(0)
+				return (which - s / size + (scroll.toFloat() / (if (vert) height else width) * count).toInt()).coerceAtLeast(0)
 			}
 		}
 		return 0
 	}
-	
-	// Вычисление диапазона горизонтальной/вертикальной прокрутки
-	private fun scrollRange(): Int {
-		val count = ((mCount + lines - 1) / lines) * 100
-		val scroll = if(mIsVert) scrollY else scrollX
-		val size = if(mIsVert) height else width
-		var result = count.coerceAtLeast(0)
-		if(scroll != 0) result += abs((scroll.toFloat() / size * count).toInt())
-		return result
-	}
-	
-	/** Вычисление диапазона вертикальной прокрутки */
-	override fun computeVerticalScrollRange() = scrollRange()
-	
-	/** Вычисление диапазона горизонтальной прокрутки */
-	override fun computeHorizontalScrollRange() = scrollRange()
-	
+
 	/** Вычисление смещения вертикальной прокрутки */
 	override fun computeVerticalScrollOffset() = scrollOffset()
-	
+
 	/** Вычисление смещения горизонтальной прокрутки */
 	override fun computeHorizontalScrollOffset() = scrollOffset()
-	
-	/** Вычисление величины страницы вертикальной прокрутки */
-	override fun computeVerticalScrollExtent() = scrollExtent()
-	
-	/** Вычисление величины страницы горизонтальной прокрутки */
-	override fun computeHorizontalScrollExtent() = scrollExtent()
-	
+
 	/** Класс хранения состояния списка
 	 * @property first  Первый видимый элемент
 	 * @property item   Последний выбранный элемент
@@ -830,126 +729,6 @@ abstract class BaseRibbon(context: Context, id: Int, @JvmField val mIsVert: Bool
 		/** При отсутствии данных */
 		override fun onInvalidated() {
 			onChanged()
-		}
-	}
-
-	/** Класс, реализующий свайп */
-	inner class Fling : Runnable {
-		// Скроллер
-		private val mScroller = OverScroller(context)
-
-		// Последняя позиция
-		private var mLastFling = 0
-
-		/** Режим */
-		@JvmField var mTouchMode = FLING_FINISH
-
-		/** Проверка на то, что все элементы помещаются в область списка */
-		private fun contentFits(): Boolean {
-			val count = childCount
-			if(count == 0) return true
-			if(count != mCount) return false
-			return getChildAt(0).edge(mIsVert, false) >= mEdgeStart && getChildAt(count - 1).edge(mIsVert, true) <= mEdgeEnd
-		}
-
-		/** Запуск */
-		fun start(initialVelocity: Int) {
-			mLastFling = if(initialVelocity < 0) Int.MAX_VALUE else 0
-			if(mIsVert) {
-				mScroller.fling(0, mLastFling, 0, initialVelocity, 0, Int.MAX_VALUE, 0, Int.MAX_VALUE)
-			}
-			else {
-				mScroller.fling(mLastFling, 0, initialVelocity, 0, 0, Int.MAX_VALUE, 0, Int.MAX_VALUE)
-			}
-			mTouchMode = FLING_FLING
-			postOnAnimation(this)
-		}
-
-		/** Отскок */
-		fun startSpringback() {
-			mTouchMode = if(mScroller.springBack(if(mIsVert) 0 else scrollX, if(mIsVert) scrollY else 0, 0, 0, 0, 0)) {
-				invalidate()
-				postOnAnimation(this)
-				FLING_OVERFLING
-			}
-			else FLING_FINISH
-		}
-
-		/** Завершение */
-		fun finish() {
-			mTouchMode = FLING_FINISH
-			removeCallbacks(this)
-			mScroller.abortAnimation()
-			flingFinishedListener?.invoke(this@BaseRibbon)
-		}
-
-		/** Непосредственно реализация жеста */
-		private fun fling() {
-			if(mCount == 0 || childCount == 0) {
-				finish()
-				return
-			}
-			val more = mScroller.computeScrollOffset()
-			val coord = if(mIsVert) mScroller.currY else mScroller.currX
-			var delta = mLastFling - coord
-			val limit = (if(mIsVert) mRectList.height() else mRectList.width()) - 1
-			delta = if(delta > 0) limit.coerceAtMost(delta) else (-limit).coerceAtLeast(delta)
-			val atEdge = scrolling(delta)
-			val atEnd = atEdge && delta != 0
-			if(atEnd) {
-				if(more) {
-					if(mIsVert) mScroller.notifyVerticalEdgeReached(scrollY, 0, mOverflingDistance)
-					else mScroller.notifyHorizontalEdgeReached(scrollX, 0, mOverflingDistance)
-					val mode = overScrollMode
-					mTouchMode = if(mode == View.OVER_SCROLL_ALWAYS || mode == View.OVER_SCROLL_IF_CONTENT_SCROLLS && !contentFits()) {
-						mIsStartEdgeGlow = delta < 0
-						//mGlow.onAbsorb(mScroller.currVelocity.toInt())
-						FLING_OVERFLING
-					} else FLING_FINISH
-					invalidate()
-					postOnAnimation(this)
-				}
-			}
-			else {
-				if(more) {
-					if(atEdge) invalidate()
-					mLastFling = coord
-					postOnAnimation(this)
-				}
-				else finish()
-			}
-		}
-
-		/** Обработка */
-		override fun run() {
-			when(mTouchMode) {
-				FLING_SCROLL 	-> if(!mScroller.isFinished) fling()
-				FLING_FLING 	-> fling()
-				FLING_OVERFLING -> {
-					if(mScroller.computeScrollOffset()) {
-						val curr = if(mIsVert) mScroller.currY else mScroller.currX
-						val scroll = if(mIsVert) scrollY else scrollX
-						val delta = curr - scroll
-						if(overScroll(delta)) {
-							val crossDown = scroll <= 0 && curr > 0
-							val crossUp = scroll >= 0 && curr < 0
-							if(crossDown || crossUp) {
-								var velocity = mScroller.currVelocity.toInt()
-								if(crossUp) velocity = -velocity
-								mScroller.abortAnimation()
-								start(velocity)
-							}
-							else startSpringback()
-						}
-						else {
-							invalidate()
-							postOnAnimation(this)
-						}
-					}
-					else finish()
-				}
-				else            -> finish()
-			}
 		}
 	}
 }

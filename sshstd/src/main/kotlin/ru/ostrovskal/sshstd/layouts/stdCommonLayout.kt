@@ -5,6 +5,7 @@ package ru.ostrovskal.sshstd.layouts
 import android.content.Context
 import android.view.View
 import android.widget.LinearLayout
+import com.github.ostrovskal.sshstd.R
 import ru.ostrovskal.sshstd.Common.MATCH
 import ru.ostrovskal.sshstd.Common.WRAP
 
@@ -14,7 +15,7 @@ import ru.ostrovskal.sshstd.Common.WRAP
  */
 
 /** Класс, реализующий линейную разметку */
-open class CommonLayout(context: Context, vert: Boolean) : LinearLayout(context, null, 0) {
+open class CommonLayout(context: Context, @JvmField val vert: Boolean) : LinearLayout(context, null, R.attr.scrollBarsStyle) {
 	
 	init {
 		orientation = if(vert) VERTICAL else HORIZONTAL

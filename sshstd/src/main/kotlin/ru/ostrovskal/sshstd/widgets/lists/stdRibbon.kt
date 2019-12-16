@@ -20,10 +20,10 @@ open class Ribbon(context: Context, id: Int, vert: Boolean, style: IntArray) : B
 		val h = dividerHeight
 		
 		getChildAt(0)?.apply {
-			fillStart(mFirstPosition - 1, edge(mIsVert, false) - h + edgePos)
+			fillStart(mFirstPosition - 1, edge(vert, false) - h + edgePos)
 		}
 		with(getChildAt(childCount - 1)) {
-			val start = (if(this == null) mEdgeStart else edge(mIsVert, true) + h) + edgePos
+			val start = (if(this == null) mEdgeStart else edge(vert, true) + h) + edgePos
 			fillEnd(mFirstPosition + childCount, start)
 		}
 	}
@@ -34,7 +34,7 @@ open class Ribbon(context: Context, id: Int, vert: Boolean, style: IntArray) : B
 		val h = dividerHeight
 		
 		while(next > mEdgeStart && pos >= 0) {
-			next = addView(next, pos, false, 0).edge(mIsVert, false) - h
+			next = addView(next, pos, false, 0).edge(vert, false) - h
 			pos--
 		}
 		mFirstPosition = pos + 1
@@ -47,7 +47,7 @@ open class Ribbon(context: Context, id: Int, vert: Boolean, style: IntArray) : B
 		val h = dividerHeight
 		
 		while(next < mEdgeEnd && pos < mCount && pos >= 0) {
-			next = addView(next, pos, true, -1).edge(mIsVert, true) + h
+			next = addView(next, pos, true, -1).edge(vert, true) + h
 			pos++
 		}
 		correctHigh(h)
@@ -55,8 +55,8 @@ open class Ribbon(context: Context, id: Int, vert: Boolean, style: IntArray) : B
 	
 	// Добавление видимого элемента из кэша или из адаптера
 	private fun addView(coord: Int, position: Int, flow: Boolean, where: Int): View {
-		val x = if(mIsVert) mRectList.left else coord
-		val y = if(mIsVert) coord else mRectList.top
+		val x = if(vert) mRectList.left else coord
+		val y = if(vert) coord else mRectList.top
 		return super.addView(x, y, position, flow, where)
 	}
 }
