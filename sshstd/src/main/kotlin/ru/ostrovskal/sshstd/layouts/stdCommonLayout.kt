@@ -14,7 +14,10 @@ import ru.ostrovskal.sshstd.Common.WRAP
  * @since   0.3.1
  */
 
-/** Класс, реализующий линейную разметку */
+/** Класс, реализующий линейную разметку
+ *
+ * @property vert Ориентация
+ * */
 open class CommonLayout(context: Context, @JvmField val vert: Boolean) : LinearLayout(context, null, R.attr.scrollBarsStyle) {
 	
 	init {

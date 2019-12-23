@@ -31,7 +31,7 @@ open class FormProgress : Form() {
     /** Событие инициализации контента */
     @JvmField var initializeContent: ((root: CellLayout) -> Unit)? = null
 
-    // Объект продвижения прогресса
+    /** Объект продвижения прогресса */
     lateinit var obj: Progress
 
     /** Первичное значение */

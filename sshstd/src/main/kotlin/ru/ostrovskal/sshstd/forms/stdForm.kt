@@ -50,7 +50,7 @@ open class Form : DialogFragment(), View.OnClickListener {
 	/** Кэшируемое выражение SELECT */
 	lateinit var stmt: StmtSelect
 
-    // Предыдущий тег формы
+    /** Предыдущий тег формы */
     @JvmField protected var prevTag                 = ""
 
     /** Адаптер */
@@ -126,11 +126,6 @@ open class Form : DialogFragment(), View.OnClickListener {
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		shake = AnimationUtils.loadAnimation(wnd, R.anim.shake)
 		wnd.toast = null
-		// восстановление состояния
-		savedInstanceState?.apply {
-			prevTag = getString("prevTag") ?: ""
-			restoreState(this)
-		}
 		// загружаем/создаем содержимое
 		content = (inflateContent(inflater).view as ViewGroup).apply {
 			// инициализация содержимого
@@ -139,6 +134,11 @@ open class Form : DialogFragment(), View.OnClickListener {
 			findViewById<Tile>(BTN_OK)?.setOnClickListener(this@Form)
 			findViewById<Tile>(BTN_NO)?.setOnClickListener(this@Form)
 			findViewById<Tile>(BTN_DEF)?.setOnClickListener(this@Form)
+		}
+		// восстановление состояния
+		savedInstanceState?.apply {
+			prevTag = getString("prevTag") ?: ""
+			restoreState(this)
 		}
 		return content
 	}

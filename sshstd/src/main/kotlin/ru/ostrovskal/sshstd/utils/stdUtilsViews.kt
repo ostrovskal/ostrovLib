@@ -10,8 +10,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewManager
 import android.widget.TextView
-import ru.ostrovskal.sshstd.forms.Form
 import ru.ostrovskal.sshstd.Wnd
+import ru.ostrovskal.sshstd.forms.Form
 import ru.ostrovskal.sshstd.layouts.TabLayout
 import ru.ostrovskal.sshstd.ui.UiComponent
 import ru.ostrovskal.sshstd.ui.UiCtx
@@ -167,7 +167,7 @@ inline var View.backgroundResource: Int
 	get()                                           = noGetter()
 	set(v)                                          = setBackgroundResource(v)
 
-/** Установка цвета по умолчанию текста */
+/** Установка цвета текста по умолчанию */
 inline var TextView.textColor: Int
 	get()                                           = currentTextColor
 	set(v)                                          = setTextColor(v)

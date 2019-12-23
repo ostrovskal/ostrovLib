@@ -142,11 +142,13 @@ abstract class Wnd : Activity(), Handler.Callback, CoroutineScope {
 		initialize(false)
 	}
 
+	/** Сохранение в [outState] */
 	override fun onSaveInstanceState(outState: Bundle) {
 		outState.put("tagForm", tagForm)
 		saveState(outState)
 		super.onSaveInstanceState(outState)
 	}
+
 	/** Запуск формы, используя непосредственное создание, с аргументами [args] */
 	fun instanceForm(form: Form, tag: String, container: Int, stack: Int, vararg args: Any?) {
 		val params 		= Bundle()
@@ -202,7 +204,7 @@ abstract class Wnd : Activity(), Handler.Callback, CoroutineScope {
 		trans.commit()
 	}
 
-	// сохранение состояния
+	/** Сохранение состояния */
 	abstract fun saveState(state: Bundle)
 
 	/** Восстановление состояния */

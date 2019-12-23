@@ -148,16 +148,6 @@ abstract class BaseRibbon(context: Context, id: Int, vert: Boolean, style: IntAr
 		selector = TileDrawable(context, style_drawable_tile).apply {
 			solid = Theme.integer(context, Theme.themeAttrValue(ATTR_SSH_COLOR_SELECTOR, ATTR_SSH_COLOR_SELECTOR or THEME))
 		}
-		ViewConfiguration.get(context).apply {
-			mMinVelocity = scaledMinimumFlingVelocity
-			mMaxVelocity = scaledMaximumFlingVelocity.toFloat()
-		}
-		isVerticalScrollBarEnabled = vert
-		isHorizontalScrollBarEnabled = !vert
-		isScrollbarFadingEnabled = true
-		isClickable = true
-		isFocusableInTouchMode = true
-		setWillNotDraw(false)
 	}
 	
 	/** Действия при изменении темы */

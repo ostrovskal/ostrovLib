@@ -1,22 +1,11 @@
 package ru.ostrovskal.sshstd.widgets.html
 
 import android.content.res.AssetManager
+import ru.ostrovskal.sshstd.Common.*
 import ru.ostrovskal.sshstd.utils.debug
 import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.io.Reader
-
-/** Текст тега */
-const val HTML_TEXT_TAG         = 0
-
-/** Открывающий тег */
-const val HTML_OPEN_TAG         = 1
-
-/** Закрывающий тег*/
-const val HTML_CLOSE_TAG        = 2
-
-/** Закрывающий тег при пробросе */
-const val HTML_CLOSE_WRONG_TAG  = 3
 
 /**
  * @author Шаталов С.В.

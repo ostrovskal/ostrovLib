@@ -16,11 +16,11 @@ import android.widget.ScrollView
 import android.widget.TableRow
 import com.github.ostrovskal.sshstd.R
 import ru.ostrovskal.sshstd.Common.*
-import ru.ostrovskal.sshstd.forms.Form
 import ru.ostrovskal.sshstd.TileDrawable
 import ru.ostrovskal.sshstd.Wnd
+import ru.ostrovskal.sshstd.forms.Form
 import ru.ostrovskal.sshstd.layouts.CommonLayout
-import ru.ostrovskal.sshstd.objects.*
+import ru.ostrovskal.sshstd.objects.Theme
 import ru.ostrovskal.sshstd.utils.*
 import ru.ostrovskal.sshstd.widgets.Text
 import java.util.*
@@ -36,7 +36,13 @@ import kotlin.math.max
  * @param style     Стиль по умолчанию style_wnd
  */
 open class Html(context: Context, @JvmField val style: IntArray): ScrollView(context) {
-	
+	companion object {
+		/** Карта HTML флагов */
+		val mapHtmlArray  = mapOf("CENTER" to Gravity.CENTER, "CENTER_VERTICAL" to Gravity.CENTER_VERTICAL,
+												 "CENTER_HORIZONTAL" to Gravity.CENTER_HORIZONTAL, "START" to Gravity.START,
+												 "END" to Gravity.END, "TOP" to Gravity.TOP, "BOTTOM" to Gravity.BOTTOM)
+	}
+
 	private inner class HtmlLayout(context: Context) : CommonLayout(context, true) {
 		/** Позиция вертикальной прокрутки страницы */
 		@JvmField var scrolling = -1

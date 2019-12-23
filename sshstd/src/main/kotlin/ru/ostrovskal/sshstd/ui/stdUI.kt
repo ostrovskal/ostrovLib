@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.view.ViewManager
 import com.github.ostrovskal.sshstd.R
 import ru.ostrovskal.sshstd.Common.*
-import ru.ostrovskal.sshstd.layouts.CELL_LAYOUT_INSERT_BEGIN
 import ru.ostrovskal.sshstd.layouts.CellLayout
 import ru.ostrovskal.sshstd.objects.Theme
 import ru.ostrovskal.sshstd.utils.*

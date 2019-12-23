@@ -10,7 +10,6 @@ import android.graphics.Canvas
 import android.os.*
 import android.text.format.Time
 import android.util.Log
-import android.view.Gravity
 import android.view.MotionEvent
 import ru.ostrovskal.sshstd.*
 import ru.ostrovskal.sshstd.Common.*
@@ -26,11 +25,6 @@ import kotlin.math.roundToInt
 	rtl = false,
 	sw = 0
 )
-
-/** Карта HTML флагов */
-@JvmField val mapHtmlArray  = mapOf("CENTER" to Gravity.CENTER, "CENTER_VERTICAL" to Gravity.CENTER_VERTICAL,
-                                    "CENTER_HORIZONTAL" to Gravity.CENTER_HORIZONTAL, "START" to Gravity.START,
-                                    "END" to Gravity.END, "TOP" to Gravity.TOP, "BOTTOM" to Gravity.BOTTOM)
 
 /** Исключение при попытке вызова getter() */
 fun noGetter(): Nothing = error("Property does not have a getter")

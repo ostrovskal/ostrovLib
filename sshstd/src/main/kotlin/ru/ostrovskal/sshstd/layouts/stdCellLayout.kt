@@ -19,15 +19,6 @@ import kotlin.math.roundToInt
  * @since   0.3.8
  */
 
-/** Константа для автоматического определения количества строк или столбцов */
-const val CELL_LAYOUT_AUTO_FIT      = -1
-
-/** Константа для добавления ячейки в начало */
-const val CELL_LAYOUT_INSERT_BEGIN  = -100
-
-/** Константа для добавления ячейки в конец */
-const val CELL_LAYOUT_INSERT_END    = -200
-
 /** Класс, реализующий ячеестую разметку
  *
  * @property cols    Количество колонок

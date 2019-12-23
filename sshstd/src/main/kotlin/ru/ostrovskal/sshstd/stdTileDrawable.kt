@@ -18,29 +18,6 @@ import kotlin.math.sin
  * @since 0.1.0
  */
 
-/** Патч9. Левая сторона */
-const val VL = 1.toByte()
-
-/** Патч9. Верхняя сторона */
-const val VT = 2.toByte()
-
-/** Патч9. Правая сторона */
-const val VR = 3.toByte()
-
-/** Патч9. Нижняя сторона */
-const val VB = 4.toByte()
-
-/** Карта для патч9 */
-@JvmField val mapPatch = byteArrayOf(VL,  0, VT,  0, VL,  1, VT,  1,
-                                     VR, -1, VT,  0, VR,  0, VT,  1,
-                                     VL,  0, VB, -1, VL,  1, VB,  0,
-                                     VR, -1, VB, -1, VR,  0, VB,  0,
-                                     VL,  0, VT,  1, VL,  1, VB, -1,
-                                     VR, -1, VT,  1, VR,  0, VB, -1,
-                                     VL,  1, VT,  0, VR, -1, VT,  1,
-                                     VL,  1, VB, -1, VR, -1, VB,  0,
-                                     VL,  1, VT,  1, VR, -1, VB, -1)
-
 /** Класс, реализующий управление картинкой, имеющей тайловую структуру
  *
  * @property context    Контекст
@@ -59,13 +36,13 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 		set(v)                              { field = if(v <= 0) 1 else v }
 
 	// Иконка
-	private var drawableIcon: TileDrawable? = null
+	private var iconDrawable: TileDrawable? = null
 	
 	// Рисователь выделения
-	private val paintSelector               = Paint(Paint.ANTI_ALIAS_FLAG).apply { this.style = Paint.Style.STROKE }
+	private val paintSelector         = Paint(Paint.ANTI_ALIAS_FLAG).apply { this.style = Paint.Style.STROKE }
 	
 	// Рисователь тени
-	private val paintShadow                 = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG).apply { colorFilter = fltShadowed }
+	private val paintShadow           = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG).apply { colorFilter = fltShadowed }
 	
 	/** Рисователь */
 	@JvmField val paint                     = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG)
@@ -99,14 +76,24 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 	/** Внутрений отступ */
 	var padding                             = Rect()
 		set(v)                              { field = v; if(keyBitmap.isNotEmpty()) setBitmap(keyBitmap, horz, vert, tile); update() }
-	
-	/** Выравнивание */
+
+/*
+    var tileState
+        get()                               = state
+        set(v)                              { state = v; redrawSelf(false) }
+
+    var iconState
+        get()                               = iconDrawable?.state ?: 0
+        set(v)                              { iconDrawable?.state = v; redrawSelf(false) }
+
+*/
+    /** Выравнивание */
 	var align						        = 0
 		set(v)						        { field = v; update() }
 	
 	/** Выравнивание значка */
-	var alignIcon						= drawableIcon?.align ?: 0
-		set(value)					        { drawableIcon?.align = value; update() }
+	var alignIcon						= iconDrawable?.align ?: 0
+		set(value)					        { iconDrawable?.align = value; update() }
 	
 	/** Масштаб иконки */
 	var scaleIcon                           = 0.5f
@@ -127,16 +114,16 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 	/** Фильтр */
 	var filter: ColorFilter?
 		get()                               = paint.colorFilter
-		set(v)                              { paint.colorFilter = v; drawableIcon?.filter = v; redrawSelf(false) }
+		set(v)                              { paint.colorFilter = v; iconDrawable?.filter = v; redrawSelf(false) }
 	
 	/** Смещение тени */
 	var shadowOffset                        = 0f
 		set(v)                              { field = v; update() }
 	
 	/** Значок */
-	var tileIcon                        = drawableIcon?.tile ?: -1
+	var tileIcon                        = iconDrawable?.tile ?: -1
 		set(v)                              {
-			drawableIcon = if(v == -1) null else { (drawableIcon ?: TileDrawable(context, style_icon)).apply { tile = v } }
+            iconDrawable = if(v == -1) null else { (iconDrawable ?: TileDrawable(context, style_icon)).apply { tile = v } }
 			update()
 		}
 	
@@ -243,7 +230,7 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 	override fun setAlpha(alpha: Int) { paint.alpha = alpha; redrawSelf(false) }
 	
 	/** Признак прозрачности */
-	override fun getOpacity(): Int = PixelFormat.OPAQUE
+	override fun getOpacity(): Int = PixelFormat.TRANSLUCENT
 	
 	/** Установка фильтра отображения [colorFilter] */
 	override fun setColorFilter(colorFilter: ColorFilter?) { filter = colorFilter }
@@ -336,7 +323,7 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 			fRect.set(xx.toFloat(), yy.toFloat(), xx + w.toFloat(), yy + h.toFloat())
 			// уменьшаем области на половину размера границы
 			val border = selectorWidth / 2.0f
-			fRect.inset(border, border)
+ 			fRect.inset(border, border)
 			// создать фигуру
 			path.makeFigure(shape, fRect, radii)
 			background?.bounds = fRect.toInt(iRect)
@@ -346,7 +333,7 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 			val isRedraw = bounds != iRect
 			bounds.set(iRect)
 			// пересчитать иконку
-			drawableIcon?.update(bounds)
+			iconDrawable?.update(bounds)
 			isInnerUpdate = true
 			redrawSelf(isRedraw)
 			isInnerUpdate = false
@@ -355,7 +342,7 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 	
 	/** Вызывается при изменение габаритов [r] */
 	override fun onBoundsChange(r: Rect) {
-		update()
+		update(r)
 	}
 	
 	/** Отрисовка */
@@ -379,7 +366,7 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 				}
 			}
 			// иконка
-			drawableIcon?.also {
+			iconDrawable?.also {
 				val r = it.bounds
 				scale(scaleIcon, scaleIcon, r.centerX().toFloat(), r.centerY().toFloat())
 				it.draw(this)
@@ -434,8 +421,8 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 	}
 	
 	/** Изменение состояния отображения */
-	override fun onStateChange(state: IntArray?): Boolean {
-		filter = when(state?.checkStates(STATE_PRESSED, STATE_FOCUSED)) {
+	override fun onStateChange(st: IntArray): Boolean {
+		filter = when(st.checkStates(STATE_PRESSED, STATE_FOCUSED)) {
 			STATE_DISABLED 	-> fltDisabled
 			STATE_PRESSED	-> when {
 				states test TILE_STATE_HOVER -> fltHovered

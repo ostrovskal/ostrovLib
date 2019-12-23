@@ -78,9 +78,20 @@ abstract class CommonRibbon(context: Context, vert: Boolean, @JvmField val style
     val count                   get()       = mCount
 
     init {
-        mOverflingDistance = ViewConfiguration.get(context).scaledOverflingDistance
+        ViewConfiguration.get(context).apply {
+            mMinVelocity = scaledMinimumFlingVelocity
+            mMaxVelocity = scaledMaximumFlingVelocity.toFloat()
+            mOverflingDistance = scaledOverflingDistance
+        }
+        isVerticalScrollBarEnabled = vert
+        isHorizontalScrollBarEnabled = !vert
+        isScrollbarFadingEnabled = true
+        isClickable = true
+        isFocusableInTouchMode = true
+        setWillNotDraw(false)
     }
 
+    /** Прокрутка на [delta] */
     abstract fun scrolling(delta: Int): Boolean
 
     /**

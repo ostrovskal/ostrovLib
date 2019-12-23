@@ -579,6 +579,64 @@ public final class Common {
                                                                   GradientDrawable.Orientation.BOTTOM_TOP,
                                                                   GradientDrawable.Orientation.TL_BR};
 
+    /** Патч9. Левая сторона */
+    public static final byte VL                     = 1;
+
+    /** Патч9. Верхняя сторона */
+    public static final byte VT                     = 2;
+
+    /** Патч9. Правая сторона */
+    public static final byte VR                     = 3;
+
+    /** Патч9. Нижняя сторона */
+    public static final byte VB                     = 4;
+
+    /** Карта для патч9 */
+    public static final byte[] mapPatch             = { VL, 0, VT, 0, VL, 1, VT, 1,
+                                                        VR, -1, VT, 0, VR, 0, VT, 1,
+                                                        VL, 0, VB, -1, VL, 1, VB, 0,
+                                                        VR, -1, VB, -1, VR, 0, VB, 0,
+                                                        VL, 0, VT, 1, VL, 1, VB, -1,
+                                                        VR, -1, VT, 1, VR, 0, VB, -1,
+                                                        VL, 1, VT, 0, VR, -1, VT, 1,
+                                                        VL, 1, VB, -1, VR, -1, VB, 0,
+                                                        VL, 1, VT, 1, VR, -1, VB, -1
+    };
+
+    /** Символы карты контроллера */
+    public static final char[] controllerCharsMap   = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ' ' };
+
+    /** Карта контроллера по умолчанию 8x8 */
+    public static final String mapController        =   "1313111111111414\n" +
+                                                        "1313111111111414\n" +
+                                                        "3333131010144444\n" +
+                                                        "3333300000404444\n" +
+                                                        "3333300000404444\n" +
+                                                        "3333232020244444\n" +
+                                                        "2323222222222424\n" +
+                                                        "2323222222222424";
+
+    /** Текст тега */
+    public static final int HTML_TEXT_TAG           = 0;
+
+    /** Открывающий тег */
+    public static final int HTML_OPEN_TAG           = 1;
+
+    /** Закрывающий тег*/
+    public static final int HTML_CLOSE_TAG          = 2;
+
+    /** Закрывающий тег при пробросе */
+    public static final int HTML_CLOSE_WRONG_TAG    = 3;
+
+    /** Константа для автоматического определения количества строк или столбцов */
+    public static final int CELL_LAYOUT_AUTO_FIT    = -1;
+
+    /** Константа для добавления ячейки в начало */
+    public static final int CELL_LAYOUT_INSERT_BEGIN= -100;
+
+    /** Константа для добавления ячейки в конец */
+    public static final int CELL_LAYOUT_INSERT_END  = -200;
+
     /** Свойство атрибута. Целое  */
     public static final int ATTR_INT              = 0x00800000;
 

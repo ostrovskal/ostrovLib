@@ -118,7 +118,6 @@ class SurfaceTouch(context: Context) : Surface(context) {
 										}
 									}
 				actScale       -> {
-/*
 					if(temp == -1) {
 						touch2.apply {
 							ptBegin.x = touch.ptBegin.x
@@ -129,18 +128,16 @@ class SurfaceTouch(context: Context) : Surface(context) {
 						}
 						if(isUnpressed) { temp = 0; flags = 0 }
 					}
-*/
-						scale(touch2, cellD) { o, e ->
-							if (e) {
-								val p1 = ptCurrent
-								val p2 = touch2.ptCurrent
-								c1.x = p1.x; c1.y = p1.y
-								c0.x = p2.x; c0.y = p2.y
-								len = o
-                                o.info()
-							} else { temp = -1 }
-						}
-//					}
+					scale(touch2, cellD) { o, e ->
+						if (e) {
+							val p1 = ptCurrent
+							val p2 = touch2.ptCurrent
+							c1.x = p1.x; c1.y = p1.y
+							c0.x = p2.x; c0.y = p2.y
+							len = o
+							o.info()
+						} else { temp = -1 }
+					}
 				}
 			}
 		}

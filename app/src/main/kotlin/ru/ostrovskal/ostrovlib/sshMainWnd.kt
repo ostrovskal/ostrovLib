@@ -11,19 +11,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewManager
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import ru.ostrovskal.sshstd.Common.*
-import ru.ostrovskal.sshstd.DropBox
 import ru.ostrovskal.sshstd.Size
 import ru.ostrovskal.sshstd.Wnd
 import ru.ostrovskal.sshstd.adapters.ArrayListAdapter
-import ru.ostrovskal.sshstd.forms.FORM_PROGRESS_DOWNLOAD
 import ru.ostrovskal.sshstd.forms.Form
 import ru.ostrovskal.sshstd.forms.FormMessage
-import ru.ostrovskal.sshstd.forms.FormProgress
 import ru.ostrovskal.sshstd.layouts.CellLayout
 import ru.ostrovskal.sshstd.layouts.CommonLayout
 import ru.ostrovskal.sshstd.layouts.RadioLayout
@@ -121,7 +115,7 @@ class TabRibbon(context: Context) : CommonLayout(context, false) {
 class MainWnd : Wnd() {
 
 	var typeTheme = 1
-
+	val mmm = intArrayOf(0, 1, 2, 3, 10, 111, 22, 33, 44,55,555, -1, -2, -3)
 	// ДПО4 ПОЛУЧЕНО
 	// 89857707575
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -131,25 +125,9 @@ class MainWnd : Wnd() {
 
         TestTouch(this).setContent(this, SSH_APP_MODE_GAME)
 
+		mmm.display().info()
+
 		if(savedInstanceState == null) instanceForm(MyForm(), "main", R.id.main, 1)
-
-		val dbx = DropBox("zx", getString(R.string.dropbox_token))
-
-		launch {
-			FormProgress().show(this@MainWnd, R.string.loading, FORM_PROGRESS_DOWNLOAD).doInBackground(10) { fp ->
-				val result = withContext(Dispatchers.IO) { dbx.folders("/ZX") }
-				delay(500)
-				result?.run {
-					fp.maximum = this.size
-					hand?.send(RECEPIENT_FORM, 1)
-					forEachIndexed { idx, _ ->
-						delay(40L)
-						fp.primary = idx
-					}
-					BTN_OK
-				} ?: BTN_NO
-			}
-		}
 	}
 
 	class MyForm : Form() {
@@ -166,7 +144,6 @@ class MainWnd : Wnd() {
 					}
 				}
 			}
-			return super.inflateContent(container)
 		}
 	}
 

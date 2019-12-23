@@ -23,19 +23,6 @@ import kotlin.math.roundToInt
  * @since   0.2.1
  */
 
-/** Символы карты контроллера */
-@JvmField val controllerCharsMap = charArrayOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ' ')
-
-/** Карта контроллера по умолчанию 8x8 */
-const val mapController = "1313111111111414\n" +
-                          "1313111111111414\n" +
-                          "3333131010144444\n" +
-                          "3333300000404444\n" +
-                          "3333300000404444\n" +
-                          "3333232020244444\n" +
-                          "2323222222222424\n" +
-                          "2323222222222424"
-
 /** Класс, реализующий контроллер управления игровыми событиями со стилем по умолчанию style_controller */
 open class Controller(context: Context, ID: Int, grid: Boolean, style: IntArray = style_controller): Tile(context, style) {
 	
