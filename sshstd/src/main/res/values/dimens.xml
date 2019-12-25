@@ -38,8 +38,8 @@
     <dimen name="heightButton">30dp</dimen>
     <dimen name="heightCheck">32dp</dimen>
     <dimen name="heightRadio">32dp</dimen>
-    <dimen name="heightSelectItem">37dp</dimen>
-    <dimen name="heightSelectCaption">42dp</dimen>
+    <dimen name="heightSpinnerItem">37dp</dimen>
+    <dimen name="heightSpinnerCaption">42dp</dimen>
     <dimen name="heightProgress">72dp</dimen>
     <dimen name="widthProgress">72dp</dimen>
     <dimen name="widthSelector">3dp</dimen>
@@ -51,8 +51,9 @@
     <dimen name="paddingVertEdit">3dp</dimen>
     <dimen name="paddingHorzToast">16dp</dimen>
     <dimen name="paddingVertToast">8dp</dimen>
-    <dimen name="vertOffsSelect">1dp</dimen>
-    <dimen name="horzOffsSelect">0dp</dimen>
+    <dimen name="paddingRightSpinnerCaption">16dp</dimen>
+    <dimen name="paddingVertOffsSpinner">1dp</dimen>
+    <dimen name="paddingHorzOffsSpinner">0dp</dimen>
     <dimen name="padHorzSwitch">3dp</dimen>
     <dimen name="paddingEditEx">8dp</dimen>
 </resources>

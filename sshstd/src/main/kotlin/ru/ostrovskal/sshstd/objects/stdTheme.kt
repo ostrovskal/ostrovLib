@@ -12,6 +12,7 @@ import android.view.View
 import android.widget.TextView
 import com.github.ostrovskal.sshstd.R
 import ru.ostrovskal.sshstd.Common.*
+import ru.ostrovskal.sshstd.Config
 import ru.ostrovskal.sshstd.utils.*
 import ru.ostrovskal.sshstd.widgets.Tile
 import ru.ostrovskal.sshstd.widgets.lists.BaseRibbon
@@ -98,7 +99,7 @@ object Theme {
 	@JvmStatic fun dimen(context: Context, value: Int): Int {
         return when(value and ATTR_VPROPS_MSK) {
             THEME 	-> dimen(context, theme.themeAttrValue(value, -1, ATTR_DMN))
-			ID_RES  -> (context.resources.getDimensionPixelOffset(value) * config.multiplySW).toInt()
+			ID_RES  -> (context.resources.getDimensionPixelOffset(value) * Config.multiplySW).toInt()
             SP_FONT -> value.sp
 			else    -> value.dp
         }

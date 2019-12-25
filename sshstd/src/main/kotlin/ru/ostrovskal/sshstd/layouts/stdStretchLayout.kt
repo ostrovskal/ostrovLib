@@ -41,9 +41,9 @@ open class StretchLayout(context: Context, vert: Boolean) : CommonLayout(context
 	override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec)
 
-		var ww = MeasureSpec.getSize(widthMeasureSpec) - horizontalPadding
-		var hh = MeasureSpec.getSize(heightMeasureSpec) - verticalPadding
-		
+		val ww = measuredWidth - horizontalPadding
+		val hh = measuredHeight - verticalPadding
+
 		var count = 0f
 		var v = if(orientation == VERTICAL) hh else ww
 		
@@ -71,7 +71,6 @@ open class StretchLayout(context: Context, vert: Boolean) : CommonLayout(context
 				                                                      getSpec(width, orientation != VERTICAL))
 				val childHeightSpec = MeasureSpec.makeMeasureSpec(getSize(height, hh, if(orientation == VERTICAL) size else 0),
 				                                                       getSpec(height, orientation == VERTICAL))
-				if(orientation == VERTICAL) hh = 0 else ww = 0
 				it.measure(childWidthSpec, childHeightSpec)
 			}
 		}

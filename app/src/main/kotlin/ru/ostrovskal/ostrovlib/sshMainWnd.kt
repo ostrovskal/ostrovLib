@@ -3,6 +3,7 @@
 package ru.ostrovskal.ostrovlib
 
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -125,8 +126,6 @@ class MainWnd : Wnd() {
 
         TestTouch(this).setContent(this, SSH_APP_MODE_GAME)
 
-		mmm.display().info()
-
 		if(savedInstanceState == null) instanceForm(MyForm(), "main", R.id.main, 1)
 	}
 
@@ -138,9 +137,29 @@ class MainWnd : Wnd() {
 
 		override fun inflateContent(container: LayoutInflater): UiCtx {
 			return ui {
-				linearLayout {
-					cellLayout(10, 10, 1, true) {
-						text(R.string.text).lps(0, 0, 10, 10)
+				linearLayout(true) {
+					backgroundSet { solid = Color.BLACK }
+					formHeader(R.string.app_name)
+					linearLayout(false) {
+						containerLayout(70, 100, true) {
+							touchSurface {
+								id = R.id.check
+							}
+						}
+						touchGrp = radioGroup {
+							spinner(100) {
+								adapter = ArrayListAdapter(context, SpinnerPopup(), SpinnerItem(), listOf("Sergey", "Vlad", "Viktor"))
+							}
+							button() {
+								tileIcon = 0
+							}
+							radio(actDblClick, R.string.radio_dclick)
+							radio(actClick, R.string.radio_click)
+							radio(actDirect, R.string.radio_direct)
+							radio(actDrag, R.string.radio_drag)
+							radio(actRotate, R.string.radio_rotate)
+							radio(actScale, R.string.radio_scale)
+						}.lps(MATCH, MATCH)
 					}
 				}
 			}
@@ -196,21 +215,8 @@ class MainWnd : Wnd() {
 
 class TestTouch(val wnd: MainWnd): UiComponent() {
 	override fun createView(ui: UiCtx) = with(ui) {
-		linearLayout(false) {
+		linearLayout(true) {
 			id = R.id.main
-			containerLayout(70, 100, true) {
-				touchSurface {
-					id = R.id.check
-				}
-			}
-			touchGrp = radioGroup {
-				radio(actDblClick, R.string.radio_dclick)
-				radio(actClick, R.string.radio_click)
-				radio(actDirect, R.string.radio_direct)
-				radio(actDrag, R.string.radio_drag)
-				radio(actRotate, R.string.radio_rotate)
-				radio(actScale, R.string.radio_scale)
-			}
 		}
 	}
 }

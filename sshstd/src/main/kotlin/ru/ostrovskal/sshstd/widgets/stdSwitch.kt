@@ -6,6 +6,7 @@ import android.graphics.Rect
 import android.os.Parcelable
 import android.view.MotionEvent
 import ru.ostrovskal.sshstd.Common.*
+import ru.ostrovskal.sshstd.Config
 import ru.ostrovskal.sshstd.objects.Theme
 import ru.ostrovskal.sshstd.utils.offset
 import ru.ostrovskal.sshstd.utils.themeAttrValue
@@ -47,7 +48,7 @@ open class Switch(context: Context, id: Int, text: Int, style: IntArray) : Tile(
 			}
 		}
 
-		realWidthThumb = (Theme.integer(context, style.themeAttrValue(ATTR_SSH_THUMB_WIDTH, 32)) * dMetrics.density).toInt()
+		realWidthThumb = (Theme.integer(context, style.themeAttrValue(ATTR_SSH_THUMB_WIDTH, 32)) * Config.density).toInt()
 		animator.apply { duration = 20; frames = 10 }
 		this.id = id
 		setText(text)

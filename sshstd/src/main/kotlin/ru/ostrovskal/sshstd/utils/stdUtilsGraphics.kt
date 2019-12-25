@@ -6,13 +6,13 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.*
-import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.util.LruCache
 import android.view.Gravity
 import android.view.View
 import android.widget.Toast
 import ru.ostrovskal.sshstd.Common
+import ru.ostrovskal.sshstd.Config
 import ru.ostrovskal.sshstd.Size
 import ru.ostrovskal.sshstd.objects.Theme
 import ru.ostrovskal.sshstd.ui.UiComponent
@@ -21,7 +21,7 @@ import java.io.File
 import kotlin.math.*
 
 /** Кэш картинок */
-@JvmField val cacheBitmap       = object : LruCache<String, Bitmap>(config.mem / 8) {
+@JvmField val cacheBitmap       = object : LruCache<String, Bitmap>(Config.maxMem / 8) {
 	override fun sizeOf(key: String, value: Bitmap): Int = value.byteCount / 1024
 }
 
@@ -171,7 +171,7 @@ fun <T> Context.loadResource(name: String, type: String, def: T): T {
 					"dimen_fraction"	-> getFraction(id, 1, 1)
 					"integer"			-> getInteger(id)
 					"dimen"     		-> getDimension(id)
-					"drawable"  		-> (getDrawable(id) as? BitmapDrawable)?.bitmap
+					"drawable"  		-> BitmapFactory.decodeResource(resources, id)
 					"text"      		-> getText(id)
 					"bool"      		-> getBoolean(id)
 					"string"    		-> getString(id)
@@ -350,19 +350,19 @@ inline val Rect.dp
 
 /** Преобразование целых экранных координат в пиксели */
 inline val Int.dp
-	@JvmName("dp") get()   = (this * Common.dMetrics.density * config.multiplySW).roundToInt()
+	@JvmName("dp") get()   = (this * Config.density * Config.multiplySW).roundToInt()
 
 /** Преобразование вещественных экранных координат в пиксели */
 inline val Float.dp
-	@JvmName("dp") get()   = this * Common.dMetrics.density * config.multiplySW
+	@JvmName("dp") get()   = this * Config.density * Config.multiplySW
 
 /** Преобразование целого размера шрифта в пиксели */
 inline val Int.sp
-	@JvmName("sp") get()   = (this * Common.dMetrics.scaledDensity).roundToInt()
+	@JvmName("sp") get()   = (this * Config.scaledDensity).roundToInt()
 
 /** Преобразование вещественного размера шрифта в пиксели */
 inline val Float.sp
-	@JvmName("sp") get()   = this * Common.dMetrics.scaledDensity
+	@JvmName("sp") get()   = this * Config.scaledDensity
 
 /** Преобразование числа в цвет */
 inline val Long.color
@@ -374,9 +374,9 @@ inline val Int.color
 
 /** Преобразование пикселей в экранные координаты */
 inline val Int.dp2px
-	@JvmName("dp2px") get()= (this / Common.dMetrics.density).toInt()
+	@JvmName("dp2px") get()= (this / Config.density).toInt()
 
 /** Преобразование пикселей в размер шрифта */
 inline val Int.sp2px
-	@JvmName("sp2px") get()= (this / Common.dMetrics.scaledDensity).toInt()
+	@JvmName("sp2px") get()= (this / Config.scaledDensity).toInt()
 

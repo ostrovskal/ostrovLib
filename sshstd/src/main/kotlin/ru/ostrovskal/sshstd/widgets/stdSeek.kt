@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Rect
 import android.view.MotionEvent
 import ru.ostrovskal.sshstd.Common.*
+import ru.ostrovskal.sshstd.Config
 import ru.ostrovskal.sshstd.objects.Theme
 import ru.ostrovskal.sshstd.utils.*
 
@@ -34,7 +35,7 @@ open class Seek(context: Context, id: Int, range: IntRange, enabled: Boolean, st
 	
 	/** Скорость анимации трека */
 	var animSpeedTrack      = 2
-		set(v)              { field = (v * config.multiplySW).toInt(); requestLayout() }
+		set(v)              { field = (v * Config.multiplySW).toInt(); requestLayout() }
 	
 	/** Не используется - заглушка */
 	final override var isChecked    = false

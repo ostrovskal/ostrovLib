@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.*
 import android.view.MotionEvent
 import ru.ostrovskal.sshstd.Common.*
+import ru.ostrovskal.sshstd.Config
 import ru.ostrovskal.sshstd.Size
 import ru.ostrovskal.sshstd.Surface
 import ru.ostrovskal.sshstd.Touch
@@ -27,7 +28,7 @@ class SurfaceTouch(context: Context) : Surface(context) {
 	private val touch		= Touch()
 	private val touch2		= Touch()
 	private val rectBmp     = Rect()
-	private var bitmap		= BitmapFactory.decodeResource(resources, R.drawable.droid, BitmapFactory.Options().apply { inDensity = dMetrics.densityDpi } )
+	private var bitmap		= BitmapFactory.decodeResource(resources, R.drawable.droid, BitmapFactory.Options().apply { inDensity = Config.dip } )
 
 	private var temp  		= -1
 

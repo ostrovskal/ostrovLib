@@ -9,7 +9,6 @@ import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.text.InputType;
-import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.widget.ListPopupWindow;
 
@@ -64,9 +63,6 @@ public final class Common {
 
     /** Путь к папке /data/data/package */
     public static String folderData	    = "";
-
-    /** Характеристики дисплея */
-    public static DisplayMetrics        dMetrics;
 
     /** Имя пакета приложения */
     public static String                namePackage;
@@ -592,15 +588,15 @@ public final class Common {
     public static final byte VB                     = 4;
 
     /** Карта для патч9 */
-    public static final byte[] mapPatch             = { VL, 0, VT, 0, VL, 1, VT, 1,
-                                                        VR, -1, VT, 0, VR, 0, VT, 1,
-                                                        VL, 0, VB, -1, VL, 1, VB, 0,
-                                                        VR, -1, VB, -1, VR, 0, VB, 0,
-                                                        VL, 0, VT, 1, VL, 1, VB, -1,
-                                                        VR, -1, VT, 1, VR, 0, VB, -1,
-                                                        VL, 1, VT, 0, VR, -1, VT, 1,
-                                                        VL, 1, VB, -1, VR, -1, VB, 0,
-                                                        VL, 1, VT, 1, VR, -1, VB, -1
+    public static final byte[] mapPatch             = { VL,  0, VT,  0, VL,  1, VT,  1,// LEFT_TOP
+                                                        VR, -1, VT,  0, VR,  0, VT,  1,// RIGHT_TOP
+                                                        VL,  0, VB, -1, VL,  1, VB,  0,// LEFT_BOTTOM
+                                                        VR, -1, VB, -1, VR,  0, VB,  0,// RIGHT_BOTTOM
+                                                        VL,  0, VT,  1, VL,  1, VB, -1,// LEFT
+                                                        VR, -1, VT,  1, VR,  0, VB, -1,// RIGHT
+                                                        VL,  1, VT,  0, VR, -1, VT,  1,// TOP
+                                                        VL,  1, VB, -1, VR, -1, VB,  0,// BOTTOM
+                                                        VL,  1, VT,  1, VR, -1, VB, -1 // CENTER
     };
 
     /** Символы карты контроллера */
@@ -1131,7 +1127,7 @@ public final class Common {
             ATTR_SIZE, R.dimen.normal,
             ATTR_FONT, R.string.font_normal,
             ATTR_SSH_BITMAP_NAME, ATTR_SSH_BM_SPINNER | THEME,
-            ATTR_MIN_HEIGHT, R.dimen.heightSelectItem,
+            ATTR_MIN_HEIGHT, R.dimen.heightSpinnerItem,
             ATTR_PADDING_HORZ, R.dimen.paddingHorzSelectItem,
             ATTR_SSH_VERT, 3,
             ATTR_SSH_PATCH9, R.string.patch9_select_item,
@@ -1145,6 +1141,7 @@ public final class Common {
             ATTR_COLOR_HIGHLIGHT, ATTR_SSH_COLOR_NORMAL | THEME,
             ATTR_PADDING_HORZ, R.dimen.paddingHorzSelectItem,
             ATTR_GRAVITY, Gravity.CENTER,
+            ATTR_PADDING_RIGHT, R.dimen.paddingRightSpinnerCaption,
             ATTR_SIZE, R.dimen.large,
             ATTR_FONT, R.string.font_normal,
             ATTR_SSH_BITMAP_NAME, ATTR_SSH_BM_SPINNER | THEME,
@@ -1156,12 +1153,12 @@ public final class Common {
     public static final int[] style_spinner               = {
             ATTR_CLICKABLE, 1,
             ATTR_GRAVITY, Gravity.CENTER,
-            ATTR_MIN_HEIGHT, R.dimen.heightSelectCaption,
+            ATTR_MIN_HEIGHT, R.dimen.heightSpinnerCaption,
             ATTR_SSH_PATCH9, R.string.patch9_select_caption,
             ATTR_SSH_BITMAP_NAME, ATTR_SSH_BM_SPINNER | THEME,
             ATTR_SSH_VERT, 3,
             ATTR_SSH_TILE, 1,
-            ATTR_SSH_DROPDOWN_VERT_OFFS, R.dimen.vertOffsSelect,
+            ATTR_SSH_DROPDOWN_VERT_OFFS, R.dimen.paddingVertOffsSpinner,
             ATTR_SSH_DROPDOWN_WIDTH, MATCH,
             ATTR_SELECTOR, ATTR_SSH_COLOR_SELECTOR | THEME,
             ATTR_DIVIDER_SIZE, 0

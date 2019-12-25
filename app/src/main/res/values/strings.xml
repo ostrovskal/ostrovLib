@@ -11,14 +11,14 @@
     <string name="header" translatable="false">Справка</string>
     <string name="std_theme_d" translatable="false">_dark</string>
     <string name="std_theme_l" translatable="false">_light</string>
-    <string name="radio_click">CLICK</string>
-    <string name="radio_direct">DIRECT</string>
-    <string name="radio_drag">DRAG</string>
-    <string name="radio_rotate">ROTATE</string>
-    <string name="radio_scale">SCALE</string>
-    <string name="radio_dclick">DBL CLICK</string>
-    <string name="loading">Загрузка…</string>
-    <string name="success">Загрузка списка файлов из облака выполнена успешно!</string>
-    <string name="failed">Загрузка списка файлов из облака завершилась с ошибкой!</string>
-    <string name="text">Hello, World!!!</string>
+    <string name="radio_click" translatable="false">CLICK</string>
+    <string name="radio_direct" translatable="false">DIRECT</string>
+    <string name="radio_drag" translatable="false">DRAG</string>
+    <string name="radio_rotate" translatable="false">ROTATE</string>
+    <string name="radio_scale" translatable="false">SCALE</string>
+    <string name="radio_dclick" translatable="false">DBL CLICK</string>
+    <string name="loading" translatable="false">Загрузка…</string>
+    <string name="success" translatable="false">Загрузка списка файлов из облака выполнена успешно!</string>
+    <string name="failed" translatable="false">Загрузка списка файлов из облака завершилась с ошибкой!</string>
+    <string name="text" translatable="false">Hello, World!!!</string>
 </resources>

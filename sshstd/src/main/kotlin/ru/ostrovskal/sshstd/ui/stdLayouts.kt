@@ -31,10 +31,6 @@ inline fun ViewManager.stretchLayout(vert: Boolean = true, init: StretchLayout.(
 inline fun ViewManager.tabLayout(id: Int = R.id.tabHost, idContent: Int = R.id.tabContent, captionPos: Int = DIRU, sizeCaption: Int = 20, style: IntArray = style_tab_page, init: TabLayout.() -> Unit) =
 		uiView( { TabLayout(it, idContent, captionPos, sizeCaption, style).apply { this.id = id } }, init)
 
-/** Реализация TabRibbon с кастомным стилем вкладок [style], позицией заголовка [captionPos], относительным размером заголовка [sizeCaption] и инициализатором [init] */
-inline fun ViewManager.tabRibbonLayout(id: Int = R.id.tabHost, idContent: Int = R.id.tabContent, captionPos: Int = DIRU, sizeCaption: Int = 20, style: IntArray = style_tab_page, init: TabRibbonLayout.() -> Unit) =
-		uiView({ TabRibbonLayout(it, idContent, captionPos, sizeCaption, style).apply { this.id = id } }, init)
-
 /** Реализация контейнерной разметки, шириной [width] и высотой [height] в процентах относительно родителя,
  *  варавниванием [aligned] дочерних представлений и инициализатором [init] */
 inline fun ViewManager.containerLayout(width: Int, height: Int, aligned: Boolean, init: ContainerLayout.() -> Unit) =

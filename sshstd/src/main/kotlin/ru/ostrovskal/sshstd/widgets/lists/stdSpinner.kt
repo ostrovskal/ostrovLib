@@ -12,6 +12,7 @@ import android.widget.Adapter
 import android.widget.ListAdapter
 import android.widget.SpinnerAdapter
 import ru.ostrovskal.sshstd.Common.*
+import ru.ostrovskal.sshstd.Config
 import ru.ostrovskal.sshstd.TileDrawable
 import ru.ostrovskal.sshstd.objects.Theme
 import ru.ostrovskal.sshstd.utils.*
@@ -288,7 +289,7 @@ open class Spinner(context: Context, id: Int, @JvmField val style: IntArray, sty
 			contentWidth = when(dropdownWidth) {
 				WRAP  -> {
 					var contentWidth = measureContentWidth(adapter)
-					val contentWidthLimit = dMetrics.widthPixels
+					val contentWidthLimit = Config.screenWidth
 					if(contentWidth > contentWidthLimit) contentWidth = contentWidthLimit
 					contentWidth.coerceAtLeast(spinnerPadding)
 				}

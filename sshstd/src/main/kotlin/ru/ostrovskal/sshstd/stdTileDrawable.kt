@@ -77,16 +77,6 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 	var padding                             = Rect()
 		set(v)                              { field = v; if(keyBitmap.isNotEmpty()) setBitmap(keyBitmap, horz, vert, tile); update() }
 
-/*
-    var tileState
-        get()                               = state
-        set(v)                              { state = v; redrawSelf(false) }
-
-    var iconState
-        get()                               = iconDrawable?.state ?: 0
-        set(v)                              { iconDrawable?.state = v; redrawSelf(false) }
-
-*/
     /** Выравнивание */
 	var align						        = 0
 		set(v)						        { field = v; update() }
@@ -121,8 +111,9 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 		set(v)                              { field = v; update() }
 	
 	/** Значок */
-	var tileIcon                        = iconDrawable?.tile ?: -1
+	var tileIcon                            = -1
 		set(v)                              {
+            field = v
             iconDrawable = if(v == -1) null else { (iconDrawable ?: TileDrawable(context, style_icon)).apply { tile = v } }
 			update()
 		}
@@ -152,11 +143,11 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 	/** Область обрезки картинки */
 	var patch9                              = Rect()
 		set(v)                              {
-			val d = dMetrics.density
-			field.left = (v.left * d).toInt()
-			field.right = (v.right * d).toInt()
-			field.top = (v.top * d).toInt()
-			field.bottom = (v.bottom * d).toInt()
+			val dip = Config.density
+			field.left = (v.left * dip).toInt()
+			field.right = (v.right * dip).toInt()
+			field.top = (v.top * dip).toInt()
+			field.bottom = (v.bottom * dip).toInt()
 			redrawSelf(false)
 		}
 	
@@ -378,16 +369,14 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 		var x = 0; var y = 0
 		
 		fun getVal(idx: Int) {
-			val f = mapPatch[idx + 0]
 			var v = mapPatch[idx + 1].toInt()
-			when(f) {
+			when(mapPatch[idx + 0]) {
 				VT -> { v *= patch9.top;     x = rect.top    + v; y = tileRect.top      + v }
 				VR -> { v *= patch9.right;   x = rect.right  + v; y = tileRect.right    + v }
 				VL -> { v *= patch9.left;    x = rect.left   + v; y = tileRect.left     + v }
 				VB -> { v *= patch9.bottom;  x = rect.bottom + v; y = tileRect.bottom   + v }
 			}
 		}
-		
 		for(i in 0..64 step 8) {
 			getVal(i + 0); iRect.left     = y; fRect.left   = x.toFloat()
 			getVal(i + 2); iRect.top      = y; fRect.top    = x.toFloat()
@@ -422,7 +411,7 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 	
 	/** Изменение состояния отображения */
 	override fun onStateChange(st: IntArray): Boolean {
-		filter = when(st.checkStates(STATE_PRESSED, STATE_FOCUSED)) {
+		filter = when(st.checkStates(STATE_PRESSED)) {
 			STATE_DISABLED 	-> fltDisabled
 			STATE_PRESSED	-> when {
 				states test TILE_STATE_HOVER -> fltHovered

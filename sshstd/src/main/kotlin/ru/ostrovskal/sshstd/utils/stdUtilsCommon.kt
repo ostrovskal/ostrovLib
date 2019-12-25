@@ -11,20 +11,14 @@ import android.os.*
 import android.text.format.Time
 import android.util.Log
 import android.view.MotionEvent
-import ru.ostrovskal.sshstd.*
 import ru.ostrovskal.sshstd.Common.*
+import ru.ostrovskal.sshstd.Config
+import ru.ostrovskal.sshstd.STORAGE
 import ru.ostrovskal.sshstd.sql.SQL
 import java.io.Closeable
 import java.io.File
 import java.io.IOException
 import kotlin.math.roundToInt
-
-/** Конфигурация устройства */
-@JvmField var config     = Config(ScreenSize.UNDEF, 0, "", Orientation.UNDEF, false, 0, 0, UiMode.UNDEF,
-	night = false,
-	rtl = false,
-	sw = 0
-)
 
 /** Исключение при попытке вызова getter() */
 fun noGetter(): Nothing = error("Property does not have a getter")
@@ -140,18 +134,18 @@ fun startLog(context: Context, tag: String, sqlLog: Boolean, version: Int, appVe
 	folderCache = context.cacheDir.path
 	folderFiles = context.filesDir.path
 	folderData  = context.getDatabasePath(tag).path
-	dMetrics    = context.resources.displayMetrics
 	namePackage = context.packageName
-	config      = context.queryConfiguration()
 	logTag      = tag
 	isSqlLog    = sqlLog
 	isDebug     = buildConfig
 	dbVersion   = version
 	messageNames= arrayOf(	"ACT_MESSAGE_RESULT", "ACT_EMPTY", "ACT_INIT_SURFACE_THREAD", "ACT_BACKPRESSED", "ACT_EXIT") + (msgInfos ?: arrayOf(""))
-	
+
+	Config.query(context)
+
 	"--------------------------------------------------------".info()
 	"Executed $logTag $appVersion - ${System.currentTimeMillis().datetime}".info()
-	config.debug()
+	Config.debug()
 	"--------------------------------------------------------".info()
 	"".info()
 }
