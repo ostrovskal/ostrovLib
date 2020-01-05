@@ -123,6 +123,16 @@ class MainWnd : Wnd() {
 
 		startLog(this, "LIB", true, BuildConfig.VERSION_CODE, BuildConfig.VERSION_NAME, BuildConfig.DEBUG, null)
 		super.onCreate(savedInstanceState)
+/*
+		val ext = listOf(".z80", ".tap")
+		val f = folderFiles
+		val f1 = f.listFoldersAndFiles(true, ext)
+		val f2 = "${f}tap".listFoldersAndFiles(true, ext)
+		val f3 = "${f}z80".listFoldersAndFiles(true, ext)
+		val res = f.collectedFiles(ext)
+		val rm = RunnableMessage.obtain(Message.obtain().apply { what = 10 } )
+		rm.recycle()
+*/
 
         TestTouch(this).setContent(this, SSH_APP_MODE_GAME)
 

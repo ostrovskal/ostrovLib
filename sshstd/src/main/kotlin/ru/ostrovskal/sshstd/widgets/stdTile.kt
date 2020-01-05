@@ -166,7 +166,6 @@ open class Tile(context: Context, style: IntArray) : Text(context, style) {
 	/** Определение позиции тайла */
 	override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
 		super.onLayout(changed, left, top, right, bottom)
-		isEnabled = true
 		getDrawingRect(rectScreen)
 		val vspace = height - (compoundPaddingBottom + compoundPaddingTop)
 		y = scrollY + compoundPaddingTop + (vspace - drawablePosition.height()) / 2

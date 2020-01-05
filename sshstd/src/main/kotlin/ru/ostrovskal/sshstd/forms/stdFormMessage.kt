@@ -27,8 +27,8 @@ open class FormMessage : Form() {
 
     override fun inflateContent(container: LayoutInflater): UiCtx {
         val params = arguments.getIntArray("params") ?: error("В форме сообщений не задан массив параметров!")
-        val width = params[5].run { if(this == 0 ) 330.dp else this }
-        val height = params[6].run { if(this == 0 ) 180.dp else this }
+        val width = params[5].run { if(this == 0 ) 300.dp else this }
+        val height = params[6].run { if(this == 0 ) 160.dp else this }
         return ui {
             linearLayout {
                 root = cellLayout(10, 9) {

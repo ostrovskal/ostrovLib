@@ -131,9 +131,9 @@ val Message.info: String get() {
  * @param msgInfos      Массив имен сообщений хэндлера
  */
 fun startLog(context: Context, tag: String, sqlLog: Boolean, version: Int, appVersion: String, buildConfig: Boolean, msgInfos: Array<String>? = null) {
-	folderCache = context.cacheDir.path
-	folderFiles = context.filesDir.path
-	folderData  = context.getDatabasePath(tag).path
+	folderCache = context.cacheDir.path.endingFolderPath()
+	folderFiles = context.filesDir.path.endingFolderPath()
+	folderData  = context.getDatabasePath(tag).path.endingFolderPath()
 	namePackage = context.packageName
 	logTag      = tag
 	isSqlLog    = sqlLog

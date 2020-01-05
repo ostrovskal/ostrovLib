@@ -111,9 +111,8 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 		set(v)                              { field = v; update() }
 	
 	/** Значок */
-	var tileIcon                            = -1
+	var tileIcon                        = iconDrawable?.tile ?: -1
 		set(v)                              {
-            field = v
             iconDrawable = if(v == -1) null else { (iconDrawable ?: TileDrawable(context, style_icon)).apply { tile = v } }
 			update()
 		}

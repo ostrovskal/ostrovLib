@@ -5,7 +5,9 @@ import android.graphics.Color
 import android.graphics.Rect
 import ru.ostrovskal.sshstd.Common.hexChars
 import ru.ostrovskal.sshstd.objects.Settings
+import java.io.File
 import java.util.*
+
 
 /** Установка/Получение текстовых настроек системы */
 inline var String.s
@@ -233,4 +235,42 @@ fun Char.escape(): Any = when(this) {
 	'\r'    -> "\\r"
 	'\t'    -> "\\t"
 	else    -> this
+}
+
+/** Формирование списка подпапок и файлов, относительно корневой папки, с признаком возврата [back] и фильтром [validExtensions] */
+fun String.listFoldersAndFiles(back: Boolean, validExtensions: List<String>) : List<String> {
+	val path = endingFolderPath()
+	return File(path).list()?.run {
+		// папки
+		val dirs = filter { File(path + it).isDirectory }.map { "[$it]" }.sorted().toMutableList()
+		// папка назад
+		if(back) dirs.add(0, "...")
+		// файлы
+		(dirs + filter { it.validFileExtensions(validExtensions) }.sorted())
+	} ?: listOf( "" )
+}
+
+/** Обход всех файлов, относительно корневой папки с фильтром [validExtensions] */
+fun String.collectedFiles(validExtensions: List<String>): MutableList<String> {
+	fun putFiles(path: String, lst: MutableList<String>) {
+		File(path).listFiles()?.forEach {
+			if(it.isDirectory) {
+				putFiles(it.absolutePath, lst)
+				return@forEach
+			}
+			val name = it.name
+			if(name.validFileExtensions(validExtensions))
+				lst.add(name)
+		}
+	}
+	val files = MutableList(0) { "" }
+	putFiles(this, files)
+	return files
+}
+
+/** Возвращает путь к папке с завершающим разделителем */
+fun String.endingFolderPath() : String {
+	var path = this
+	if(last() != File.separatorChar) path += File.separatorChar
+	return path
 }
