@@ -13,7 +13,7 @@ class Pool<T : Pool.PoolObject>(count: Int, private val block: () -> T) {
     /** Класс, для реализации списка объектов пула
      *
      * @property next Ссылка на следующий
-     * */
+     */
     open class PoolObject(@JvmField var next: PoolObject?)
 
     // текущий объект из пула

@@ -20,7 +20,6 @@ import ru.ostrovskal.sshstd.adapters.ArrayListAdapter
 import ru.ostrovskal.sshstd.forms.Form
 import ru.ostrovskal.sshstd.forms.FormMessage
 import ru.ostrovskal.sshstd.layouts.CellLayout
-import ru.ostrovskal.sshstd.layouts.CommonLayout
 import ru.ostrovskal.sshstd.layouts.RadioLayout
 import ru.ostrovskal.sshstd.objects.Theme
 import ru.ostrovskal.sshstd.sql.SQL
@@ -109,10 +108,6 @@ object Ostrov: Table() {
 	@JvmField val real= real("real").default(0f).checked { it gteq 0f }.index(true)
 }
 
-class TabRibbon(context: Context) : CommonLayout(context, false) {
-
-}
-
 class MainWnd : Wnd() {
 
 	var typeTheme = 1
@@ -123,16 +118,6 @@ class MainWnd : Wnd() {
 
 		startLog(this, "LIB", true, BuildConfig.VERSION_CODE, BuildConfig.VERSION_NAME, BuildConfig.DEBUG, null)
 		super.onCreate(savedInstanceState)
-/*
-		val ext = listOf(".z80", ".tap")
-		val f = folderFiles
-		val f1 = f.listFoldersAndFiles(true, ext)
-		val f2 = "${f}tap".listFoldersAndFiles(true, ext)
-		val f3 = "${f}z80".listFoldersAndFiles(true, ext)
-		val res = f.collectedFiles(ext)
-		val rm = RunnableMessage.obtain(Message.obtain().apply { what = 10 } )
-		rm.recycle()
-*/
 
         TestTouch(this).setContent(this, SSH_APP_MODE_GAME)
 
@@ -160,7 +145,7 @@ class MainWnd : Wnd() {
 							spinner(100) {
 								adapter = ArrayListAdapter(context, SpinnerPopup(), SpinnerItem(), listOf("Sergey", "Vlad", "Viktor"))
 							}
-							button() {
+							button {
 								tileIcon = 0
 							}
 							radio(actDblClick, R.string.radio_dclick)
