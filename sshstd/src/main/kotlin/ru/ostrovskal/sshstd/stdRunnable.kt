@@ -9,7 +9,7 @@ import android.os.Message
 
 /** Класс, реализующий объект исполнения с передачей сообщения */
 
-class RunnableMessage : Pool.PoolObject(null), Runnable {
+open class RunnableMessage : Pool.PoolObject(null), Runnable {
 
     /** Сообщение, как параметр */
     @JvmField var msg: Message? = null
