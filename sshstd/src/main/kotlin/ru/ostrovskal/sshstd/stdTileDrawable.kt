@@ -82,7 +82,8 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 		set(v)						        { field = v; update() }
 	
 	/** Выравнивание значка */
-	var alignIcon						= iconDrawable?.align ?: 0
+	var alignIcon
+		get()								= iconDrawable?.align ?: 0
 		set(value)					        { iconDrawable?.align = value; update() }
 	
 	/** Масштаб иконки */
@@ -111,7 +112,8 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 		set(v)                              { field = v; update() }
 	
 	/** Значок */
-	var tileIcon                        = iconDrawable?.tile ?: -1
+	var tileIcon
+		get()								= iconDrawable?.tile ?: -1
 		set(v)                              {
             iconDrawable = if(v == -1) null else { (iconDrawable ?: TileDrawable(context, style_icon)).apply { tile = v } }
 			update()
@@ -126,7 +128,7 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 		set(v)                              { field = v; update() }
 	
 	/** Фигура */
-	var shape                               = TILE_SHAPE_EMPTY
+	var shape                           = TILE_SHAPE_EMPTY
 		set(v)                              { field = v; update() }
 	
 	/** Цвет рамки */

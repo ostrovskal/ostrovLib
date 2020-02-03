@@ -1,7 +1,5 @@
 package ru.ostrovskal.sshstd.sql
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import ru.ostrovskal.sshstd.Common.*
 import ru.ostrovskal.sshstd.SqlField
 import ru.ostrovskal.sshstd.utils.join
@@ -82,11 +80,16 @@ open class Statement(@JvmField val table: Table, @JvmField val dml: Int) {
 	}
 }
 
+/** Класс, реализующий DML оператор INSERT INTO/UPDATE */
+abstract class StmtInsertUpdate(table: Table, dml: Int) : Statement(table, dml) {
+	/** Формирование оператотора */
+	abstract fun execute() : Long
+}
 
 /** Класс, реализующий DML оператор INSERT INTO */
-open class StmtInsert(table: Table) : Statement(table, SQL_DML_INSERT) {
+open class StmtInsert(table: Table) : StmtInsertUpdate(table, SQL_DML_INSERT) {
 	/** Формирование оператора и исполнение запроса к БД с возвратом ID последней записи */
-	fun execute() : Long {
+	override fun execute() : Long {
 		val fields = StringBuilder(32)
 		val vals = StringBuilder(32)
 		values.forEach {
@@ -100,9 +103,9 @@ open class StmtInsert(table: Table) : Statement(table, SQL_DML_INSERT) {
 }
 
 /** Класс, реализующий DML оператор UPDATE */
-open class StmtUpdate(table: Table): Statement(table, SQL_DML_UPDATE) {
+open class StmtUpdate(table: Table): StmtInsertUpdate(table, SQL_DML_UPDATE) {
 	/** Формирование оператора и исполнение запроса к БД с возвратом количества обновленных строк */
-	suspend fun execute() = withContext(Dispatchers.IO) {
+	override fun execute(): Long {
 		val vals = buildString {
 			values.forEach {
 				it.key.apply {
@@ -110,14 +113,14 @@ open class StmtUpdate(table: Table): Statement(table, SQL_DML_UPDATE) {
 				}
 			}
 		}
-		SQL.exec(template(vals), dml)
+		return SQL.exec(template(vals), dml)
 	}
 }
 
 /** Класс, реализующий DML оператор DELETE FROM */
 open class StmtDelete(table: Table): Statement(table, SQL_DML_DELETE) {
 	/** Формирование оператора и исполнение запроса к БД с возвратом количества удаленных строк */
-	suspend fun execute() = withContext(Dispatchers.IO) { SQL.exec(template(), dml) }
+	fun execute() = SQL.exec(template(), dml)
 }
 
 /** Класс, реализующий DML оператор SELECT
@@ -205,10 +208,8 @@ open class StmtSelect(table: Table, @JvmField vararg val fields: Expression<*>):
 		return template(flds, args)
 	}
 	
-	/** Формирование оператора и исполнение запроса к БД в фоновом потоке */
-	suspend fun <T> execute(block: RecordSet.() -> T) = withContext(Dispatchers.IO) {
-		SQL.exec(this@StmtSelect.toString(), arrayListOf(*fields))?.releaseRun(block)
-	}
+	/** Формирование оператора и исполнение запроса к БД */
+	fun <T> execute(block: RecordSet.() -> T) = SQL.exec(this@StmtSelect.toString(), arrayListOf(*fields))?.releaseRun(block)
 }
 
 /**

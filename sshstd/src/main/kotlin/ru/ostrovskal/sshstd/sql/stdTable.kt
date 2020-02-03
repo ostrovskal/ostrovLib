@@ -108,27 +108,38 @@ open class Table {
 	
 	/** Регистрация поля в списке таблицы */
 	private fun <T> registerField(name: String, type: Int) = Field<T>(this, name, type).apply { fields.add(this) }
-	
+
+	/** DML оператор INSERT INTO/UPDATE */
+	fun insertOrUpdate(where: SqlBuilder.() -> Op<Boolean>, body: StmtInsertUpdate.(StmtInsertUpdate) -> Unit): Long {
+		val stmt = if(exist { where() } ) {
+			StmtUpdate(this).apply { where(where) }
+		} else {
+			StmtInsert(this)
+		}
+		stmt.body(stmt)
+		return stmt.execute()
+	}
+
 	/** DML оператор INSERT INTO */
 	inline fun insert(crossinline body: StmtInsert.(StmtInsert) -> Unit) = StmtInsert(this).run {
 		body(this)
 		execute()
 	}
-	
+
 	/** DML оператор UPDATE */
-	suspend inline fun update(crossinline body: StmtUpdate.(StmtUpdate) -> Unit) = StmtUpdate(this).run {
+	inline fun update(crossinline body: StmtUpdate.(StmtUpdate) -> Unit) = StmtUpdate(this).run {
 		body(this)
 		execute()
 	}
 	
 	/** DML оператор DELETE FROM для удаления записей с условием */
-	suspend inline fun delete(crossinline block: StmtDelete.() -> Unit) = StmtDelete(this).run {
+	inline fun delete(crossinline block: StmtDelete.() -> Unit) = StmtDelete(this).run {
 		block()
 		execute()
 	}
 	
 	/** DML оператор DELETE FROM для удаление всех записей */
-	suspend inline fun deleteAll() = StmtDelete(this).execute()
+	inline fun deleteAll() = StmtDelete(this).execute()
 	
 	/** DML оператор SELECT для полей [fields] */
 	inline fun select(vararg fields: Expression<*>, body: (StmtSelect.() -> Unit)) = StmtSelect(this, *fields).apply { body() }
@@ -162,20 +173,21 @@ open class Table {
 	}
 	
 	/** Проверка на существование */
-	suspend fun exist(where: SqlBuilder.() -> Op<Boolean>) = StmtSelect(this).run {
+	fun exist(where: SqlBuilder.() -> Op<Boolean>) = StmtSelect(this).run {
 		where { SqlBuilder.where() }
 		execute { true } ?: false
 	}
 	
 	/** Подсчет количества записей */
-	suspend fun count(op: (SqlBuilder.() -> Op<Boolean>)? = null) = StmtSelect(this).run {
+	fun count(op: (SqlBuilder.() -> Op<Boolean>)? = null) = StmtSelect(this).run {
 		count()
 		if(op != null) where { SqlBuilder.op() }
 		execute { integer(0) } ?: 0
 	}
 	
-	/** Формирование массива из содержимого таблицы по некоторому полю [field], с сортировкой [order] и типом сортировки [isAsc] */
-	suspend fun listOf(field: Field<String>, order: Field<*>, isAsc: Boolean, where: (SqlBuilder.() -> Op<Boolean>)? = null) = StmtSelect(this, field).run {
+	/** Формирование массива из содержимого таблицы по некоторому полю [field], с сортировкой [order], типом сортировки [isAsc] и фильтром [where] */
+	fun listOf(field: Field<String>, order: Field<*>, isAsc: Boolean,
+			   where: (SqlBuilder.() -> Op<Boolean>)? = null) = StmtSelect(this, field).run {
 		orderBy(order, isAsc)
 		if(where != null) where { SqlBuilder.where() }
 		execute { List(count) { hasNext(); next()[field] } } ?: listOf()

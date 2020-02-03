@@ -95,27 +95,3 @@ inline operator fun ByteArray.set(x: Int, y: Int, v: Int) { this[ y * this[0] + 
 
 /** Поиск символа [key]. [def] Значение по умолчанию */
 inline fun CharArray.search(key: Char, def: Int) = with(indexOf(key)) { if(this == -1) def else this }
-
-/** Преобразование массива целых чисел в строку */
-fun IntArray.display(): StringBuilder {
-	val sb = StringBuilder()
-	sb.append("[ ")
-	repeat(size) {
-		if(it > 0) sb.append(", ")
-		sb.append(get(it))
-	}
-	sb.append(" ]")
-	return sb
-}
-
-/** Преобразование массива байт в строку */
-fun ByteArray.display(): StringBuilder {
-	val sb = StringBuilder()
-	sb.append("[ ")
-	repeat(size) {
-		if(it > 0) sb.append(", ")
-		sb.append(get(it))
-	}
-	sb.append(" ]")
-	return sb
-}

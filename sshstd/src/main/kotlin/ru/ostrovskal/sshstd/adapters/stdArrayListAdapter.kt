@@ -27,7 +27,7 @@ open class ArrayListAdapter<T>(context: Context, protected val title: UiComponen
 	private var normColor  = 0
 	
 	/** Возвращает представление заголовка */
-	override fun getView(position: Int, convertView: View?, parent: ViewGroup) = createView(position, convertView, title, parent, false)?.run {
+	override fun getView(position: Int, convertView: View?, parent: ViewGroup): View = createView(position, convertView, title, parent, false)?.run {
 		(this as? TextView)?.apply {
 			normColor = highlightColor
 			highColor = currentTextColor
@@ -35,7 +35,7 @@ open class ArrayListAdapter<T>(context: Context, protected val title: UiComponen
 	} ?: error("View is null!")
 	
 	/** Возвращает представление из выпадающего списка */
-	override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup) = createView(position, convertView, dropdown, parent, true)
+	override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View? = createView(position, convertView, dropdown, parent, true)
 	
 	/** Создает представление */
 	open fun createView(position: Int, convertView: View?, resource: UiComponent, parent: ViewGroup, color: Boolean): View? {

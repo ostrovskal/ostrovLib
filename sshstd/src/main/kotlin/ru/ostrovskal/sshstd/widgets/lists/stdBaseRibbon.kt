@@ -315,8 +315,6 @@ abstract class BaseRibbon(context: Context, id: Int, vert: Boolean, style: IntAr
 	open fun obtainView(pos: Int): View {
 		mIsAttachedChild = false
 		val view = getCacheView(pos)
-		//val cache = (view as? Text)?.text
-		//val posCache = (view?.layoutParams as? LayoutParams)?.pos ?: -1
 		lateinit var child: View
 		adapter?.let {
 			child = it.getView(pos, view, this)
@@ -393,12 +391,18 @@ abstract class BaseRibbon(context: Context, id: Int, vert: Boolean, style: IntAr
 	
 	/** Сброс списка в исходное состояние */
 	fun resetList() {
+		removeAllViews()
 		mDataChanged = false
 		mFirstPosition = 0
 		mItemSelected = null
 		mClickPosition = -1
 		selectedItemPosition = -1
-		clearCacheViews()
+		// очищаем кэш
+		mCacheViews.forEach {views ->
+			views.forEach { removeDetachedView(it, false) }
+			views.clear()
+		}
+		mCacheViews.clear()
 	}
 
 	/** Отключение списка от окна */
@@ -585,14 +589,6 @@ abstract class BaseRibbon(context: Context, id: Int, vert: Boolean, style: IntAr
 		}
 	}
 
-	/** Очистка кэша представлений */
-	fun clearCacheViews() {
-		mCacheViews.forEach {views ->
-			views.forEach { removeDetachedView(it, false) }
-			views.clear()
-		}
-	}
-	
 	/** Извлечение представления из кэша */
 	protected fun getCacheView(position: Int): View? {
 		adapter?.let { adapter ->
