@@ -898,6 +898,8 @@ public final class Common {
     public static final int ATTR_SSH_ICON_VERT            = 238 | ATTR_INT;
     /** Количество иконок тайлов по горизонтали */
     public static final int ATTR_SSH_ICON_HORZ            = 239 | ATTR_INT;
+    /** Коэффицент масштабирования */
+    public static final int ATTR_SSH_ZOOM                 = 240 | ATTR_INT;
 
     /** Стиль по умолчанию для Большого текста */
     public static final int[] style_text_large            = {

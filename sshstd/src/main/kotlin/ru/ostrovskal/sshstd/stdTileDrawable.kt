@@ -209,6 +209,7 @@ open class TileDrawable(private val context: Context, style: IntArray) : Drawabl
 				ATTR_SSH_VERT           -> vert = Theme.int
 				ATTR_SSH_HORZ           -> horz = Theme.int
 				ATTR_SSH_TILE           -> tile = Theme.int
+				ATTR_SSH_ZOOM			-> zoom = Theme.int / 655536f
 				ATTR_SSH_SCALE_ICON     -> scaleIcon = Theme.int / 65536f
 				ATTR_SSH_GRAVITY_ICON   -> alignIcon = Theme.int
 			}

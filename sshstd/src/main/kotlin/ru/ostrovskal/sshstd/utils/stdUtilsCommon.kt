@@ -59,6 +59,7 @@ fun Bundle.put(key: String, value: Any?) {
 		is Bundle       -> putBundle(key, value)
 		is CharSequence -> putCharSequence(key, value)
 		is Parcelable   -> putParcelable(key, value)
+		is String		-> putString(key, value)
 		// Scalar arrays
 		is BooleanArray -> putBooleanArray(key, value)
 		is ByteArray    -> putByteArray(key, value)

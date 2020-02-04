@@ -75,14 +75,16 @@ open class Html(context: Context, @JvmField val style: IntArray): ScrollView(con
 	private var text 				    = SpannableStringBuilder()
 	
 	// Парсер HTML
-	private val parser                  = HtmlParser()//XmlPullParserFactory.newInstance().newPullParser()
+	private val parser                  = HtmlParser()
 	
 	/** Псевдонимы картинок */
 	@JvmField var aliases               = mutableMapOf<String, BitmapAlias>()
-	
-	// Стэк страниц
-	private var stack					= Stack<Article>()
-	
+
+    private var posStack        = -1
+
+    // стек страниц
+    private val stackPages= MutableList(32) { Article("", 0) }
+
 	// Текущая таблица
 	private var table: HtmlTable?       = null
 	
@@ -119,7 +121,7 @@ open class Html(context: Context, @JvmField val style: IntArray): ScrollView(con
 	                  @JvmField val h: Int = -1, @JvmField val rot: Float = 0f)
 	
 	/** Класс страниц со ссылкой [ref] на страницу и прокруткой [scroll] */
-	private class Article(@JvmField val ref: String?, @JvmField var scroll: Int)
+	private class Article(@JvmField val ref: String, @JvmField var scroll: Int)
 	
 	// Класс стилизаации полужирного/наклонного текста
 	private class Styles(@JvmField val isBold: Boolean)
@@ -181,12 +183,8 @@ open class Html(context: Context, @JvmField val style: IntArray): ScrollView(con
 		header	= Theme.integer(context, style.themeAttrValue(ATTR_SSH_COLOR_HTML_HEADER, ATTR_SSH_COLOR_HTML_HEADER or THEME))
 		large	= Theme.integer(context, style.themeAttrValue(ATTR_SSH_COLOR_LARGE, ATTR_SSH_COLOR_LARGE or THEME))
 		small	= Theme.integer(context, style.themeAttrValue(ATTR_SSH_COLOR_SMALL, ATTR_SSH_COLOR_SMALL or THEME))
-		try {
-			val art = stack.peek()
-			stack.pop()
-			setArticle(art.ref, scrollY)
-		}
-		catch(e: EmptyStackException) { }
+		try {  if(posStack >= 0) stackPages[posStack].apply { --posStack; setArticle(ref, scroll) }
+		} catch(e: EmptyStackException) { }
 	}
 	
 	// Параграф в тексте
@@ -200,23 +198,22 @@ open class Html(context: Context, @JvmField val style: IntArray): ScrollView(con
 		}
 		if(len != 0) text.append("\n\n")
 	}
-	
+
 	/** Возврат на предыдущую страницу или выход */
 	fun back(): Boolean = try {
-		doc = null
-		stack.pop()
-		val article = stack.pop()
-		setArticle(article.ref, article.scroll)
+        if(posStack > 0) {
+			doc = null
+			stackPages[--posStack].apply { --posStack; setArticle(ref, scroll) }
+		}
 		true
 	} catch(e: EmptyStackException) { false }
 	
 	/** Установка страницы [path] с прокруткой [scrolling] */
-	fun setArticle(path: String?, scrolling: Int) {
+	fun setArticle(path: String, scrolling: Int) {
 		doc?.scroll = scrollY
-		doc = Article(path, 0)
-		stack.push(doc)
+		doc = Article(path, 0).apply { stackPages[++posStack] = this }
 		owner.removeAllViews()
-		val link = "$root/${if(path.isNullOrBlank()) "index" else path}.html"
+		val link = "$root/${if(path.isBlank()) "index" else path}.html"
 		parser.parseFromAssets(context.assets, link, context.resources.getString(R.string.error404, link)) { what, out ->
 			when(what) {
 				HTML_TEXT_TAG   -> text.append(out)
@@ -521,8 +518,8 @@ open class Html(context: Context, @JvmField val style: IntArray): ScrollView(con
 	override fun onSaveInstanceState(): Parcelable {
 		var i = 1
 		val state = Bundle()
-		state.putInt("size", stack.size - 1)
-		stack.forEach {
+		state.putInt("size", posStack)
+		stackPages.forEach {
 			state.put("ref$i", it.ref)
 			state.put("pos$i", it.scroll)
 			i++
@@ -537,10 +534,10 @@ open class Html(context: Context, @JvmField val style: IntArray): ScrollView(con
 		var st = state
 		if(st is HtmlState) {
 			val bundle = st.bundle
-			stack.clear()
+            posStack = -1
 			val size = bundle.getInt("size")
-			for(i in 1..size) { stack.add(Article(bundle.getString("ref$i"), bundle.getInt("pos$i"))) }
-			setArticle(bundle.getString("path"), bundle.getInt("scroll"))
+            repeat(size) { stackPages[++posStack] = Article(bundle.getString("ref$it") ?: "", bundle.getInt("pos$it")) }
+			setArticle(bundle.getString("path") ?: "", bundle.getInt("scroll"))
 			st = st.superState
 		}
 		super.onRestoreInstanceState(st)

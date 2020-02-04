@@ -109,7 +109,7 @@ open class EditEx(context: Context, id: Int, hint: Int, style: IntArray, styleEx
 	@JvmField var clickEditExButton: ((v: View, e: EditEx)->Unit) = { _, e -> e.setText("") }
 
 	// Кнопка очистики текста
-	private val action	= Tile(context, styleEx).apply { setOnClickListener { clickEditExButton.invoke(it, this@EditEx) }}
+	@JvmField val action	= Tile(context, styleEx).apply { setOnClickListener { clickEditExButton.invoke(it, this@EditEx) }}
 
 	// Абсолютная разметка. Накладывается поверх поля ввода
 	private val lyt		= AbsoluteLayout(context).apply { addView(action) }

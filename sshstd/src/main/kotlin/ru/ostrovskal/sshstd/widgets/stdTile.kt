@@ -134,7 +134,12 @@ open class Tile(context: Context, style: IntArray) : Text(context, style) {
 	/** Рисунок с тайлами */
 	val bitmap: Bitmap?
 		get()		                = context.bitmapGetCache(keyBitmap)
-	
+
+	/** Масштабирование */
+	var zoom
+		get()						= drawable.zoom
+		set(v)						{ drawable.zoom = v; }
+
 	/** Признак выделения */
 	open var isChecked
 		get()						= data.toInt() != 0
