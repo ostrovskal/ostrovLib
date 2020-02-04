@@ -72,6 +72,8 @@ abstract class BaseRibbon(context: Context, id: Int, vert: Boolean, style: IntAr
 		set(v) {
 			field?.unregisterDataSetObserver(observer)
 			resetList()
+			removeAllViews()
+			mCacheViews.clear()
 			field = v
 			v?.apply {
 				registerDataSetObserver(observer)
@@ -391,7 +393,6 @@ abstract class BaseRibbon(context: Context, id: Int, vert: Boolean, style: IntAr
 	
 	/** Сброс списка в исходное состояние */
 	fun resetList() {
-		removeAllViews()
 		mDataChanged = false
 		mFirstPosition = 0
 		mItemSelected = null
@@ -402,7 +403,6 @@ abstract class BaseRibbon(context: Context, id: Int, vert: Boolean, style: IntAr
 			views.forEach { removeDetachedView(it, false) }
 			views.clear()
 		}
-		mCacheViews.clear()
 	}
 
 	/** Отключение списка от окна */
