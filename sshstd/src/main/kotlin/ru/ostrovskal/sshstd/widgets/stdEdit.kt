@@ -108,7 +108,7 @@ open class EditEx(context: Context, id: Int, hint: Int, style: IntArray, styleEx
 	/** Действие при нажатии на кнопку */
 	@JvmField var clickEditExButton: ((v: View, e: EditEx)->Unit) = { _, e -> e.setText("") }
 
-	// Кнопка очистики текста
+	/** Кнопка очистики текста */
 	@JvmField val action	= Tile(context, styleEx).apply { setOnClickListener { clickEditExButton.invoke(it, this@EditEx) }}
 
 	// Абсолютная разметка. Накладывается поверх поля ввода

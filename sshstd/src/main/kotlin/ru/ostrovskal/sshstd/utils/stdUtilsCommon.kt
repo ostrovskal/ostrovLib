@@ -160,7 +160,7 @@ fun startLog(context: Context, tag: String, sqlLog: Boolean, version: Int, appVe
  *
  * @return      Возвращает полученный файл
  */
-fun makeDirectories(folder: String, type: Int, file: String? = null): File {
+fun makeDirectories(folder: String, type: Int, file: String? = null): File? {
 	var dir = when(type) {
 		FOLDER_CACHE	-> File(folderCache)
 		FOLDER_FILES	-> File(folderFiles)
@@ -169,8 +169,7 @@ fun makeDirectories(folder: String, type: Int, file: String? = null): File {
 			Environment.getExternalStorageDirectory() else error("External storage undefined!")
 		else 			-> error("Unknown type file!")
 	}
-	if(dir != null && type != FOLDER_DATABASE)
-	{
+	if(dir != null && type != FOLDER_DATABASE) {
 		dir = File(dir, folder)
 		if(!dir.isDirectory && !dir.mkdirs()) { "It was not succeeded to create the folder ${dir.path}".debug(); dir = null }
 		if(file?.isNotEmpty() == true) dir = File(dir, file)
